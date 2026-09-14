@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ຟອມສັ່ງຊື້</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; font-size: 18px; line-height: 1.6; background-color: #f4f6f9; }
+        h2 { font-size: 24px; margin-bottom: 8px; }
+        .sub { font-size: 16px; color: #555; }
+        label { font-size: 18px; font-weight: bold; display: block; margin-top: 15px; }
+        input[type="text"], input[type="tel"], textarea { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .radio-group { display: flex; gap: 15px; margin-top: 10px; }
+        .radio-label { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: normal; background: #f0f4f8; padding: 12px 18px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; flex: 1; }
+        .radio-label input[type="radio"] { width: 20px; height: 20px; accent-color: #08a045; }
+        .qr { text-align: center; margin: 15px 0; }
+        .qr img { width: 100%; max-width: 300px; display: block; margin: 10px auto; border-radius: 10px; }
+        .account { font-size: 18px; font-weight: bold; color: #333; text-align: center; margin: 15px 0; }
+        .upload { border: 2px dashed #007bff; padding: 15px; text-align: center; border-radius: 10px; background: #f8f9fa; cursor: pointer; margin-top: 10px; }
+        button { width: 100%; padding: 16px; font-size: 20px; font-weight: bold; background-color: #25D366; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; }
+        button:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+        .box-section { display: none; }
+        #preview { max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 8px; display: none; margin-left: auto; margin-right: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>💰 ເລືອກວິທີຊຳລະສິນຄ້າຮ້ານ
+        : KOP STORE</h2>
+        <p class="sub">ກະລຸນາຕິກເລືອກວິທີຊຳລະ ຕົ້ນທາງ ຫຼື ປາຍທາງ:</p>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="shippingType" value="origin" onchange="toggleForm()">
+                <span>ຕົ້ນທາງ</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="shippingType" value="destination" onchange="toggleForm()">
+                <span>ປາຍທາງ</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- ຟອມຕົ້ນທາງ -->
+    <div id="originBox" class="card box-section">
+        <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
+        <p class="sub">ກະລຸນາກອກຂໍ້ມູນ ແລະ ຊຳລະເງິນ</p>
+        
+        <label>ຊື່ລູກຄ້າ:</label>
+        <input type="text" id="originName" placeholder="ພິມຊື່ລູກຄ້າ...">
+
+        <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
+        <textarea id="originAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
+
+        <label>ເບີໂທຕິດຕໍ່:</label>
+        <input type="tel" id="originPhone" placeholder="020 XXXXXXXX">
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+        <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
+        <div class="qr"><img src="qr.png" alt="QR ບັນຊີ"></div>
+        <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
+        
+        <label>📎 ສະລິບໂອນເງິນ</label>
+        <label class="upload" for="slip">
+            <div style="font-size:30px">📸</div>
+            <div id="slipLabel">ກົດເພື່ອເລືອກຮູບສະລິບ</div>
+        </label>
+        <input id="slip" type="file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+        <img id="preview" alt="ຕົວຢ່າງສະລິບ">
+
+        <button id="btnOrigin" onclick="sendToWhatsApp('origin')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ຕົ້ນທາງ)</button>
+    </div>
+
+    <!-- ຟອມປາຍທາງ -->
+    <div id="destinationBox" class="card box-section">
+        <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
+        <p class="sub">ກະລຸນາກອກຂໍ້ມູນສຳລັບຈັດສົ່ງເຄື່ອງ</p>
+        
+        <label>ຊື່ລູກຄ້າ:</label>
+        <input type="text" id="destName" placeholder="ພິມຊື່ລູກຄ້າ...">
+
+        <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
+        <textarea id="destAddress" rows="2" placeho lder="ບ້ານ, ເມືອງ, ແຂວງ, ສາຂາຂົນສົ່ງ..."></textarea>
+
+        <label>ເບີໂທຕິດຕໍ່ຜູ້ຮັບ:</label>
+        <input type="tel" id="destPhone" placeholder="020 XXXXXXXX">
+
+        <button id="btnDest" onclick="sendToWhatsApp('destination')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ປາຍທາງ)</button>
+    </div>
+
+    <script>
+        const MY_WHATSAPP_NUMBER = "8562055970908"; 
+        // ໃສ່ API Key ຂອງເຈົ້າໃຫ້ແລ້ວ
+        const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
+
+        let selectedFile = null;
+
+        function toggleForm() {
+            var radios = document.getElementsByName("shippingType");
+            var selectedValue = "";
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) { 
+                    selectedValue = radios[i].value; 
+                    break; 
+                }
+            }
+            document.getElementById("originBox").style.display = selectedValue === "origin" ? "block" : "none";
+            document.getElementById("destinationBox").style.display = selectedValue === "destination" ? "block" : "none";
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById("slipLabel").innerText = "ເລືອກຮູບແລ້ວ: " + file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) { 
+                    const img = document.getElementById("preview");
+                    img.src = e.target.result;
+                    img.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function uploadSlipToImgBB(file) {
+            const formData = new FormData();
+            formData.append("image", file);
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: "POST",
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    return result.data.url;
+                } else {
+                    return null;
+                }
+            } catch (error) {
+                console.error("Upload error:", error);
+                return null;
+            }
+        }
+
+        async function sendToWhatsApp(type) {
+            let name = "", address = "", phone = "", typeText = "";
+            
+            if (type === 'origin') {
+                typeText = "📦 ຕົ້ນທາງ (ຜູ້ສົ່ງ)";
+                name = document.getElementById("originName").value;
+                address = document.getElementById("originAddress").value;
+                phone = document.getElementById("originPhone").value;
+            } else {
+                typeText = "📍 ປາຍທາງ (ຜູ້ຮັບ)";
+                name = document.getElementById("destName").value;
+                address = document.getElementById("destAddress").value;
+                phone = document.getElementById("destPhone").value;
+            }
+
+            if (!name || !address || !phone) {
+                alert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!");
+                return;
+            }
+
+            let btn = type === 'origin' ? document.getElementById("btnOrigin") : document.getElementById("btnDest");
+            let originalBtnText = btn.innerText;
+
+            let imageUrl = "";
+            if (type === 'origin' && selectedFile) {
+                btn.disabled = true;
+                btn.innerText = "⏳ ກຳລັງອັບໂຫຼດຮູບສະລິບ...";
+                imageUrl = await uploadSlipToImgBB(selectedFile);
+                btn.disabled = false;
+                btn.innerText = originalBtnText;
+            }
+
+            let message = `🛒 *ລາຍການສັ່ງເຄື່ອງ KOP STORE*\n` +
+                          `--------------------\n` +
+                          `📌 *ປະເພດ:* ${typeText}\n` +
+                          `👤 *ຊື່:* ${name}\n` +
+                          `🏠 *ທີ່ຢູ່:* ${address}\n` +
+                          `📞 *ເບີໂທ:* ${phone}\n` +
+                          `--------------------\n`;
+
+            if (type === 'origin') {
+                if (imageUrl) {
+                    message += `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}`;
+                } else if (selectedFile) {
+                    message += `📸 *ສະລິບ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
+                } else {
+                    message += `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
+                }
+            }
+
+            const whatsappUrl = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
