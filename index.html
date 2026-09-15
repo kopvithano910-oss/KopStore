@@ -1,204 +1,1217 @@
 <!DOCTYPE html>
 <html lang="lo">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ຟອມສັ່ງຊື້</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; font-size: 18px; line-height: 1.6; background-color: #f4f6f9; }
-        h2 { font-size: 24px; margin-bottom: 8px; }
-        .sub { font-size: 16px; color: #555; }
-        label { font-size: 18px; font-weight: bold; display: block; margin-top: 15px; }
-        input[type="text"], input[type="tel"], textarea { width: 100%; padding: 12px; font-size: 16px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .radio-group { display: flex; gap: 15px; margin-top: 10px; }
-        .radio-label { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: normal; background: #f0f4f8; padding: 12px 18px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; flex: 1; }
-        .radio-label input[type="radio"] { width: 20px; height: 20px; accent-color: #08a045; }
-        .qr { text-align: center; margin: 15px 0; }
-        .qr img { width: 100%; max-width: 300px; display: block; margin: 10px auto; border-radius: 10px; }
-        .account { font-size: 18px; font-weight: bold; color: #333; text-align: center; margin: 15px 0; }
-        .upload { border: 2px dashed #007bff; padding: 15px; text-align: center; border-radius: 10px; background: #f8f9fa; cursor: pointer; margin-top: 10px; }
-        button { width: 100%; padding: 16px; font-size: 20px; font-weight: bold; background-color: #25D366; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; }
-        button:disabled { background-color: #a5d6a7; cursor: not-allowed; }
-        .box-section { display: none; }
-        #preview { max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 8px; display: none; margin-left: auto; margin-right: auto; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KOP STORE - E-Commerce</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,"Noto Sans Lao",sans-serif;
+    background:#f4f6f8;
+    color:#222;
+    padding-bottom:80px;
+    font-size:16px;
+    line-height:1.5;
+}
+
+header{
+    background:#111;
+    color:white;
+    padding:15px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.header-top{
+    max-width:1100px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.header-btns{
+    display:flex;
+    gap:8px;
+}
+
+.admin-login-btn{
+    background:#333;
+    color:#fff;
+    border:1px solid #555;
+    padding:8px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.cart-btn{
+    background:#25D366;
+    color:white;
+    border:0;
+    padding:8px 14px;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.hero{
+    background:linear-gradient(135deg,#111,#333);
+    color:white;
+    padding:20px 15px;
+    text-align:center;
+}
+.hero h1 { font-size: 24px; }
+.hero p { font-size: 14px; opacity: 0.9; }
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:15px;
+}
+
+/* ຟອມ ADMIN */
+.admin-card{
+    display:none; 
+    background:#fff3cd;
+    border:2px solid #ffeba2;
+    padding:15px;
+    border-radius:16px;
+    margin-bottom:20px;
+}
+
+.admin-card.show{ display:block; }
+.admin-card h2{ margin-bottom:12px; font-size:18px; color:#856404; }
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.form-group{
+    margin-bottom:10px;
+}
+
+.file-upload-btn{
+    border:2px dashed #007bff;
+    background:#f0f7ff;
+    color:#007bff;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    display:block;
+    margin-bottom:10px;
+    font-size:15px;
+}
+
+#newProdPreview {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    display: none;
+    margin: 10px auto;
+}
+
+.search{
+    width:100%;
+    padding:12px 15px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    font-size:16px;
+    margin-bottom:15px;
+}
+
+.categories{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:10px;
+    margin-bottom:15px;
+}
+
+.categories button{
+    border:0;
+    background:white;
+    padding:8px 16px;
+    border-radius:20px;
+    white-space:nowrap;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.categories button.active{
+    background:#111;
+    color:white;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.product{
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.product-img-box{
+    position:relative;
+    width:100%;
+    height:180px;
+    background:#f9f9f9;
+    overflow:hidden;
+}
+
+.product img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.product-info{
+    padding:10px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.product-name{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:4px;
+    line-height:1.3;
+}
+
+.product-desc{
+    font-size:12px;
+    color:#666;
+    margin-bottom:6px;
+    line-height:1.3;
+}
+
+.timer-box{
+    background:#ffebee;
+    color:#d32f2f;
+    padding:4px 6px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:6px;
+    text-align:center;
+}
+
+.stock-tag{
+    font-size:12px;
+    color:#28a745;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.stock-out{ color:#dc3545; }
+
+.price-box{ margin-bottom:8px; }
+.price-normal{ color:#777; font-size:12px; text-decoration:line-through; margin-right:4px; }
+.price{ color:#e53935; font-size:16px; font-weight:bold; }
+
+.promo-badge{
+    background:#fff3cd;
+    color:#856404;
+    border:1px solid #ffeeba;
+    padding:2px 6px;
+    border-radius:4px;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:6px;
+    display:inline-block;
+}
+
+.qty-control{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#f0f0f0;
+    border-radius:8px;
+    padding:3px;
+    margin-bottom:8px;
+}
+
+.qty-control button{
+    width:30px;
+    height:30px;
+    border:0;
+    background:white;
+    border-radius:6px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.qty-control span{ font-weight:bold; font-size:14px; }
+
+.add-btn{
+    width:100%;
+    padding:10px;
+    border:0;
+    background:#111;
+    color:white;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.add-btn:disabled{ background:#ccc; cursor:not-allowed; }
+
+.delete-btn{
+    background:#dc3545;
+    color:white;
+    border:0;
+    padding:6px;
+    border-radius:6px;
+    margin-top:6px;
+    font-size:12px;
+    cursor:pointer;
+    width:100%;
+}
+
+/* OVERLAY & CART */
+.overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:200;
+}
+
+.overlay.show{ display:block; }
+
+.cart-panel{
+    position:absolute;
+    right:0;
+    top:0;
+    width:100%;
+    max-width:420px;
+    height:100%;
+    background:white;
+    overflow-y:auto;
+    padding:20px;
+}
+
+.close{
+    border:0;
+    background:#eee;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    font-size:20px;
+    cursor:pointer;
+    float:right;
+}
+
+.cart-title{ font-size:20px; margin-bottom:15px; }
+
+.cart-item{
+    display:flex;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid #eee;
+}
+
+.cart-item img{
+    width:65px;
+    height:65px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.cart-item-info{ flex:1; font-size:14px; }
+
+.qty{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:6px;
+}
+
+.qty button{
+    width:26px;
+    height:26px;
+    border:0;
+    border-radius:4px;
+    background:#eee;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.total{
+    font-size:18px;
+    font-weight:bold;
+    margin-top:15px;
+    padding-top:12px;
+    border-top:2px solid #111;
+}
+
+.checkout-btn{
+    width:100%;
+    padding:14px;
+    background:#25D366;
+    color:white;
+    border:0;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    margin-top:15px;
+    cursor:pointer;
+}
+
+/* CHECKOUT PAGE */
+.checkout{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#f4f6f8;
+    z-index:300;
+    overflow-y:auto;
+}
+
+.checkout.show{ display:block; }
+
+.checkout-box{
+    max-width:550px;
+    margin:auto;
+    padding:15px;
+}
+
+.checkout-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.checkout-header h2 { font-size: 18px; }
+
+.checkout-header button{
+    border:0;
+    background:#ddd;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.card { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.card h2 { font-size: 18px; margin-bottom: 6px; }
+.sub { font-size: 13px; color: #555; }
+.radio-group { display: flex; gap: 10px; margin-top: 10px; }
+.radio-label { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; background: #f0f4f8; padding: 10px 14px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer; flex: 1; }
+.radio-label input[type="radio"] { width: 18px; height: 18px; accent-color: #08a045; }
+.box-section { display: none; }
+
+label{
+    display:block;
+    font-weight:bold;
+    margin:8px 0 4px;
+    font-size:14px;
+}
+
+input[type="text"], input[type="number"], input[type="tel"], input[type="datetime-local"], textarea, select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+textarea{ min-height:70px; }
+
+.qr{ text-align: center; margin: 12px 0; }
+.qr img{ width: 100%; max-width: 220px; display: block; margin: 10px auto; border-radius: 10px; }
+.account{ font-size: 15px; font-weight: bold; color: #333; text-align: center; margin: 10px 0; line-height: 1.5; }
+.upload{ border: 2px dashed #007bff; padding: 12px; text-align: center; border-radius: 8px; background: #f8f9fa; cursor: pointer; margin-top: 8px; display: block; font-size: 14px; }
+#preview{ max-width: 100%; max-height: 180px; margin-top: 10px; border-radius: 8px; display: none; margin-left: auto; margin-right: auto; object-fit: contain; }
+
+.confirm-btn{ width: 100%; padding: 14px; font-size: 16px; font-weight: bold; background-color: #25D366; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
+.confirm-btn:disabled{ background-color: #a5d6a7; cursor: not-allowed; }
+
+.empty{ text-align:center; color:#777; padding:20px 10px; font-size:14px; }
+
+@media(min-width:768px){
+    .products{ grid-template-columns:repeat(4,1fr); gap:15px; }
+    .product-img-box{ height:220px; }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="card">
-        <h2>💳 ເລືອກວິທີຊຳລະສິນຄ້າຮ້ານ
-        : KOP STORE</h2>
-        <p class="sub">ກະລຸນາຕິກເລືອກວິທີຊຳລະ ຕົ້ນທາງ ຫຼື ປາຍທາງ:</p>
-        <div class="radio-group">
-            <label class="radio-label">
-                <input type="radio" name="shippingType" value="origin" onchange="toggleForm()">
-                <span>ຕົ້ນທາງ</span>
-            </label>
-            <label class="radio-label">
-                <input type="radio" name="shippingType" value="destination" onchange="toggleForm()">
-                <span>ປາຍທາງ</span>
-            </label>
-        </div>
+<!-- HEADER -->
+<header>
+<div class="header-top">
+<div class="logo">🛍️ BEAUTY STORE</div>
+<div class="header-btns">
+    <button class="admin-login-btn" onclick="toggleAdmin()">🔒 ຈັດການສິນຄ້າ</button>
+    <button class="cart-btn" onclick="openCart()">🛒 (<span id="cartCount">0</span>)</button>
+</div>
+</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+<h1>BEAUTY STORE</h1>
+<p>ເລືອກສິນຄ້າ, ສັ່ງຊື້ ແລະ ຊຳລະເງິນໄດ້ງ່າຍໆ</p>
+</section>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+<!-- ADMIN FORM -->
+<div id="adminCard" class="admin-card">
+    <h2>👑 ຈັດການສິນຄ້າ (ສະເພາະເຈົ້າຂອງຮ້ານ)</h2>
+    <div class="form-grid">
+        <input id="newProdName" type="text" placeholder="ຊື່ສິນຄ້າ">
+        <select id="newProdCat">
+            <option value="ເຄື່ອງສໍາອາງ">💄 ເຄື່ອງສໍາອາງ</option>
+            <option value="ເສື້ອຜ້າ">👕 ເສື້ອຜ້າ</option>
+            <option value="ອຸປະກອນ">📱 ອຸປະກອນ</option>
+            <option value="ອື່ນໆ">📦 ອື່ນໆ</option>
+        </select>
+    </div>
+    
+    <div class="form-grid">
+        <input id="newProdPrice" type="number" placeholder="ລາຄາເດີມ/ຊິ້ນ (ກີບ)">
+        <input id="newProdStock" type="number" placeholder="ຈຳນວນສະຕັອກ (ຊິ້ນ)">
     </div>
 
-    <!-- ຟອມຕົ້ນທາງ -->
-    <div id="originBox" class="card box-section">
-        <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
-        <p class="sub">ກະລຸນາກອກຂໍ້ມູນ ແລະ ຊຳລະເງິນ</p>
-        
-        <label>ຊື່ລູກຄ້າ:</label>
-        <input type="text" id="originName" placeholder="ພິມຊື່ລູກຄ້າ...">
+    <div class="form-group">
+        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນ (ເຊັ່ນ: 1:99000, 3:290000)">
+    </div>
 
-        <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
-        <textarea id="originAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
+    <div class="form-group">
+        <label>⏰ ຕັ້ງເວລາໝົດໂປໂມຊັນ:</label>
+        <input id="newProdTimer" type="datetime-local">
+    </div>
 
-        <label>ເບີໂທຕິດຕໍ່:</label>
-        <input type="tel" id="originPhone" placeholder="020 XXXXXXXX">
+    <label class="file-upload-btn" for="newProdFile">📷 ເລືອກຮູບສິນຄ້າຈາກເຄື່ອງ</label>
+    <input id="newProdFile" type="file" accept="image/*" style="display:none;" onchange="handleProductImageUpload(event)">
+    <img id="newProdPreview" alt="Product Image Preview">
 
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+    <div class="form-group">
+        <textarea id="newProdDesc" placeholder="ລາຍລະອຽດສິນຄ້າ..."></textarea>
+    </div>
 
-        <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
-        <div class="qr"><img src="qr.png" alt="QR ບັນຊີ"></div>
-        <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
-        
-        <label>📎 ສະລິບໂອນເງິນ</label>
-        <label class="upload" for="slip">
-            <div style="font-size:30px">📸</div>
-            <div id="slipLabel">ກົດເພື່ອເລືອກຮູບສະລິບ</div>
+    <button class="add-btn" style="background:#28a745; padding:12px;" onclick="addNewProduct()">✨ ບັນທຶກເພີ່ມສິນຄ້າ</button>
+</div>
+
+<input id="search" class="search" type="text" placeholder="🔎 ຄົ້ນຫາສິນຄ້າ..." oninput="renderProducts()">
+
+<div class="categories">
+<button class="active" onclick="setCategory('all',this)">ທັງໝົດ</button>
+<button onclick="setCategory('ເຄື່ອງສໍາອາງ',this)">💄 ເຄື່ອງສໍາອາງ</button>
+<button onclick="setCategory('ເສື້ອຜ້າ',this)">👕 ເສື້ອຜ້າ</button>
+<button onclick="setCategory('ອຸປະກອນ',this)">📱 ອຸປະກອນ</button>
+<button onclick="setCategory('ອື່ນໆ',this)">📦 ອື່ນໆ</button>
+</div>
+
+<div id="products" class="products"></div>
+
+</div>
+
+<!-- CART OVERLAY -->
+<div id="cartOverlay" class="overlay">
+<div class="cart-panel">
+<button class="close" onclick="closeCart()">×</button>
+<h2 class="cart-title">🛒 ກະຕ່າສິນຄ້າ</h2>
+<div id="cartItems"></div>
+<div id="cartTotal" class="total">ລວມ: ₭0</div>
+<button class="checkout-btn" onclick="openCheckout()">💳 ໄປຊຳລະເງິນ</button>
+</div>
+</div>
+
+<!-- CHECKOUT PAGE -->
+<div id="checkout" class="checkout">
+<div class="checkout-box">
+
+<div class="checkout-header">
+<h2>🧾 ຢືນຢັນການສັ່ງຊື້ & ຊຳລະເງິນ</h2>
+<button onclick="closeCheckout()">← ກັບ</button>
+</div>
+
+<!-- ສິນຄ້າໃນກະຕ່າ -->
+<div class="card">
+<h2>🛒 ລາຍການສິນຄ້າ</h2>
+<div id="checkoutItems"></div>
+<div id="checkoutTotal" class="total">ລວມ: ₭0</div>
+</div>
+
+<!-- ເລືອກວິທີຊຳລະ ຕົ້ນທາງ / ປາຍທາງ -->
+<div class="card">
+    <h2>💳 ເລືອກວິທີຊຳລະສິນຄ້າຮ້ານ: KOP STORE</h2>
+    <p class="sub">ກະລຸນາຕິກເລືອກວິທີຊຳລະ ຕົ້ນທາງ ຫຼື ປາຍທາງ:</p>
+    <div class="radio-group">
+        <label class="radio-label">
+            <input type="radio" name="shippingType" value="origin" onchange="toggleForm()">
+            <span>ຕົ້ນທາງ</span>
         </label>
-        <input id="slip" type="file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
-        <img id="preview" alt="ຕົວຢ່າງສະລິບ">
-
-        <button id="btnOrigin" onclick="sendToWhatsApp('origin')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ຕົ້ນທາງ)</button>
+        <label class="radio-label">
+            <input type="radio" name="shippingType" value="destination" onchange="toggleForm()">
+            <span>ປາຍທາງ</span>
+        </label>
     </div>
+</div>
 
-    <!-- ຟອມປາຍທາງ -->
-    <div id="destinationBox" class="card box-section">
-        <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
-        <p class="sub">ກະລຸນາກອກຂໍ້ມູນສຳລັບຈັດສົ່ງເຄື່ອງ</p>
-        
-        <label>ຊື່ລູກຄ້າ:</label>
-        <input type="text" id="destName" placeholder="ພິມຊື່ລູກຄ້າ...">
+<!-- ຟອມຕົ້ນທາງ -->
+<div id="originBox" class="card box-section">
+    <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
+    <p class="sub">ກະລຸນາກອກຂໍ້ມູນ ແລະ ຊຳລະເງິນ</p>
+    
+    <label>ຊື່ລູກຄ້າ:</label>
+    <input type="text" id="originName" placeholder="ພິມຊື່ລູກຄ້າ...">
 
-        <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
-        <textarea id="destAddress" rows="2" placeho lder="ບ້ານ, ເມືອງ, ແຂວງ, ສາຂາຂົນສົ່ງ..."></textarea>
+    <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
+    <textarea id="originAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
 
-        <label>ເບີໂທຕິດຕໍ່ຜູ້ຮັບ:</label>
-        <input type="tel" id="destPhone" placeholder="020 XXXXXXXX">
+    <label>ເບີໂທຕິດຕໍ່:</label>
+    <input type="tel" id="originPhone" placeholder="020 XXXXXXXX">
 
-        <button id="btnDest" onclick="sendToWhatsApp('destination')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ປາຍທາງ)</button>
-    </div>
+    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
 
-    <script>
-        const MY_WHATSAPP_NUMBER = "8562055970908"; 
-        // ໃສ່ API Key ຂອງເຈົ້າໃຫ້ແລ້ວ
-        const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
+    <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
+    <div class="qr"><img src="qr.png" alt="QR ບັນຊີ"></div>
+    <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
+    
+    <label>📎 ສະລິບໂອນເງິນ</label>
+    <label class="upload" for="slip">
+        <div style="font-size:24px">📸</div>
+        <div id="slipLabel">ກົດເພື່ອເລືອກຮູບສະລິບ</div>
+    </label>
+    <input id="slip" type="file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+    <img id="preview" alt="ຕົວຢ່າງສະລິບ">
 
-        let selectedFile = null;
+    <button id="btnOrigin" class="confirm-btn" onclick="sendToWhatsApp('origin')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ຕົ້ນທາງ)</button>
+</div>
 
-        function toggleForm() {
-            var radios = document.getElementsByName("shippingType");
-            var selectedValue = "";
-            for (var i = 0; i < radios.length; i++) {
-                if (radios[i].checked) { 
-                    selectedValue = radios[i].value; 
-                    break; 
-                }
+<!-- ຟອມປາຍທາງ -->
+<div id="destinationBox" class="card box-section">
+    <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
+    <p class="sub">ກະລຸນາກອກຂໍ້ມູນສຳລັບຈັດສົ່ງເຄື່ອງ</p>
+    
+    <label>ຊື່ລູກຄ້າ:</label>
+    <input type="text" id="destName" placeholder="ພິມຊື່ລູກຄ້າ...">
+
+    <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
+    <textarea id="destAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ, ສາຂາຂົນສົ່ງ..."></textarea>
+
+    <label>ເບີໂທຕິດຕໍ່ຜູ້ຮັບ:</label>
+    <input type="tel" id="destPhone" placeholder="020 XXXXXXXX">
+
+    <button id="btnDest" class="confirm-btn" onclick="sendToWhatsApp('destination')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ປາຍທາງ)</button>
+</div>
+
+</div>
+</div>
+
+<script>
+const MY_WHATSAPP_NUMBER = "8562055970908"; 
+const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
+const ADMIN_PASSWORD = "kop78900"; 
+
+let isAdminLoggedIn = false;
+let tempImageBase64 = "";
+let selectedFile = null;
+
+let products = JSON.parse(localStorage.getItem("kop_products")) || [
+    {
+        id: 1,
+        name: "ຄີມບຳລຸງຜິວ (Beauty Cream)",
+        description: "ເນື້ອຄີມນຸ່ມ ຕິດທົນດົນ ບຳລຸງຜິວຂາວໃສ",
+        normalPrice: 120000,
+        stock: 50,
+        category: "ເຄື່ອງສໍາອາງ",
+        tierPrices: [
+            { qty: 1, price: 99000 },
+            { qty: 3, price: 290000 }
+        ],
+        timerEnd: new Date(Date.now() + 86400000 * 2).toISOString(),
+        image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500"
+    }
+];
+
+let productQtyState = {};
+let cart = JSON.parse(localStorage.getItem("kop_cart")) || [];
+let currentCategory = "all";
+
+function saveProducts(){
+    localStorage.setItem("kop_products", JSON.stringify(products));
+}
+
+function saveCart(){
+    localStorage.setItem("kop_cart", JSON.stringify(cart));
+}
+
+function money(number){
+    if(isNaN(number) || number === null || number === undefined) return "₭0";
+    return "₭" + Number(number).toLocaleString();
+}
+
+function toggleAdmin(){
+    if(!isAdminLoggedIn){
+        const pwd = prompt("ກະລຸນາກອກລະຫັດຜ່ານເຈົ້າຂອງຮ້ານ:");
+        if(pwd === ADMIN_PASSWORD){
+            isAdminLoggedIn = true;
+            document.getElementById("adminCard").classList.add("show");
+            alert("ເຂົ້າສູ່ລະບົບ Admin ສຳເລັດ!");
+            renderProducts();
+        }else if(pwd !== null){
+            alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
+        }
+    }else{
+        isAdminLoggedIn = false;
+        document.getElementById("adminCard").classList.remove("show");
+        renderProducts();
+    }
+}
+
+function handleProductImageUpload(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        tempImageBase64 = e.target.result;
+        const preview = document.getElementById("newProdPreview");
+        preview.src = tempImageBase64;
+        preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+}
+
+function addNewProduct(){
+    const name = document.getElementById("newProdName").value.trim();
+    const normalPrice = Number(document.getElementById("newProdPrice").value);
+    const stock = Number(document.getElementById("newProdStock").value);
+    const category = document.getElementById("newProdCat").value;
+    const rawTiers = document.getElementById("newProdTierPrices").value.trim();
+    const timerVal = document.getElementById("newProdTimer").value;
+    const desc = document.getElementById("newProdDesc").value.trim();
+
+    if(!name || isNaN(normalPrice) || normalPrice <= 0){
+        alert("ກະລຸນາກອກຊື່ ແລະ ລາຄາເດີມສິນຄ້າໃຫ້ຖືກຕ້ອງ!");
+        return;
+    }
+
+    let tierPrices = [];
+    if(rawTiers){
+        const parts = rawTiers.split(",");
+        parts.forEach(p => {
+            const [q, pr] = p.split(":");
+            if(q && pr && !isNaN(q) && !isNaN(pr)){
+                tierPrices.push({ qty: parseInt(q.trim()), price: parseInt(pr.trim()) });
             }
-            document.getElementById("originBox").style.display = selectedValue === "origin" ? "block" : "none";
-            document.getElementById("destinationBox").style.display = selectedValue === "destination" ? "block" : "none";
+        });
+    }
+
+    const finalImage = tempImageBase64 || "https://via.placeholder.com/300?text=No+Image";
+
+    const newProd = {
+        id: Date.now(),
+        name: name,
+        description: desc,
+        normalPrice: normalPrice,
+        stock: isNaN(stock) ? 0 : stock,
+        category: category,
+        tierPrices: tierPrices,
+        timerEnd: timerVal ? new Date(timerVal).toISOString() : null,
+        image: finalImage
+    };
+
+    products.push(newProd);
+    saveProducts();
+    renderProducts();
+
+    document.getElementById("newProdName").value = "";
+    document.getElementById("newProdPrice").value = "";
+    document.getElementById("newProdStock").value = "";
+    document.getElementById("newProdTierPrices").value = "";
+    document.getElementById("newProdTimer").value = "";
+    document.getElementById("newProdDesc").value = "";
+    document.getElementById("newProdFile").value = "";
+    document.getElementById("newProdPreview").style.display = "none";
+    tempImageBase64 = "";
+
+    alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
+}
+
+function deleteProduct(id){
+    if(confirm("ທ່ານຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")){
+        products = products.filter(p => p.id !== id);
+        saveProducts();
+        renderProducts();
+    }
+}
+
+function isPromoActive(product){
+    if(!product.timerEnd) return true;
+    const now = new Date().getTime();
+    const end = new Date(product.timerEnd).getTime();
+    return end > now;
+}
+
+function calculatePriceForQty(product, qty){
+    const activePromo = isPromoActive(product);
+    
+    if(activePromo && product.tierPrices && product.tierPrices.length > 0){
+        const matchedTier = product.tierPrices.find(t => t.qty === qty);
+        if(matchedTier){
+            return { totalPrice: matchedTier.price, isPromo: true };
+        }
+    }
+    
+    const normal = product.normalPrice || 0;
+    return { totalPrice: normal * qty, isPromo: false };
+}
+
+function changeProductQty(id, delta){
+    const product = products.find(p => p.id === id);
+    if(!product) return;
+
+    let currentQty = productQtyState[id] || 1;
+    let newQty = currentQty + delta;
+
+    if(newQty < 1) newQty = 1;
+    if(newQty > product.stock) newQty = product.stock;
+
+    productQtyState[id] = newQty;
+
+    const qtyEl = document.getElementById(`qty-val-${id}`);
+    if(qtyEl) qtyEl.innerText = newQty;
+
+    const priceRes = calculatePriceForQty(product, newQty);
+    const priceBoxEl = document.getElementById(`price-display-${id}`);
+    
+    if(priceBoxEl){
+        if(priceRes.isPromo){
+            priceBoxEl.innerHTML = `
+                <span class="price-normal">${money((product.normalPrice || 0) * newQty)}</span>
+                <span class="price">${money(priceRes.totalPrice)}</span>
+                <span class="promo-badge">🔥 ລາຄາໂປໂມຊັນ</span>
+            `;
+        } else {
+            priceBoxEl.innerHTML = `<span class="price">${money(priceRes.totalPrice)}</span>`;
+        }
+    }
+}
+
+function renderProducts(){
+    const box = document.getElementById("products");
+    const search = document.getElementById("search").value.toLowerCase();
+
+    const filtered = products.filter(p => {
+        const matchCategory = currentCategory === "all" || p.category === currentCategory;
+        const matchSearch = p.name.toLowerCase().includes(search);
+        return matchCategory && matchSearch;
+    });
+
+    if(filtered.length === 0){
+        box.innerHTML = `<div class="empty">ບໍ່ພົບສິນຄ້າ</div>`;
+        return;
+    }
+
+    box.innerHTML = filtered.map(p => {
+        const activePromo = isPromoActive(p);
+        const currentQty = productQtyState[p.id] || 1;
+        const priceRes = calculatePriceForQty(p, currentQty);
+
+        let promoListHTML = "";
+        if(activePromo && p.tierPrices && p.tierPrices.length > 0){
+            const promoItems = p.tierPrices.map(t => `${t.qty}ຊິ້ນ = ${money(t.price)}`).join(" | ");
+            promoListHTML = `<div class="promo-badge">🔥 ໂປ: ${promoItems}</div>`;
         }
 
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                selectedFile = file;
-                document.getElementById("slipLabel").innerText = "ເລືອກຮູບແລ້ວ: " + file.name;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) { 
-                    const img = document.getElementById("preview");
-                    img.src = e.target.result;
-                    img.style.display = "block";
-                };
-                reader.readAsDataURL(file);
-            }
+        const deleteBtnHTML = isAdminLoggedIn ? `<button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ ລຶບສິນຄ້າ</button>` : "";
+        const descHTML = p.description ? `<div class="product-desc">${p.description}</div>` : "";
+
+        const hasStock = p.stock > 0;
+        const stockHTML = hasStock 
+            ? `<div class="stock-tag">📦 ເຫຼືອ ${p.stock} ຊິ້ນ</div>` 
+            : `<div class="stock-tag stock-out">❌ ສິນຄ້າໝົດ</div>`;
+
+        let timerHTML = "";
+        if(p.timerEnd){
+            timerHTML = `<div class="timer-box" id="timer-${p.id}">⏳ ກຳລັງໂຫຼດ...</div>`;
         }
 
-        async function uploadSlipToImgBB(file) {
-            const formData = new FormData();
-            formData.append("image", file);
-            try {
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                    method: "POST",
-                    body: formData
-                });
-                const result = await response.json();
-                if (result.success) {
-                    return result.data.url;
-                } else {
-                    return null;
-                }
-            } catch (error) {
-                console.error("Upload error:", error);
-                return null;
-            }
+        let priceDisplayHTML = "";
+        if(priceRes.isPromo){
+            priceDisplayHTML = `
+                <span class="price-normal">${money((p.normalPrice || 0) * currentQty)}</span>
+                <span class="price">${money(priceRes.totalPrice)}</span>
+            `;
+        } else {
+            priceDisplayHTML = `<span class="price">${money(priceRes.totalPrice)}</span>`;
         }
 
-        async function sendToWhatsApp(type) {
-            let name = "", address = "", phone = "", typeText = "";
-            
-            if (type === 'origin') {
-                typeText = "📦 ຕົ້ນທາງ (ຜູ້ສົ່ງ)";
-                name = document.getElementById("originName").value;
-                address = document.getElementById("originAddress").value;
-                phone = document.getElementById("originPhone").value;
-            } else {
-                typeText = "📍 ປາຍທາງ (ຜູ້ຮັບ)";
-                name = document.getElementById("destName").value;
-                address = document.getElementById("destAddress").value;
-                phone = document.getElementById("destPhone").value;
-            }
+        return `
+        <div class="product">
+            <div class="product-img-box">
+                <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+            </div>
+            <div class="product-info">
+                <div>
+                    <div class="product-name">${p.name}</div>
+                    ${descHTML}
+                    ${timerHTML}
+                    ${promoListHTML}
+                    ${stockHTML}
+                </div>
 
-            if (!name || !address || !phone) {
-                alert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!");
+                <div class="price-box" id="price-display-${p.id}">
+                    ${priceDisplayHTML}
+                </div>
+
+                <div class="qty-control">
+                    <button onclick="changeProductQty(${p.id}, -1)">−</button>
+                    <span id="qty-val-${p.id}">${currentQty}</span>
+                    <button onclick="changeProductQty(${p.id}, 1)">+</button>
+                </div>
+
+                <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="addToCart(${p.id})">
+                    ${hasStock ? "🛒 ເພີ່ມໃສ່ກະຕ່າ" : "ສິນຄ້າໝົດ"}
+                </button>
+                ${deleteBtnHTML}
+            </div>
+        </div>
+        `;
+    }).join("");
+
+    updateCountdowns();
+}
+
+function updateCountdowns(){
+    products.forEach(p => {
+        if(!p.timerEnd) return;
+        const el = document.getElementById(`timer-${p.id}`);
+        if(!el) return;
+
+        const now = new Date().getTime();
+        const end = new Date(p.timerEnd).getTime();
+        const diff = end - now;
+
+        if(diff <= 0){
+            el.innerHTML = "⏰ ໝົດເວລາໂປ";
+            el.style.background = "#eeeeee";
+            el.style.color = "#888888";
+        }else{
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const dStr = days > 0 ? `${days}ມື້ ` : "";
+            const hStr = String(hours).padStart(2,'0');
+            const mStr = String(minutes).padStart(2,'0');
+            const sStr = String(seconds).padStart(2,'0');
+
+            el.innerHTML = `⏰ ໝົດໃນ: ${dStr}${hStr}:${mStr}:${sStr}`;
+        }
+    });
+}
+
+setInterval(updateCountdowns, 1000);
+
+function setCategory(category, button){
+    currentCategory = category;
+    document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    renderProducts();
+}
+
+function addToCart(id){
+    const product = products.find(p => p.id === id);
+    if(!product || product.stock <= 0) return;
+
+    const selectedQty = productQtyState[id] || 1;
+    const item = cart.find(x => x.id === id);
+    const totalQty = (item ? item.qty : 0) + selectedQty;
+
+    if(totalQty > product.stock){
+        alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!");
+        return;
+    }
+
+    const priceRes = calculatePriceForQty(product, totalQty);
+    const unitPrice = Math.round(priceRes.totalPrice / totalQty);
+
+    if(item){
+        item.qty = totalQty;
+        item.unitPrice = unitPrice;
+    }else{
+        cart.push({
+            id: id,
+            name: product.name,
+            image: product.image,
+            qty: selectedQty,
+            unitPrice: unitPrice
+        });
+    }
+
+    saveCart();
+    updateCartCount();
+    alert("ເພີ່ມໃສ່ກະຕ່າຮຽບຮ້ອຍ!");
+}
+
+function updateCartCount(){
+    const count = cart.reduce((sum,item)=>sum+item.qty,0);
+    document.getElementById("cartCount").innerText = count;
+}
+
+function getTotal(){
+    return cart.reduce((total,item)=>{
+        return total + (item.unitPrice * item.qty);
+    },0);
+}
+
+function openCart(){
+    renderCart();
+    document.getElementById("cartOverlay").classList.add("show");
+}
+
+function closeCart(){
+    document.getElementById("cartOverlay").classList.remove("show");
+}
+
+function renderCart(){
+    const box = document.getElementById("cartItems");
+
+    if(cart.length === 0){
+        box.innerHTML = `<div class="empty">🛒 ກະຕ່າຍັງວ່າງ</div>`;
+    }else{
+        box.innerHTML = cart.map((item, index) => {
+            const p = products.find(x => x.id === item.id);
+            const prodName = item.name || (p ? p.name : "ສິນຄ້າ");
+            const prodImg = item.image || (p ? p.image : "https://via.placeholder.com/300?text=No+Image");
+
+            return `
+            <div class="cart-item">
+                <img src="${prodImg}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                <div class="cart-item-info">
+                    <b>${prodName}</b>
+                    <div>${money(item.unitPrice * item.qty)}</div>
+                    <div class="qty">
+                        <button onclick="changeCartQty(${index},-1)">−</button>
+                        <b>${item.qty}</b>
+                        <button onclick="changeCartQty(${index},1)">+</button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join("");
+    }
+
+    document.getElementById("cartTotal").innerText = "ລວມ: " + money(getTotal());
+}
+
+function changeCartQty(index, amount){
+    if(cart[index]){
+        const item = cart[index];
+        const p = products.find(x => x.id === item.id);
+        if(!p) return;
+
+        const newQty = item.qty + amount;
+
+        if(newQty <= 0){
+            cart.splice(index, 1);
+        } else {
+            if(newQty > p.stock){
+                alert("ບໍ່ສາມາດເພີ່ມໄດ້ຫຼາຍກວ່າສິນຄ້າໃນສະຕັອກ!");
                 return;
             }
 
-            let btn = type === 'origin' ? document.getElementById("btnOrigin") : document.getElementById("btnDest");
-            let originalBtnText = btn.innerText;
-
-            let imageUrl = "";
-            if (type === 'origin' && selectedFile) {
-                btn.disabled = true;
-                btn.innerText = "⏳ ກຳລັງອັບໂຫຼດຮູບສະລິບ...";
-                imageUrl = await uploadSlipToImgBB(selectedFile);
-                btn.disabled = false;
-                btn.innerText = originalBtnText;
-            }
-
-            let message = `🛒 *ລາຍການສັ່ງເຄື່ອງ KOP STORE*\n` +
-                          `--------------------\n` +
-                          `📌 *ປະເພດ:* ${typeText}\n` +
-                          `👤 *ຊື່:* ${name}\n` +
-                          `🏠 *ທີ່ຢູ່:* ${address}\n` +
-                          `📞 *ເບີໂທ:* ${phone}\n` +
-                          `--------------------\n`;
-
-            if (type === 'origin') {
-                if (imageUrl) {
-                    message += `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}`;
-                } else if (selectedFile) {
-                    message += `📸 *ສະລິບ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
-                } else {
-                    message += `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
-                }
-            }
-
-            const whatsappUrl = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
+            item.qty = newQty;
+            const priceRes = calculatePriceForQty(p, newQty);
+            item.unitPrice = Math.round(priceRes.totalPrice / newQty);
         }
-    </script>
+    }
+    saveCart();
+    updateCartCount();
+    renderCart();
+}
+
+function openCheckout(){
+    if(cart.length === 0){
+        alert("ກະຕ່າຍັງວ່າງ!");
+        return;
+    }
+    closeCart();
+    renderCheckout();
+    document.getElementById("checkout").classList.add("show");
+}
+
+function closeCheckout(){
+    document.getElementById("checkout").classList.remove("show");
+}
+
+function renderCheckout(){
+    const box = document.getElementById("checkoutItems");
+    box.innerHTML = cart.map(item => {
+        const p = products.find(x => x.id === item.id);
+        const prodName = item.name || (p ? p.name : "ສິນຄ້າ");
+
+        return `
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px;">
+            <span>${prodName} × ${item.qty}</span>
+            <b>${money(item.unitPrice * item.qty)}</b>
+        </div>
+        `;
+    }).join("");
+
+    document.getElementById("checkoutTotal").innerText = "ລວມ: " + money(getTotal());
+}
+
+function toggleForm() {
+    var radios = document.getElementsByName("shippingType");
+    var selectedValue = "";
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) { 
+            selectedValue = radios[i].value; 
+            break; 
+        }
+    }
+    document.getElementById("originBox").style.display = selectedValue === "origin" ? "block" : "none";
+    document.getElementById("destinationBox").style.display = selectedValue === "destination" ? "block" : "none";
+}
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        selectedFile = file;
+        document.getElementById("slipLabel").innerText = "ເລືອກຮູບແລ້ວ: " + file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) { 
+            const img = document.getElementById("preview");
+            img.src = e.target.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+async function uploadSlipToImgBB(file) {
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: "POST",
+            body: formData
+        });
+        const result = await response.json();
+        if (result.success) {
+            return result.data.url;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("Upload error:", error);
+        return null;
+    }
+}
+
+async function sendToWhatsApp(type) {
+    let name = "", address = "", phone = "", typeText = "";
+    
+    if (type === 'origin') {
+        typeText = "📦 ຕົ້ນທາງ (ຜູ້ສົ່ງ)";
+        name = document.getElementById("originName").value.trim();
+        address = document.getElementById("originAddress").value.trim();
+        phone = document.getElementById("originPhone").value.trim();
+    } else {
+        typeText = "📍 ປາຍທາງ (ຜູ້ຮັບ)";
+        name = document.getElementById("destName").value.trim();
+        address = document.getElementById("destAddress").value.trim();
+        phone = document.getElementById("destPhone").value.trim();
+    }
+
+    if (!name || !address || !phone) {
+        alert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!");
+        return;
+    }
+
+    let btn = type === 'origin' ? document.getElementById("btnOrigin") : document.getElementById("btnDest");
+    let originalBtnText = btn.innerText;
+
+    let imageUrl = "";
+    if (type === 'origin' && selectedFile) {
+        btn.disabled = true;
+        btn.innerText = "⏳ ກຳລັງອັບໂຫຼດຮູບສະລິບ...";
+        imageUrl = await uploadSlipToImgBB(selectedFile);
+        btn.disabled = false;
+        btn.innerText = originalBtnText;
+    }
+
+    let message = `🛒 *ລາຍການສັ່ງເຄື່ອງ KOP STORE*\n` +
+                  `--------------------\n` +
+                  `📌 *ປະເພດ:* ${typeText}\n` +
+                  `👤 *ຊື່:* ${name}\n` +
+                  `🏠 *ທີ່ຢູ່:* ${address}\n` +
+                  `📞 *ເບີໂທ:* ${phone}\n` +
+                  `--------------------\n` +
+                  `🛒 *ລາຍການສິນຄ້າ:* \n`;
+
+    cart.forEach(item => {
+        const p = products.find(x => x.id === item.id);
+        const prodName = item.name || (p ? p.name : "ສິນຄ້າ");
+        message += `• ${prodName} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
+    });
+
+    message += `--------------------\n` +
+               `💰 *ລວມທັງໝົດ: ${money(getTotal())}*\n`;
+
+    if (type === 'origin') {
+        if (imageUrl) {
+            message += `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}`;
+        } else if (selectedFile) {
+            message += `📸 *ສະລິບ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
+        } else {
+            message += `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
+        }
+    }
+
+    const whatsappUrl = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+renderProducts();
+updateCartCount();
+</script>
+
 </body>
 </html>
