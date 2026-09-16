@@ -533,7 +533,7 @@ textarea{ min-height:70px; }
         <textarea id="newProdDesc" placeholder="ລາຍລະອຽດສິນຄ້າ..."></textarea>
     </div>
 
-    <button class="add-btn" style="background:#28a745; padding:12px;" onclick="addNewProduct()">✨ ບັນທຶກເພີ່ມສິນຄ້າ</button>
+    <button id="saveProdBtn" class="add-btn" style="background:#28a745; padding:12px;" onclick="addNewProduct()">✨ ບັນທຶກເພີ່ມສິນຄ້າ</button>
 </div>
 
 <input id="search" class="search" type="text" placeholder="🔎 ຄົ້ນຫາສິນຄ້າ..." oninput="renderProducts()">
@@ -680,6 +680,9 @@ productsRef.on('value', (snapshot) => {
     products = productList;
     renderProducts();
     updateCartCount();
+}, (error) => {
+    console.error("Firebase Read Error:", error);
+    alert("ບໍ່ສາມາດໂຫຼດຂໍ້ມູນຈາກ Firebase ໄດ້! ກວດເບິ່ງ Rules ໃນ Firebase Realtime Database.");
 });
 
 function saveCart(){
@@ -709,15 +712,46 @@ function toggleAdmin(){
     }
 }
 
+// ຟັງຊັນບີບອັດຮູບພາບ
 function handleProductImageUpload(event){
     const file = event.target.files[0];
     if(!file) return;
+
     const reader = new FileReader();
     reader.onload = function(e){
-        tempImageBase64 = e.target.result;
-        const preview = document.getElementById("newProdPreview");
-        preview.src = tempImageBase64;
-        preview.style.display = "block";
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 600;
+            const MAX_HEIGHT = 600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // ບີບອັດເປັນ JPEG ຄຸນນະພາບ 70%
+            tempImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            
+            const preview = document.getElementById("newProdPreview");
+            preview.src = tempImageBase64;
+            preview.style.display = "block";
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -760,26 +794,40 @@ function addNewProduct(){
         image: finalImage
     };
 
+    const saveBtn = document.getElementById("saveProdBtn");
+    saveBtn.disabled = true;
+    saveBtn.innerText = "⏳ ກຳລັງບັນທຶກ...";
+
     // ເພີ່ມສິນຄ້າລົງ Firebase Realtime Database
-    productsRef.push(newProd);
+    productsRef.push(newProd)
+        .then(() => {
+            document.getElementById("newProdName").value = "";
+            document.getElementById("newProdPrice").value = "";
+            document.getElementById("newProdStock").value = "";
+            document.getElementById("newProdTierPrices").value = "";
+            document.getElementById("newProdTimer").value = "";
+            document.getElementById("newProdDesc").value = "";
+            document.getElementById("newProdFile").value = "";
+            document.getElementById("newProdPreview").style.display = "none";
+            tempImageBase64 = "";
 
-    document.getElementById("newProdName").value = "";
-    document.getElementById("newProdPrice").value = "";
-    document.getElementById("newProdStock").value = "";
-    document.getElementById("newProdTierPrices").value = "";
-    document.getElementById("newProdTimer").value = "";
-    document.getElementById("newProdDesc").value = "";
-    document.getElementById("newProdFile").value = "";
-    document.getElementById("newProdPreview").style.display = "none";
-    tempImageBase64 = "";
-
-    alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
+            alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
+        })
+        .catch((err) => {
+            console.error("Save Error:", err);
+            alert("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ: " + err.message + "\nກະລຸນາກວດເບິ່ງ Firebase Rules (ຕ້ອງປ່ຽນເປັນ true).");
+        })
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerText = "✨ ບັນທຶກເພີ່ມສິນຄ້າ";
+        });
 }
 
 function deleteProduct(id){
     if(confirm("ທ່ານຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")){
-        // ລຶບສິນຄ້າຈາກ Firebase
-        productsRef.child(id).remove();
+        productsRef.child(id).remove()
+            .then(() => alert("ລຶບສິນຄ້າສຳເລັດ!"))
+            .catch(err => alert("ລຶບບໍ່ສຳເລັດ: " + err.message));
     }
 }
 
