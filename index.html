@@ -470,6 +470,10 @@ textarea{ min-height:70px; }
     .product-img-box{ height:220px; }
 }
 </style>
+
+<!-- ເພີ່ມ SDK ຂອງ Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
 
 <body>
@@ -645,34 +649,38 @@ const MY_WHATSAPP_NUMBER = "8562055970908";
 const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
 const ADMIN_PASSWORD = "kop78900"; 
 
+// === ຕັ້ງຄ່າ Firebase ===
+const firebaseConfig = {
+  databaseURL: "https://kopstore-1040b-default-rtdb.firebaseio.com/"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const productsRef = db.ref('products');
+
 let isAdminLoggedIn = false;
 let tempImageBase64 = "";
 let selectedFile = null;
-
-let products = JSON.parse(localStorage.getItem("kop_products")) || [
-    {
-        id: 1,
-        name: "ຄີມບຳລຸງຜິວ (Beauty Cream)",
-        description: "ເນື້ອຄີມນຸ່ມ ຕິດທົນດົນ ບຳລຸງຜິວຂາວໃສ",
-        normalPrice: 120000,
-        stock: 50,
-        category: "ເຄື່ອງສໍາອາງ",
-        tierPrices: [
-            { qty: 1, price: 99000 },
-            { qty: 3, price: 290000 }
-        ],
-        timerEnd: new Date(Date.now() + 86400000 * 2).toISOString(),
-        image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500"
-    }
-];
-
+let products = [];
 let productQtyState = {};
 let cart = JSON.parse(localStorage.getItem("kop_cart")) || [];
 let currentCategory = "all";
 
-function saveProducts(){
-    localStorage.setItem("kop_products", JSON.stringify(products));
-}
+// ດຶງຂໍ້ມູນສິນຄ້າ Realtime ຈາກ Firebase
+productsRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    const productList = [];
+    
+    if (data) {
+        for (let id in data) {
+            productList.push({ id, ...data[id] });
+        }
+    }
+    
+    products = productList;
+    renderProducts();
+    updateCartCount();
+});
 
 function saveCart(){
     localStorage.setItem("kop_cart", JSON.stringify(cart));
@@ -742,7 +750,6 @@ function addNewProduct(){
     const finalImage = tempImageBase64 || "https://via.placeholder.com/300?text=No+Image";
 
     const newProd = {
-        id: Date.now(),
         name: name,
         description: desc,
         normalPrice: normalPrice,
@@ -753,9 +760,8 @@ function addNewProduct(){
         image: finalImage
     };
 
-    products.push(newProd);
-    saveProducts();
-    renderProducts();
+    // ເພີ່ມສິນຄ້າລົງ Firebase Realtime Database
+    productsRef.push(newProd);
 
     document.getElementById("newProdName").value = "";
     document.getElementById("newProdPrice").value = "";
@@ -772,9 +778,8 @@ function addNewProduct(){
 
 function deleteProduct(id){
     if(confirm("ທ່ານຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")){
-        products = products.filter(p => p.id !== id);
-        saveProducts();
-        renderProducts();
+        // ລຶບສິນຄ້າຈາກ Firebase
+        productsRef.child(id).remove();
     }
 }
 
@@ -856,7 +861,7 @@ function renderProducts(){
             promoListHTML = `<div class="promo-badge">🔥 ໂປ: ${promoItems}</div>`;
         }
 
-        const deleteBtnHTML = isAdminLoggedIn ? `<button class="delete-btn" onclick="deleteProduct(${p.id})">🗑️ ລຶບສິນຄ້າ</button>` : "";
+        const deleteBtnHTML = isAdminLoggedIn ? `<button class="delete-btn" onclick="deleteProduct('${p.id}')">🗑️ ລຶບສິນຄ້າ</button>` : "";
         const descHTML = p.description ? `<div class="product-desc">${p.description}</div>` : "";
 
         const hasStock = p.stock > 0;
@@ -898,12 +903,12 @@ function renderProducts(){
                 </div>
 
                 <div class="qty-control">
-                    <button onclick="changeProductQty(${p.id}, -1)">−</button>
+                    <button onclick="changeProductQty('${p.id}', -1)">−</button>
                     <span id="qty-val-${p.id}">${currentQty}</span>
-                    <button onclick="changeProductQty(${p.id}, 1)">+</button>
+                    <button onclick="changeProductQty('${p.id}', 1)">+</button>
                 </div>
 
-                <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="addToCart(${p.id})">
+                <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="addToCart('${p.id}')">
                     ${hasStock ? "🛒 ເພີ່ມໃສ່ກະຕ່າ" : "ສິນຄ້າໝົດ"}
                 </button>
                 ${deleteBtnHTML}
@@ -1208,9 +1213,6 @@ async function sendToWhatsApp(type) {
     const whatsappUrl = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
-
-renderProducts();
-updateCartCount();
 </script>
 
 </body>
