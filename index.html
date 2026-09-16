@@ -340,6 +340,8 @@ header{
 
 .cart-item{
     display:flex;
+    align-items:center;
+    justify-content:space-between;
     gap:10px;
     padding:10px 0;
     border-bottom:1px solid #eee;
@@ -369,6 +371,21 @@ header{
     background:#eee;
     cursor:pointer;
     font-weight:bold;
+}
+
+.remove-item-btn{
+    background:none;
+    border:none;
+    color:#ff4d4f;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+    padding:5px 10px;
+    line-height:1;
+}
+
+.remove-item-btn:hover{
+    color:#d9363e;
 }
 
 .total{
@@ -1084,12 +1101,22 @@ function renderCart(){
                         <button onclick="changeCartQty(${index},1)">+</button>
                     </div>
                 </div>
+                <!-- ປຸ່ມ × ສຳລັບລຶບສິນຄ້າອອກຈາກກະຕ່າ -->
+                <button class="remove-item-btn" onclick="removeFromCart(${index})" title="ລຶບສິນຄ້ານີ້">&times;</button>
             </div>
             `;
         }).join("");
     }
 
     document.getElementById("cartTotal").innerText = "ລວມ: " + money(getTotal());
+}
+
+// ຟັງຊັນລຶບສິນຄ້າອອກຈາກກະຕ່າໂດຍຕົງ
+function removeFromCart(index){
+    cart.splice(index, 1);
+    saveCart();
+    updateCartCount();
+    renderCart();
 }
 
 function changeCartQty(index, amount){
@@ -1265,3 +1292,4 @@ async function sendToWhatsApp(type) {
 
 </body>
 </html>
+
