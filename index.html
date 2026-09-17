@@ -475,7 +475,16 @@ textarea{ min-height:70px; }
 .qr img{ width: 100%; max-width: 220px; display: block; margin: 10px auto; border-radius: 10px; }
 .account{ font-size: 15px; font-weight: bold; color: #333; text-align: center; margin: 10px 0; line-height: 1.5; }
 .upload{ border: 2px dashed #007bff; padding: 12px; text-align: center; border-radius: 8px; background: #f8f9fa; cursor: pointer; margin-top: 8px; display: block; font-size: 14px; }
-#preview{ max-width: 100%; max-height: 180px; margin-top: 10px; border-radius: 8px; display: none; margin-left: auto; margin-right: auto; object-fit: contain; }
+#preview, #destPreview{ max-width: 100%; max-height: 180px; margin-top: 10px; border-radius: 8px; display: none; margin-left: auto; margin-right: auto; object-fit: contain; }
+
+.deposit-box-style {
+    background-color: #fff8e7;
+    border: 2px dashed #f39c12;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 15px 0;
+}
 
 .confirm-btn{ width: 100%; padding: 14px; font-size: 16px; font-weight: bold; background-color: #25D366; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
 .confirm-btn:disabled{ background-color: #a5d6a7; cursor: not-allowed; }
@@ -655,6 +664,26 @@ textarea{ min-height:70px; }
     <label>ເບີໂທຕິດຕໍ່ຜູ້ຮັບ:</label>
     <input type="tel" id="destPhone" placeholder="020 XXXXXXXX">
 
+    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+    <!-- ເພີ່ມສ່ວນໂອນເງິນມັດຈຳ (ບັງຄັບ) -->
+    <div class="deposit-box-style">
+        <p style="margin:0; font-size:15px;">⚠️ <b style="color:#d35400;">ເງື່ອນໄຂການຊຳລະປາຍທາງ:</b></p>
+        <p style="margin:5px 0; font-size:16px;">ຕ້ອງໂອນມັດຈຳ <b style="color:#e53935; font-size:18px;">20,000 ₭</b> ຕໍ່ 1 ອໍເດີ້</p>
+        <p style="font-size: 13px; color: #666; margin-bottom: 8px;">(ສ່ວນທີ່ເຫຼືອແມ່ນເກັບນຳຂົນສົ່ງ/ປາຍທາງ)</p>
+        
+        <div class="qr"><img src="qr.png" alt="QR ໂອນມັດຈຳ"></div>
+        <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
+    </div>
+
+    <label>📎 ສະລິບໂອນເງິນມັດຈຳ (20,000₭) <span style="color:red;">*ບັງຄັບ</span></label>
+    <label class="upload" for="destSlip">
+        <div style="font-size:24px">📸</div>
+        <div id="destSlipLabel">ກົດເພື່ອເລືອກຮູບສະລິບມັດຈຳ</div>
+    </label>
+    <input id="destSlip" type="file" accept="image/*" style="display:none;" onchange="handleDestFileSelect(event)">
+    <img id="destPreview" alt="ຕົວຢ່າງສະລິບມັດຈຳ">
+
     <button id="btnDest" class="confirm-btn" onclick="sendToWhatsApp('destination')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ປາຍທາງ)</button>
 </div>
 
@@ -678,6 +707,7 @@ const productsRef = db.ref('products');
 let isAdminLoggedIn = false;
 let tempImageBase64 = "";
 let selectedFile = null;
+let selectedDestFile = null; // ຮູບສະລິບມັດຈຳ
 let products = [];
 let productQtyState = {};
 let cart = JSON.parse(localStorage.getItem("kop_cart")) || [];
@@ -1205,6 +1235,23 @@ function handleFileSelect(event) {
     }
 }
 
+// ຟັງຊັນຈັດການເລືອກຮູບສະລິບມັດຈຳ
+function handleDestFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        selectedDestFile = file;
+        document.getElementById("destSlipLabel").innerText = "ເລືອກຮູບແລ້ວ: " + file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) { 
+            const img = document.getElementById("destPreview");
+            img.src = e.target.result;
+            img.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 async function uploadSlipToImgBB(file) {
     const formData = new FormData();
     formData.append("image", file);
@@ -1238,6 +1285,12 @@ async function sendToWhatsApp(type) {
         name = document.getElementById("destName").value.trim();
         address = document.getElementById("destAddress").value.trim();
         phone = document.getElementById("destPhone").value.trim();
+
+        // ບັງຄັບໃຫ້ອັບໂຫຼດສະລິບມັດຈຳສຳລັບປາຍທາງ
+        if (!selectedDestFile) {
+            alert("ກະລຸນາອັບໂຫຼດສະລິບໂອນເງິນມັດຈຳ 20,000 ₭ ກ່ອນ!");
+            return;
+        }
     }
 
     if (!name || !address || !phone) {
@@ -1249,10 +1302,12 @@ async function sendToWhatsApp(type) {
     let originalBtnText = btn.innerText;
 
     let imageUrl = "";
-    if (type === 'origin' && selectedFile) {
+    const activeFile = type === 'origin' ? selectedFile : selectedDestFile;
+
+    if (activeFile) {
         btn.disabled = true;
         btn.innerText = "⏳ ກຳລັງອັບໂຫຼດຮູບສະລິບ...";
-        imageUrl = await uploadSlipToImgBB(selectedFile);
+        imageUrl = await uploadSlipToImgBB(activeFile);
         btn.disabled = false;
         btn.innerText = originalBtnText;
     }
@@ -1282,6 +1337,13 @@ async function sendToWhatsApp(type) {
             message += `📸 *ສະລິບ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
         } else {
             message += `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
+        }
+    } else {
+        message += `💵 *ຄ່າມັດຈຳ:* 20,000 ₭ (ໂອນແລ້ວ)\n`;
+        if (imageUrl) {
+            message += `📸 *ສະລິບມັດຈຳ:* ${imageUrl}`;
+        } else {
+            message += `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
         }
     }
 
