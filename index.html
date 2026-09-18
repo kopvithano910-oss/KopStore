@@ -108,28 +108,14 @@ header{
     margin-bottom:10px;
 }
 
-.file-upload-btn{
-    border:2px dashed #007bff;
-    background:#f0f7ff;
-    color:#007bff;
-    padding:12px;
-    border-radius:10px;
-    text-align:center;
-    font-weight:bold;
-    cursor:pointer;
-    display:block;
-    margin-bottom:10px;
-    font-size:15px;
-}
+/* UI ຈັດການຮູບພາບ ແລະ ວີດີໂອ */
+.media-upload-wrapper { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; align-items: center; }
+.media-preview-item { position: relative; width: 75px; height: 75px; flex-shrink: 0; }
+.media-preview-item img, .media-preview-item video { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #ccc; }
+.media-preview-item .remove-btn { position: absolute; top: -6px; right: -6px; background: #ff4d4f; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; }
 
-#newProdPreview {
-    max-width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    border-radius: 8px;
-    display: none;
-    margin: 10px auto;
-}
+.add-media-btn { width: 75px; height: 75px; flex-shrink: 0; border: 2px dashed #007bff; background: #eef6ff; color: #007bff; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 20px; text-align: center; }
+.add-media-btn span { font-size: 10px; margin-top: 2px; }
 
 .search{
     width:100%;
@@ -180,6 +166,7 @@ header{
     justify-content:space-between;
 }
 
+/* ປັບປຸງ UI GALLERY */
 .product-img-box{
     position:relative;
     width:100%;
@@ -188,11 +175,55 @@ header{
     overflow:hidden;
 }
 
-.product img{
+.product img.main-img, .product video.main-img {
     width:100%;
     height:100%;
     object-fit:cover;
     display:block;
+    cursor:pointer;
+}
+
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+.slide-btn.prev { left: 5px; }
+.slide-btn.next { right: 5px; }
+
+.dots-container {
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    z-index: 5;
+}
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+.dot.active {
+    background: #ffffff;
+    width: 12px;
+    border-radius: 4px;
 }
 
 .product-info{
@@ -238,7 +269,6 @@ header{
 .stock-out{ color:#dc3545; }
 
 .price-box{ margin-bottom:8px; }
-.price-normal{ color:#777; font-size:12px; text-decoration:line-through; margin-right:4px; }
 .price{ color:#e53935; font-size:16px; font-weight:bold; }
 
 .promo-badge{
@@ -347,7 +377,7 @@ header{
     border-bottom:1px solid #eee;
 }
 
-.cart-item img{
+.cart-item img, .cart-item video {
     width:65px;
     height:65px;
     object-fit:cover;
@@ -384,10 +414,6 @@ header{
     line-height:1;
 }
 
-.remove-item-btn:hover{
-    color:#d9363e;
-}
-
 .total{
     font-size:18px;
     font-weight:bold;
@@ -408,6 +434,33 @@ header{
     margin-top:15px;
     cursor:pointer;
 }
+
+/* OPTION MODAL */
+.modal-card { background:#fff; width:100%; max-width:500px; border-radius:16px 16px 0 0; padding:15px; max-height:85vh; overflow-y:auto; position:fixed; bottom:0; left:50%; transform:translateX(-50%); z-index:201; }
+.modal-header { display:flex; gap:12px; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:12px; }
+.modal-header img, .modal-header video { width:80px; height:80px; object-fit:cover; border-radius:8px; cursor:pointer; }
+.modal-header-info .price { font-size:20px; color:#e53935; font-weight:bold; }
+.modal-header-info .selected-text { font-size:13px; color:#666; margin-top:4px; }
+
+.option-section { margin-bottom:15px; }
+.option-title { font-size:14px; font-weight:bold; margin-bottom:8px; }
+
+.chip-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.option-chip { padding:8px 16px; border:1px solid #ddd; border-radius:8px; background:#f9f9f9; cursor:pointer; font-size:13px; }
+.option-chip.active { border-color:#ff4d4f; color:#ff4d4f; background:#fff0f0; font-weight:bold; }
+
+.variant-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+.variant-chip { border:1px solid #ddd; border-radius:8px; padding:6px; text-align:center; cursor:pointer; font-size:12px; background:#f9f9f9; }
+.variant-chip img, .variant-chip video { width:100%; height:50px; object-fit:cover; border-radius:4px; margin-bottom:4px; }
+.variant-chip.active { border-color:#ff4d4f; color:#ff4d4f; background:#fff0f0; font-weight:bold; }
+
+.confirm-add-btn { width:100%; padding:12px; background:#ff4d4f; color:white; border:0; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px; }
+
+/* FULL MEDIA VIEWER */
+.full-image-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:400; justify-content:center; align-items:center; flex-direction:column; }
+.full-image-modal.show { display:flex; }
+.full-image-modal img, .full-image-modal video { max-width:90%; max-height:80vh; object-fit:contain; border-radius:8px; }
+.full-image-close { position:absolute; top:20px; right:20px; color:white; font-size:32px; font-weight:bold; cursor:pointer; background:rgba(255,255,255,0.2); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
 
 /* CHECKOUT PAGE */
 .checkout{
@@ -497,7 +550,7 @@ textarea{ min-height:70px; }
 }
 </style>
 
-<!-- ເພີ່ມ SDK ຂອງ Firebase -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
@@ -542,6 +595,11 @@ textarea{ min-height:70px; }
         <input id="newProdStock" type="number" placeholder="ຈຳນວນສະຕັອກ (ຊິ້ນ)">
     </div>
 
+    <div class="form-grid">
+        <input id="newProdColors" type="text" placeholder="🎨 ສີ/ຕົວເລືອກ (ເຊັ່ນ: ສີດຳ, ສີຂາວ)">
+        <input id="newProdSizes" type="text" placeholder="📏 ຂະໜາດ (ເຊັ່ນ: S, M, L, XL)">
+    </div>
+
     <div class="form-group">
         <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນ (ເຊັ່ນ: 1:99000, 3:290000)">
     </div>
@@ -551,11 +609,19 @@ textarea{ min-height:70px; }
         <input id="newProdTimer" type="datetime-local">
     </div>
 
-    <label class="file-upload-btn" for="newProdFile">📷 ເລືອກຮູບສິນຄ້າຈາກເຄື່ອງ</label>
-    <input id="newProdFile" type="file" accept="image/*" style="display:none;" onchange="handleProductImageUpload(event)">
-    <img id="newProdPreview" alt="Product Image Preview">
+    <!-- UI ເລືອກຮູບ/ວີດີໂອ -->
+    <label style="font-size:14px; font-weight:bold; margin-bottom:5px; display:block;">📷/🎥 ຮູບ ຫຼື ວີດີໂອສິນຄ້າ (ກົດ + ເພື່ອເພີ່ມ):</label>
+    <input id="newProdFile" type="file" accept="image/*,video/*" multiple style="display:none;" onchange="handleProductMediaUpload(event)">
+    
+    <div class="media-upload-wrapper">
+        <div id="previewGallery" style="display:flex; gap:10px;"></div>
+        <label for="newProdFile" class="add-media-btn">
+            +
+            <span>ເພີ່ມຮູບ/ວີດີໂອ</span>
+        </label>
+    </div>
 
-    <div class="form-group">
+    <div class="form-group" style="margin-top:10px;">
         <textarea id="newProdDesc" placeholder="ລາຍລະອຽດສິນຄ້າ..."></textarea>
     </div>
 
@@ -574,6 +640,52 @@ textarea{ min-height:70px; }
 
 <div id="products" class="products"></div>
 
+</div>
+
+<!-- OPTION SELECT MODAL -->
+<div id="optionModal" class="overlay">
+    <div class="modal-card">
+        <button class="close" onclick="closeOptionModal()" style="float:right;">×</button>
+        <div class="modal-header">
+            <div id="modalMediaContainer"></div>
+            <div class="modal-header-info">
+                <div class="price" id="modalPrice">₭0</div>
+                <div class="selected-text" id="modalSelectedText">ເລືອກ: -</div>
+            </div>
+        </div>
+
+        <div class="option-section" id="variantSection">
+            <div class="option-title">ເລືອກຮູບແບບ:</div>
+            <div class="variant-grid" id="variantGrid"></div>
+        </div>
+
+        <div class="option-section" id="colorSection">
+            <div class="option-title">ເລືອກສີ:</div>
+            <div class="chip-grid" id="colorGrid"></div>
+        </div>
+
+        <div class="option-section" id="sizeSection">
+            <div class="option-title">ເລືອກຂະໜາດ:</div>
+            <div class="chip-grid" id="sizeGrid"></div>
+        </div>
+
+        <div class="option-section" style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="option-title" style="margin:0;">ຈຳນວນ:</div>
+            <div class="qty-control" style="width:120px; margin:0;">
+                <button onclick="changeModalQty(-1)">−</button>
+                <span id="modalQty">1</span>
+                <button onclick="changeModalQty(1)">+</button>
+            </div>
+        </div>
+
+        <button class="confirm-add-btn" onclick="confirmAddToCart()">ຢືນຢັນເພີ່ມໃສ່ກະຕ່າ</button>
+    </div>
+</div>
+
+<!-- FULL MEDIA VIEWER MODAL -->
+<div id="fullImageModal" class="full-image-modal" onclick="closeFullImage()">
+    <span class="full-image-close" onclick="closeFullImage()">&times;</span>
+    <div id="fullMediaContainer"></div>
 </div>
 
 <!-- CART OVERLAY -->
@@ -596,14 +708,12 @@ textarea{ min-height:70px; }
 <button onclick="closeCheckout()">← ກັບ</button>
 </div>
 
-<!-- ສິນຄ້າໃນກະຕ່າ -->
 <div class="card">
 <h2>🛒 ລາຍການສິນຄ້າ</h2>
 <div id="checkoutItems"></div>
 <div id="checkoutTotal" class="total">ລວມ: ₭0</div>
 </div>
 
-<!-- ເລືອກວິທີຊຳລະ ຕົ້ນທາງ / ປາຍທາງ -->
 <div class="card">
     <h2>💳 ເລືອກວິທີຊຳລະສິນຄ້າຮ້ານ: KOP STORE</h2>
     <p class="sub">ກະລຸນາຕິກເລືອກວິທີຊຳລະ ຕົ້ນທາງ ຫຼື ປາຍທາງ:</p>
@@ -619,71 +729,50 @@ textarea{ min-height:70px; }
     </div>
 </div>
 
-<!-- ຟອມຕົ້ນທາງ -->
 <div id="originBox" class="card box-section">
     <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
-    <p class="sub">ກະລຸນາກອກຂໍ້ມູນ ແລະ ຊຳລະເງິນ</p>
-    
     <label>ຊື່ລູກຄ້າ:</label>
     <input type="text" id="originName" placeholder="ພິມຊື່ລູກຄ້າ...">
-
     <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
     <textarea id="originAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
-
     <label>ເບີໂທຕິດຕໍ່:</label>
     <input type="tel" id="originPhone" placeholder="020 XXXXXXXX">
-
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-
     <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
-    <div class="qr"><img src="qr.png" alt="QR ບັນຊີ"></div>
+    <div class="qr"><img src="qr.png" alt="QR ບັນຊີ" onclick="viewFullMedia('qr.png', 'image')"></div>
     <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
-    
     <label>📎 ສະລິບໂອນເງິນ</label>
     <label class="upload" for="slip">
         <div style="font-size:24px">📸</div>
         <div id="slipLabel">ກົດເພື່ອເລືອກຮູບສະລິບ</div>
     </label>
     <input id="slip" type="file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
-    <img id="preview" alt="ຕົວຢ່າງສະລິບ">
-
+    <img id="preview" alt="ຕົວຢ່າງສະລິບ" onclick="viewFullMedia(this.src, 'image')">
     <button id="btnOrigin" class="confirm-btn" onclick="sendToWhatsApp('origin')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ຕົ້ນທາງ)</button>
 </div>
 
-<!-- ຟອມປາຍທາງ -->
 <div id="destinationBox" class="card box-section">
     <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
-    <p class="sub">ກະລຸນາກອກຂໍ້ມູນສຳລັບຈັດສົ່ງເຄື່ອງ</p>
-    
     <label>ຊື່ລູກຄ້າ:</label>
     <input type="text" id="destName" placeholder="ພິມຊື່ລູກຄ້າ...">
-
     <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
     <textarea id="destAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ, ສາຂາຂົນສົ່ງ..."></textarea>
-
     <label>ເບີໂທຕິດຕໍ່ຜູ້ຮັບ:</label>
     <input type="tel" id="destPhone" placeholder="020 XXXXXXXX">
-
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-
-    <!-- ເພີ່ມສ່ວນໂອນເງິນມັດຈຳ (ບັງຄັບ) -->
     <div class="deposit-box-style">
         <p style="margin:0; font-size:15px;">⚠️ <b style="color:#d35400;">ເງື່ອນໄຂການຊຳລະປາຍທາງ:</b></p>
         <p style="margin:5px 0; font-size:16px;">ຕ້ອງໂອນມັດຈຳ <b style="color:#e53935; font-size:18px;">20,000 ₭</b> ຕໍ່ 1 ອໍເດີ້</p>
-        <p style="font-size: 13px; color: #666; margin-bottom: 8px;">(ສ່ວນທີ່ເຫຼືອແມ່ນເກັບນຳຂົນສົ່ງ/ປາຍທາງ)</p>
-        
-        <div class="qr"><img src="qr.png" alt="QR ໂອນມັດຈຳ"></div>
+        <div class="qr"><img src="qr.png" alt="QR ໂອນມັດຈຳ" onclick="viewFullMedia('qr.png', 'image')"></div>
         <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
     </div>
-
     <label>📎 ສະລິບໂອນເງິນມັດຈຳ (20,000₭) <span style="color:red;">*ບັງຄັບ</span></label>
     <label class="upload" for="destSlip">
         <div style="font-size:24px">📸</div>
         <div id="destSlipLabel">ກົດເພື່ອເລືອກຮູບສະລິບມັດຈຳ</div>
     </label>
     <input id="destSlip" type="file" accept="image/*" style="display:none;" onchange="handleDestFileSelect(event)">
-    <img id="destPreview" alt="ຕົວຢ່າງສະລິບມັດຈຳ">
-
+    <img id="destPreview" alt="ຕົວຢ່າງສະລິບມັດຈຳ" onclick="viewFullMedia(this.src, 'image')">
     <button id="btnDest" class="confirm-btn" onclick="sendToWhatsApp('destination')">📱 ສົ່ງຂໍ້ມູນຜ່ານ WhatsApp (ປາຍທາງ)</button>
 </div>
 
@@ -695,46 +784,39 @@ const MY_WHATSAPP_NUMBER = "8562055970908";
 const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
 const ADMIN_PASSWORD = "kop78900"; 
 
-// === ຕັ້ງຄ່າ Firebase ===
-const firebaseConfig = {
-  databaseURL: "https://kopstore-1040b-default-rtdb.firebaseio.com/"
-};
-
+// Firebase Init
+const firebaseConfig = { databaseURL: "https://kopstore-1040b-default-rtdb.firebaseio.com/" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const productsRef = db.ref('products');
 
 let isAdminLoggedIn = false;
-let tempImageBase64 = "";
+let tempMediaArray = []; 
 let selectedFile = null;
-let selectedDestFile = null; // ຮູບສະລິບມັດຈຳ
+let selectedDestFile = null;
 let products = [];
-let productQtyState = {};
+let productSlideIndices = {}; 
 let cart = JSON.parse(localStorage.getItem("kop_cart")) || [];
 let currentCategory = "all";
 
-// ດຶງຂໍ້ມູນສິນຄ້າ Realtime ຈາກ Firebase
+let currentModalProduct = null;
+let selectedMediaIndex = 0;
+let selectedColor = "";
+let selectedSize = "";
+let selectedModalQty = 1;
+
 productsRef.on('value', (snapshot) => {
     const data = snapshot.val();
     const productList = [];
-    
     if (data) {
-        for (let id in data) {
-            productList.push({ id, ...data[id] });
-        }
+        for (let id in data) { productList.push({ id, ...data[id] }); }
     }
-    
     products = productList;
     renderProducts();
     updateCartCount();
-}, (error) => {
-    console.error("Firebase Read Error:", error);
-    alert("ບໍ່ສາມາດໂຫຼດຂໍ້ມູນຈາກ Firebase ໄດ້! ກວດເບິ່ງ Rules ໃນ Firebase Realtime Database.");
 });
 
-function saveCart(){
-    localStorage.setItem("kop_cart", JSON.stringify(cart));
-}
+function saveCart(){ localStorage.setItem("kop_cart", JSON.stringify(cart)); }
 
 function money(number){
     if(isNaN(number) || number === null || number === undefined) return "₭0";
@@ -749,9 +831,7 @@ function toggleAdmin(){
             document.getElementById("adminCard").classList.add("show");
             alert("ເຂົ້າສູ່ລະບົບ Admin ສຳເລັດ!");
             renderProducts();
-        }else if(pwd !== null){
-            alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
-        }
+        }else if(pwd !== null) alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
     }else{
         isAdminLoggedIn = false;
         document.getElementById("adminCard").classList.remove("show");
@@ -759,48 +839,77 @@ function toggleAdmin(){
     }
 }
 
-// ຟັງຊັນບີບອັດຮູບພາບ
-function handleProductImageUpload(event){
-    const file = event.target.files[0];
-    if(!file) return;
+function viewFullMedia(url, type='image'){
+    if(!url) return;
+    const box = document.getElementById("fullMediaContainer");
+    if(type === 'video'){
+        box.innerHTML = `<video src="${url}" controls autoplay style="max-width:90%; max-height:80vh; border-radius:8px;"></video>`;
+    } else {
+        box.innerHTML = `<img src="${url}" alt="Media" style="max-width:90%; max-height:80vh; object-fit:contain; border-radius:8px;">`;
+    }
+    document.getElementById("fullImageModal").classList.add("show");
+}
 
-    const reader = new FileReader();
-    reader.onload = function(e){
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 600;
-            const MAX_HEIGHT = 600;
-            let width = img.width;
-            let height = img.height;
+function closeFullImage(){ document.getElementById("fullImageModal").classList.remove("show"); }
 
-            if (width > height) {
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-            } else {
-                if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-                }
-            }
+async function handleProductMediaUpload(event){
+    const files = Array.from(event.target.files);
+    if(files.length === 0) return;
 
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // ບີບອັດເປັນ JPEG ຄຸນນະພາບ 70%
-            tempImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
-            
-            const preview = document.getElementById("newProdPreview");
-            preview.src = tempImageBase64;
-            preview.style.display = "block";
+    for (const file of files) {
+        if(file.type.startsWith('video/')){
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                tempMediaArray.push({ url: e.target.result, type: 'video' });
+                renderPreviewGallery();
+            };
+            reader.readAsDataURL(file);
+        } else if(file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX = 600;
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
+                    else { if (h > MAX) { w *= MAX / h; h = MAX; } }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    tempMediaArray.push({ url: canvas.toDataURL('image/jpeg', 0.7), type: 'image' });
+                    renderPreviewGallery();
+                };
+            };
+            reader.readAsDataURL(file);
         }
-    };
-    reader.readAsDataURL(file);
+    }
+    event.target.value = "";
+}
+
+function removePreviewMedia(index){
+    tempMediaArray.splice(index, 1);
+    renderPreviewGallery();
+}
+
+function renderPreviewGallery(){
+    const previewBox = document.getElementById("previewGallery");
+    previewBox.innerHTML = "";
+    tempMediaArray.forEach((item, idx) => {
+        const div = document.createElement("div");
+        div.className = "media-preview-item";
+        
+        let mediaHTML = item.type === 'video' 
+            ? `<video src="${item.url}" muted onclick="viewFullMedia('${item.url}', 'video')"></video>`
+            : `<img src="${item.url}" onclick="viewFullMedia('${item.url}', 'image')">`;
+
+        div.innerHTML = `
+            ${mediaHTML}
+            <button type="button" class="remove-btn" onclick="removePreviewMedia(${idx})">✕</button>
+        `;
+        previewBox.appendChild(div);
+    });
 }
 
 function addNewProduct(){
@@ -808,6 +917,8 @@ function addNewProduct(){
     const normalPrice = Number(document.getElementById("newProdPrice").value);
     const stock = Number(document.getElementById("newProdStock").value);
     const category = document.getElementById("newProdCat").value;
+    const rawColors = document.getElementById("newProdColors").value.trim();
+    const rawSizes = document.getElementById("newProdSizes").value.trim();
     const rawTiers = document.getElementById("newProdTierPrices").value.trim();
     const timerVal = document.getElementById("newProdTimer").value;
     const desc = document.getElementById("newProdDesc").value.trim();
@@ -817,117 +928,88 @@ function addNewProduct(){
         return;
     }
 
+    let colors = rawColors ? rawColors.split(",").map(c => c.trim()).filter(c => c !== "") : [];
+    let sizes = rawSizes ? rawSizes.split(",").map(s => s.trim()).filter(s => s !== "") : [];
+
     let tierPrices = [];
     if(rawTiers){
         const parts = rawTiers.split(",");
         parts.forEach(p => {
             const [q, pr] = p.split(":");
             if(q && pr && !isNaN(q) && !isNaN(pr)){
-                tierPrices.push({ qty: parseInt(q.trim()), price: parseInt(pr.trim()) });
+                tierPrices.push({ q: parseInt(q.trim()), price: parseInt(pr.trim()) });
             }
         });
     }
 
-    const finalImage = tempImageBase64 || "https://via.placeholder.com/300?text=No+Image";
+    let mediaList = [...tempMediaArray];
+    if(mediaList.length === 0){
+        mediaList = [{ url: "https://via.placeholder.com/300?text=No+Media", type: 'image' }];
+    }
 
     const newProd = {
-        name: name,
-        description: desc,
-        normalPrice: normalPrice,
-        stock: isNaN(stock) ? 0 : stock,
-        category: category,
-        tierPrices: tierPrices,
+        name, description: desc, normalPrice, stock: isNaN(stock) ? 0 : stock,
+        category, colors, sizes, tierPrices,
         timerEnd: timerVal ? new Date(timerVal).toISOString() : null,
-        image: finalImage
+        mediaList
     };
 
     const saveBtn = document.getElementById("saveProdBtn");
     saveBtn.disabled = true;
     saveBtn.innerText = "⏳ ກຳລັງບັນທຶກ...";
 
-    // ເພີ່ມສິນຄ້າລົງ Firebase Realtime Database
-    productsRef.push(newProd)
-        .then(() => {
-            document.getElementById("newProdName").value = "";
-            document.getElementById("newProdPrice").value = "";
-            document.getElementById("newProdStock").value = "";
-            document.getElementById("newProdTierPrices").value = "";
-            document.getElementById("newProdTimer").value = "";
-            document.getElementById("newProdDesc").value = "";
-            document.getElementById("newProdFile").value = "";
-            document.getElementById("newProdPreview").style.display = "none";
-            tempImageBase64 = "";
-
-            alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
-        })
-        .catch((err) => {
-            console.error("Save Error:", err);
-            alert("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ: " + err.message + "\nກະລຸນາກວດເບິ່ງ Firebase Rules (ຕ້ອງປ່ຽນເປັນ true).");
-        })
-        .finally(() => {
-            saveBtn.disabled = false;
-            saveBtn.innerText = "✨ ບັນທຶກເພີ່ມສິນຄ້າ";
-        });
+    productsRef.push(newProd).then(() => {
+        document.getElementById("newProdName").value = "";
+        document.getElementById("newProdPrice").value = "";
+        document.getElementById("newProdStock").value = "";
+        document.getElementById("newProdColors").value = "";
+        document.getElementById("newProdSizes").value = "";
+        document.getElementById("newProdTierPrices").value = "";
+        document.getElementById("newProdTimer").value = "";
+        document.getElementById("newProdDesc").value = "";
+        document.getElementById("previewGallery").innerHTML = "";
+        tempMediaArray = [];
+        alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
+    }).finally(() => {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "✨ ບັນທຶກເພີ່ມສິນຄ້າ";
+    });
 }
 
 function deleteProduct(id){
     if(confirm("ທ່ານຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")){
-        productsRef.child(id).remove()
-            .then(() => alert("ລຶບສິນຄ້າສຳເລັດ!"))
-            .catch(err => alert("ລຶບບໍ່ສຳເລັດ: " + err.message));
+        productsRef.child(id).remove().then(() => alert("ລຶບສິນຄ້າສຳເລັດ!"));
     }
 }
 
 function isPromoActive(product){
     if(!product.timerEnd) return true;
-    const now = new Date().getTime();
-    const end = new Date(product.timerEnd).getTime();
-    return end > now;
+    return (new Date(product.timerEnd).getTime()) > (new Date().getTime());
 }
 
 function calculatePriceForQty(product, qty){
     const activePromo = isPromoActive(product);
-    
     if(activePromo && product.tierPrices && product.tierPrices.length > 0){
-        const matchedTier = product.tierPrices.find(t => t.qty === qty);
-        if(matchedTier){
-            return { totalPrice: matchedTier.price, isPromo: true };
-        }
+        const matchedTier = product.tierPrices.find(t => t.q === qty);
+        if(matchedTier) return { totalPrice: matchedTier.price, isPromo: true };
     }
-    
-    const normal = product.normalPrice || 0;
-    return { totalPrice: normal * qty, isPromo: false };
+    return { totalPrice: (product.normalPrice || 0) * qty, isPromo: false };
 }
 
-function changeProductQty(id, delta){
-    const product = products.find(p => p.id === id);
-    if(!product) return;
+function changeProductSlide(productId, direction, totalMedia, event){
+    if(event) event.stopPropagation();
+    let currentIdx = productSlideIndices[productId] || 0;
+    currentIdx += direction;
+    if(currentIdx < 0) currentIdx = totalMedia - 1;
+    if(currentIdx >= totalMedia) currentIdx = 0;
+    productSlideIndices[productId] = currentIdx;
+    renderProducts();
+}
 
-    let currentQty = productQtyState[id] || 1;
-    let newQty = currentQty + delta;
-
-    if(newQty < 1) newQty = 1;
-    if(newQty > product.stock) newQty = product.stock;
-
-    productQtyState[id] = newQty;
-
-    const qtyEl = document.getElementById(`qty-val-${id}`);
-    if(qtyEl) qtyEl.innerText = newQty;
-
-    const priceRes = calculatePriceForQty(product, newQty);
-    const priceBoxEl = document.getElementById(`price-display-${id}`);
-    
-    if(priceBoxEl){
-        if(priceRes.isPromo){
-            priceBoxEl.innerHTML = `
-                <span class="price-normal">${money((product.normalPrice || 0) * newQty)}</span>
-                <span class="price">${money(priceRes.totalPrice)}</span>
-                <span class="promo-badge">🔥 ລາຄາໂປໂມຊັນ</span>
-            `;
-        } else {
-            priceBoxEl.innerHTML = `<span class="price">${money(priceRes.totalPrice)}</span>`;
-        }
-    }
+function setProductSlide(productId, index, event){
+    if(event) event.stopPropagation();
+    productSlideIndices[productId] = index;
+    renderProducts();
 }
 
 function renderProducts(){
@@ -947,42 +1029,49 @@ function renderProducts(){
 
     box.innerHTML = filtered.map(p => {
         const activePromo = isPromoActive(p);
-        const currentQty = productQtyState[p.id] || 1;
-        const priceRes = calculatePriceForQty(p, currentQty);
-
-        let promoListHTML = "";
-        if(activePromo && p.tierPrices && p.tierPrices.length > 0){
-            const promoItems = p.tierPrices.map(t => `${t.qty}ຊິ້ນ = ${money(t.price)}`).join(" | ");
-            promoListHTML = `<div class="promo-badge">🔥 ໂປ: ${promoItems}</div>`;
+        const priceRes = calculatePriceForQty(p, 1);
+        
+        const mediaList = p.mediaList || (p.images ? p.images.map(img => ({url: img, type:'image'})) : [{url: p.image || "https://via.placeholder.com/300?text=No+Media", type:'image'}]);
+        
+        if (productSlideIndices[p.id] === undefined) {
+            productSlideIndices[p.id] = 0;
         }
+        let activeIdx = productSlideIndices[p.id];
+        if (activeIdx >= mediaList.length) activeIdx = 0;
+
+        const currentMedia = mediaList[activeIdx] || mediaList[0];
+
+        let mediaDisplay = currentMedia.type === 'video'
+            ? `<video class="main-img" src="${currentMedia.url}" autoplay loop muted playsinline onclick="viewFullMedia('${currentMedia.url}', 'video')"></video>`
+            : `<img class="main-img" src="${currentMedia.url}" alt="${p.name}" onclick="viewFullMedia('${currentMedia.url}', 'image')">`;
+
+        let slideControlsHTML = "";
+        if (mediaList.length > 1) {
+            let dots = mediaList.map((_, idx) => `
+                <span class="dot ${idx === activeIdx ? 'active' : ''}" onclick="setProductSlide('${p.id}', ${idx}, event)"></span>
+            `).join("");
+
+            slideControlsHTML = `
+                <button class="slide-btn prev" onclick="changeProductSlide('${p.id}', -1, ${mediaList.length}, event)">❮</button>
+                <button class="slide-btn next" onclick="changeProductSlide('${p.id}', 1, ${mediaList.length}, event)">❯</button>
+                <div class="dots-container">${dots}</div>
+            `;
+        }
+
+        let promoListHTML = (activePromo && p.tierPrices && p.tierPrices.length > 0)
+            ? `<div class="promo-badge">🔥 ໂປ: ${p.tierPrices.map(t => `${t.q}ຊິ້ນ = ${money(t.price)}`).join(" | ")}</div>` : "";
 
         const deleteBtnHTML = isAdminLoggedIn ? `<button class="delete-btn" onclick="deleteProduct('${p.id}')">🗑️ ລຶບສິນຄ້າ</button>` : "";
         const descHTML = p.description ? `<div class="product-desc">${p.description}</div>` : "";
-
         const hasStock = p.stock > 0;
-        const stockHTML = hasStock 
-            ? `<div class="stock-tag">📦 ເຫຼືອ ${p.stock} ຊິ້ນ</div>` 
-            : `<div class="stock-tag stock-out">❌ ສິນຄ້າໝົດ</div>`;
-
-        let timerHTML = "";
-        if(p.timerEnd){
-            timerHTML = `<div class="timer-box" id="timer-${p.id}">⏳ ກຳລັງໂຫຼດ...</div>`;
-        }
-
-        let priceDisplayHTML = "";
-        if(priceRes.isPromo){
-            priceDisplayHTML = `
-                <span class="price-normal">${money((p.normalPrice || 0) * currentQty)}</span>
-                <span class="price">${money(priceRes.totalPrice)}</span>
-            `;
-        } else {
-            priceDisplayHTML = `<span class="price">${money(priceRes.totalPrice)}</span>`;
-        }
+        const stockHTML = hasStock ? `<div class="stock-tag">📦 ເຫຼືອ ${p.stock} ຊິ້ນ</div>` : `<div class="stock-tag stock-out">❌ ສິນຄ້າໝົດ</div>`;
+        const timerHTML = p.timerEnd ? `<div class="timer-box" id="timer-${p.id}">⏳ ກຳລັງໂຫຼດ...</div>` : "";
 
         return `
         <div class="product">
             <div class="product-img-box">
-                <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                ${mediaDisplay}
+                ${slideControlsHTML}
             </div>
             <div class="product-info">
                 <div>
@@ -993,17 +1082,11 @@ function renderProducts(){
                     ${stockHTML}
                 </div>
 
-                <div class="price-box" id="price-display-${p.id}">
-                    ${priceDisplayHTML}
+                <div class="price-box">
+                    <span class="price">${money(priceRes.totalPrice)}</span>
                 </div>
 
-                <div class="qty-control">
-                    <button onclick="changeProductQty('${p.id}', -1)">−</button>
-                    <span id="qty-val-${p.id}">${currentQty}</span>
-                    <button onclick="changeProductQty('${p.id}', 1)">+</button>
-                </div>
-
-                <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="addToCart('${p.id}')">
+                <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="openOptionModal('${p.id}')">
                     ${hasStock ? "🛒 ເພີ່ມໃສ່ກະຕ່າ" : "ສິນຄ້າໝົດ"}
                 </button>
                 ${deleteBtnHTML}
@@ -1021,31 +1104,136 @@ function updateCountdowns(){
         const el = document.getElementById(`timer-${p.id}`);
         if(!el) return;
 
-        const now = new Date().getTime();
-        const end = new Date(p.timerEnd).getTime();
-        const diff = end - now;
-
+        const diff = new Date(p.timerEnd).getTime() - new Date().getTime();
         if(diff <= 0){
             el.innerHTML = "⏰ ໝົດເວລາໂປ";
-            el.style.background = "#eeeeee";
-            el.style.color = "#888888";
+            el.style.background = "#eeeeee"; el.style.color = "#888888";
         }else{
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            const dStr = days > 0 ? `${days}ມື້ ` : "";
-            const hStr = String(hours).padStart(2,'0');
-            const mStr = String(minutes).padStart(2,'0');
-            const sStr = String(seconds).padStart(2,'0');
-
-            el.innerHTML = `⏰ ໝົດໃນ: ${dStr}${hStr}:${mStr}:${sStr}`;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2,'0');
+            const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2,'0');
+            const s = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2,'0');
+            el.innerHTML = `⏰ ໝົດໃນ: ${d > 0 ? d+'ມື້ ' : ''}${h}:${m}:${s}`;
         }
     });
 }
-
 setInterval(updateCountdowns, 1000);
+
+// OPTION MODAL
+function openOptionModal(id){
+    const prod = products.find(p => p.id === id);
+    if(!prod) return;
+
+    currentModalProduct = prod;
+    selectedMediaIndex = productSlideIndices[id] || 0;
+    selectedColor = (prod.colors && prod.colors.length > 0) ? prod.colors[0] : "";
+    selectedSize = (prod.sizes && prod.sizes.length > 0) ? prod.sizes[0] : "";
+    selectedModalQty = 1;
+
+    updateModalUI();
+    document.getElementById("optionModal").classList.add("show");
+}
+
+function closeOptionModal(){ document.getElementById("optionModal").classList.remove("show"); }
+
+function updateModalUI(){
+    const prod = currentModalProduct;
+    if(!prod) return;
+
+    const mediaList = prod.mediaList || (prod.images ? prod.images.map(img => ({url: img, type:'image'})) : [{url: prod.image || "https://via.placeholder.com/300?text=No+Media", type:'image'}]);
+    const priceRes = calculatePriceForQty(prod, selectedModalQty);
+    const activeMedia = mediaList[selectedMediaIndex] || mediaList[0];
+
+    const mediaContainer = document.getElementById("modalMediaContainer");
+    if(activeMedia.type === 'video'){
+        mediaContainer.innerHTML = `<video src="${activeMedia.url}" autoplay loop muted onclick="viewFullMedia('${activeMedia.url}', 'video')"></video>`;
+    } else {
+        mediaContainer.innerHTML = `<img src="${activeMedia.url}" onclick="viewFullMedia('${activeMedia.url}', 'image')">`;
+    }
+
+    document.getElementById("modalPrice").innerText = money(priceRes.totalPrice);
+    document.getElementById("modalQty").innerText = selectedModalQty;
+
+    let selectedText = [];
+    if(mediaList.length > 1) selectedText.push(`ແບບທີ ${selectedMediaIndex + 1}`);
+    if(selectedColor) selectedText.push(`ສີ: ${selectedColor}`);
+    if(selectedSize) selectedText.push(`ຂະໜາດ: ${selectedSize}`);
+    document.getElementById("modalSelectedText").innerText = selectedText.length > 0 ? "ເລືອກ: " + selectedText.join(" | ") : "ເລືອກແລ້ວ";
+
+    const variantSection = document.getElementById("variantSection");
+    if(mediaList.length > 1){
+        variantSection.style.display = "block";
+        document.getElementById("variantGrid").innerHTML = mediaList.map((m, idx) => `
+            <div class="variant-chip ${idx === selectedMediaIndex ? 'active' : ''}" onclick="selectModalMedia(${idx})">
+                ${m.type === 'video' ? `<video src="${m.url}" muted></video>` : `<img src="${m.url}">`}
+                <div>ແບບທີ ${idx + 1}</div>
+            </div>
+        `).join("");
+    } else variantSection.style.display = "none";
+
+    const colorSection = document.getElementById("colorSection");
+    if(prod.colors && prod.colors.length > 0){
+        colorSection.style.display = "block";
+        document.getElementById("colorGrid").innerHTML = prod.colors.map(c => `
+            <div class="option-chip ${c === selectedColor ? 'active' : ''}" onclick="selectModalColor('${c}')">${c}</div>
+        `).join("");
+    } else colorSection.style.display = "none";
+
+    const sizeSection = document.getElementById("sizeSection");
+    if(prod.sizes && prod.sizes.length > 0){
+        sizeSection.style.display = "block";
+        document.getElementById("sizeGrid").innerHTML = prod.sizes.map(s => `
+            <div class="option-chip ${s === selectedSize ? 'active' : ''}" onclick="selectModalSize('${s}')">${s}</div>
+        `).join("");
+    } else sizeSection.style.display = "none";
+}
+
+function selectModalMedia(idx){ selectedMediaIndex = idx; updateModalUI(); }
+function selectModalColor(c){ selectedColor = c; updateModalUI(); }
+function selectModalSize(s){ selectedSize = s; updateModalUI(); }
+
+function changeModalQty(delta){
+    let newQty = selectedModalQty + delta;
+    if(newQty < 1) newQty = 1;
+    if(currentModalProduct && newQty > currentModalProduct.stock) newQty = currentModalProduct.stock;
+    selectedModalQty = newQty;
+    updateModalUI();
+}
+
+function confirmAddToCart(){
+    const prod = currentModalProduct;
+    if(!prod) return;
+
+    const mediaList = prod.mediaList || (prod.images ? prod.images.map(img => ({url: img, type:'image'})) : [{url: prod.image || "https://via.placeholder.com/300?text=No+Media", type:'image'}]);
+    const itemKey = `${prod.id}_${selectedMediaIndex}_${selectedColor}_${selectedSize}`;
+
+    const existingItem = cart.find(x => x.cartKey === itemKey);
+    const totalQty = (existingItem ? existingItem.qty : 0) + selectedModalQty;
+
+    if(prod.stock && totalQty > prod.stock){ alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!"); return; }
+
+    const priceRes = calculatePriceForQty(prod, totalQty);
+    const unitPrice = Math.round(priceRes.totalPrice / totalQty);
+    const activeMedia = mediaList[selectedMediaIndex] || mediaList[0];
+
+    if(existingItem){
+        existingItem.qty = totalQty;
+        existingItem.unitPrice = unitPrice;
+    } else {
+        cart.push({
+            cartKey: itemKey, id: prod.id, name: prod.name,
+            color: selectedColor, size: selectedSize,
+            variantName: mediaList.length > 1 ? `ແບບທີ ${selectedMediaIndex + 1}` : '',
+            media: activeMedia,
+            qty: selectedModalQty, unitPrice
+        });
+    }
+
+    saveCart();
+    updateCartCount();
+    closeOptionModal();
+    alert("ເພີ່ມໃສ່ກະຕ່າຮຽບຮ້ອຍ!");
+}
 
 function setCategory(category, button){
     currentCategory = category;
@@ -1054,76 +1242,27 @@ function setCategory(category, button){
     renderProducts();
 }
 
-function addToCart(id){
-    const product = products.find(p => p.id === id);
-    if(!product || product.stock <= 0) return;
+function updateCartCount(){ document.getElementById("cartCount").innerText = cart.reduce((sum,item)=>sum+item.qty,0); }
+function getTotal(){ return cart.reduce((total,item)=> total + (item.unitPrice * item.qty), 0); }
 
-    const selectedQty = productQtyState[id] || 1;
-    const item = cart.find(x => x.id === id);
-    const totalQty = (item ? item.qty : 0) + selectedQty;
-
-    if(totalQty > product.stock){
-        alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!");
-        return;
-    }
-
-    const priceRes = calculatePriceForQty(product, totalQty);
-    const unitPrice = Math.round(priceRes.totalPrice / totalQty);
-
-    if(item){
-        item.qty = totalQty;
-        item.unitPrice = unitPrice;
-    }else{
-        cart.push({
-            id: id,
-            name: product.name,
-            image: product.image,
-            qty: selectedQty,
-            unitPrice: unitPrice
-        });
-    }
-
-    saveCart();
-    updateCartCount();
-    alert("ເພີ່ມໃສ່ກະຕ່າຮຽບຮ້ອຍ!");
-}
-
-function updateCartCount(){
-    const count = cart.reduce((sum,item)=>sum+item.qty,0);
-    document.getElementById("cartCount").innerText = count;
-}
-
-function getTotal(){
-    return cart.reduce((total,item)=>{
-        return total + (item.unitPrice * item.qty);
-    },0);
-}
-
-function openCart(){
-    renderCart();
-    document.getElementById("cartOverlay").classList.add("show");
-}
-
-function closeCart(){
-    document.getElementById("cartOverlay").classList.remove("show");
-}
+function openCart(){ renderCart(); document.getElementById("cartOverlay").classList.add("show"); }
+function closeCart(){ document.getElementById("cartOverlay").classList.remove("show"); }
 
 function renderCart(){
     const box = document.getElementById("cartItems");
-
     if(cart.length === 0){
         box.innerHTML = `<div class="empty">🛒 ກະຕ່າຍັງວ່າງ</div>`;
     }else{
         box.innerHTML = cart.map((item, index) => {
-            const p = products.find(x => x.id === item.id);
-            const prodName = item.name || (p ? p.name : "ສິນຄ້າ");
-            const prodImg = item.image || (p ? p.image : "https://via.placeholder.com/300?text=No+Image");
+            let mDisplay = (item.media && item.media.type === 'video')
+                ? `<video src="${item.media.url}" muted onclick="viewFullMedia('${item.media.url}', 'video')"></video>`
+                : `<img src="${item.media ? item.media.url : 'https://via.placeholder.com/300'}" onclick="viewFullMedia('${item.media ? item.media.url : ''}', 'image')">`;
 
             return `
             <div class="cart-item">
-                <img src="${prodImg}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                ${mDisplay}
                 <div class="cart-item-info">
-                    <b>${prodName}</b>
+                    <b>${item.name}${item.variantName ? ' ('+item.variantName+')' : ''}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}</b>
                     <div>${money(item.unitPrice * item.qty)}</div>
                     <div class="qty">
                         <button onclick="changeCartQty(${index},-1)">−</button>
@@ -1131,78 +1270,53 @@ function renderCart(){
                         <button onclick="changeCartQty(${index},1)">+</button>
                     </div>
                 </div>
-                <!-- ປຸ່ມ × ສຳລັບລຶບສິນຄ້າອອກຈາກກະຕ່າ -->
-                <button class="remove-item-btn" onclick="removeFromCart(${index})" title="ລຶບສິນຄ້ານີ້">&times;</button>
+                <button class="remove-item-btn" onclick="removeFromCart(${index})">&times;</button>
             </div>
             `;
         }).join("");
     }
-
     document.getElementById("cartTotal").innerText = "ລວມ: " + money(getTotal());
 }
 
-// ຟັງຊັນລຶບສິນຄ້າອອກຈາກກະຕ່າໂດຍຕົງ
-function removeFromCart(index){
-    cart.splice(index, 1);
-    saveCart();
-    updateCartCount();
-    renderCart();
-}
+function removeFromCart(index){ cart.splice(index, 1); saveCart(); updateCartCount(); renderCart(); }
 
 function changeCartQty(index, amount){
     if(cart[index]){
         const item = cart[index];
         const p = products.find(x => x.id === item.id);
-        if(!p) return;
-
         const newQty = item.qty + amount;
 
         if(newQty <= 0){
             cart.splice(index, 1);
         } else {
-            if(newQty > p.stock){
-                alert("ບໍ່ສາມາດເພີ່ມໄດ້ຫຼາຍກວ່າສິນຄ້າໃນສະຕັອກ!");
-                return;
-            }
-
+            if(p && newQty > p.stock){ alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!"); return; }
             item.qty = newQty;
-            const priceRes = calculatePriceForQty(p, newQty);
-            item.unitPrice = Math.round(priceRes.totalPrice / newQty);
+            if(p){
+                const priceRes = calculatePriceForQty(p, newQty);
+                item.unitPrice = Math.round(priceRes.totalPrice / newQty);
+            }
         }
     }
-    saveCart();
-    updateCartCount();
-    renderCart();
+    saveCart(); updateCartCount(); renderCart();
 }
 
 function openCheckout(){
-    if(cart.length === 0){
-        alert("ກະຕ່າຍັງວ່າງ!");
-        return;
-    }
+    if(cart.length === 0){ alert("ກະຕ່າຍັງວ່າງ!"); return; }
     closeCart();
     renderCheckout();
     document.getElementById("checkout").classList.add("show");
 }
 
-function closeCheckout(){
-    document.getElementById("checkout").classList.remove("show");
-}
+function closeCheckout(){ document.getElementById("checkout").classList.remove("show"); }
 
 function renderCheckout(){
     const box = document.getElementById("checkoutItems");
-    box.innerHTML = cart.map(item => {
-        const p = products.find(x => x.id === item.id);
-        const prodName = item.name || (p ? p.name : "ສິນຄ້າ");
-
-        return `
+    box.innerHTML = cart.map(item => `
         <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px;">
-            <span>${prodName} × ${item.qty}</span>
+            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''} × ${item.qty}</span>
             <b>${money(item.unitPrice * item.qty)}</b>
         </div>
-        `;
-    }).join("");
-
+    `).join("");
     document.getElementById("checkoutTotal").innerText = "ລວມ: " + money(getTotal());
 }
 
@@ -1210,10 +1324,7 @@ function toggleForm() {
     var radios = document.getElementsByName("shippingType");
     var selectedValue = "";
     for (var i = 0; i < radios.length; i++) {
-        if (radios[i].checked) { 
-            selectedValue = radios[i].value; 
-            break; 
-        }
+        if (radios[i].checked) { selectedValue = radios[i].value; break; }
     }
     document.getElementById("originBox").style.display = selectedValue === "origin" ? "block" : "none";
     document.getElementById("destinationBox").style.display = selectedValue === "destination" ? "block" : "none";
@@ -1224,29 +1335,24 @@ function handleFileSelect(event) {
     if (file) {
         selectedFile = file;
         document.getElementById("slipLabel").innerText = "ເລືອກຮູບແລ້ວ: " + file.name;
-        
         const reader = new FileReader();
-        reader.onload = function(e) { 
+        reader.onload = e => { 
             const img = document.getElementById("preview");
-            img.src = e.target.result;
-            img.style.display = "block";
+            img.src = e.target.result; img.style.display = "block";
         };
         reader.readAsDataURL(file);
     }
 }
 
-// ຟັງຊັນຈັດການເລືອກຮູບສະລິບມັດຈຳ
 function handleDestFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
         selectedDestFile = file;
         document.getElementById("destSlipLabel").innerText = "ເລືອກຮູບແລ້ວ: " + file.name;
-        
         const reader = new FileReader();
-        reader.onload = function(e) { 
+        reader.onload = e => { 
             const img = document.getElementById("destPreview");
-            img.src = e.target.result;
-            img.style.display = "block";
+            img.src = e.target.result; img.style.display = "block";
         };
         reader.readAsDataURL(file);
     }
@@ -1256,16 +1362,9 @@ async function uploadSlipToImgBB(file) {
     const formData = new FormData();
     formData.append("image", file);
     try {
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: "POST",
-            body: formData
-        });
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
         const result = await response.json();
-        if (result.success) {
-            return result.data.url;
-        } else {
-            return null;
-        }
+        return result.success ? result.data.url : null;
     } catch (error) {
         console.error("Upload error:", error);
         return null;
@@ -1286,7 +1385,6 @@ async function sendToWhatsApp(type) {
         address = document.getElementById("destAddress").value.trim();
         phone = document.getElementById("destPhone").value.trim();
 
-        // ບັງຄັບໃຫ້ອັບໂຫຼດສະລິບມັດຈຳສຳລັບປາຍທາງ
         if (!selectedDestFile) {
             alert("ກະລຸນາອັບໂຫຼດສະລິບໂອນເງິນມັດຈຳ 20,000 ₭ ກ່ອນ!");
             return;
@@ -1322,36 +1420,24 @@ async function sendToWhatsApp(type) {
                   `🛒 *ລາຍການສິນຄ້າ:* \n`;
 
     cart.forEach(item => {
-        const p = products.find(x => x.id === item.id);
-        const prodName = item.name || (p ? p.name : "ສິນຄ້າ");
-        message += `• ${prodName} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
+        const colorText = item.color ? ` [ສີ: ${item.color}]` : "";
+        const sizeText = item.size ? ` [ຂະໜາດ: ${item.size}]` : "";
+        const variantText = item.variantName ? ` (${item.variantName})` : "";
+        message += `• ${item.name}${variantText}${colorText}${sizeText} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
     });
 
-    message += `--------------------\n` +
-               `💰 *ລວມທັງໝົດ: ${money(getTotal())}*\n`;
+    message += `--------------------\n💰 *ລວມທັງໝົດ: ${money(getTotal())}*\n`;
 
     if (type === 'origin') {
-        if (imageUrl) {
-            message += `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}`;
-        } else if (selectedFile) {
-            message += `📸 *ສະລິບ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
-        } else {
-            message += `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
-        }
+        message += imageUrl ? `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}` : `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
     } else {
         message += `💵 *ຄ່າມັດຈຳ:* 20,000 ₭ (ໂອນແລ້ວ)\n`;
-        if (imageUrl) {
-            message += `📸 *ສະລິບມັດຈຳ:* ${imageUrl}`;
-        } else {
-            message += `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ (ກະລຸນາສົ່ງຮູບໃສ່ແຊັດນີ້ເອງ)`;
-        }
+        message += imageUrl ? `📸 *ສະລິບມັດຈຳ:* ${imageUrl}` : `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ`;
     }
 
-    const whatsappUrl = `https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
 }
 </script>
 
 </body>
 </html>
-
