@@ -97,6 +97,14 @@ header{
 .admin-card.show{ display:block; }
 .admin-card h2{ margin-bottom:12px; font-size:18px; color:#856404; }
 
+.coupon-section-box {
+    background: #fff8e7;
+    border: 1px dashed #f39c12;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
 .form-grid{
     display:grid;
     grid-template-columns:repeat(2, 1fr);
@@ -106,6 +114,19 @@ header{
 
 .form-group{
     margin-bottom:10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 /* UI ຈັດການຮູບພາບ ແລະ ວີດີໂອ */
@@ -164,9 +185,24 @@ header{
     display:flex;
     flex-direction:column;
     justify-content:space-between;
+    position:relative;
 }
 
-/* ປັບປຸງ UI GALLERY */
+.pinned-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #ff3b30;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 12px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* UI GALLERY */
 .product-img-box{
     position:relative;
     width:100%;
@@ -259,6 +295,18 @@ header{
     text-align:center;
 }
 
+.coupon-tag {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #bbdefb;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: block;
+}
+
 .stock-tag{
     font-size:12px;
     color:#28a745;
@@ -320,16 +368,32 @@ header{
 
 .add-btn:disabled{ background:#ccc; cursor:not-allowed; }
 
+.admin-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.pin-btn {
+    background: #ff9500;
+    color: white;
+    border: 0;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    flex: 1;
+}
+
 .delete-btn{
     background:#dc3545;
     color:white;
     border:0;
     padding:6px;
     border-radius:6px;
-    margin-top:6px;
     font-size:12px;
     cursor:pointer;
-    width:100%;
+    flex: 1;
 }
 
 /* OVERLAY & CART */
@@ -601,16 +665,40 @@ textarea{ min-height:70px; }
     </div>
 
     <div class="form-group">
-        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນ (ເຊັ່ນ: 1:99000, 3:290000)">
+        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນເກົ່າ (ເຊັ່ນ: 1:99000, 3:290000)">
     </div>
 
-    <div class="form-group">
-        <label>⏰ ຕັ້ງເວລາໝົດໂປໂມຊັນ:</label>
-        <input id="newProdTimer" type="datetime-local">
+    <!-- 🎟️ ໂຊນຕັ້ງຄ່າຄູປັອງ/ໂຄດສ່ວນລົດເປີເຊັນ -->
+    <div class="coupon-section-box">
+        <label style="font-size:13px; color:#d35400; margin-top:0;">🎟️ ຕັ້ງຄ່າຄູປັອງ/ໂຄດສ່ວນລົດ (%):</label>
+        <div class="form-grid">
+            <input id="newProdCouponCode" type="text" placeholder="🔑 ໂຄດສ່ວນລົດ (ເຊັ່ນ: KOP10)">
+            <input id="newProdCouponDiscount" type="number" placeholder="📉 ສ່ວນລົດ (%) ເຊັ່ນ: 10">
+        </div>
+        <div class="form-grid">
+            <input id="newProdCouponMinQty" type="number" placeholder="📦 ຊື້ຂັ້ນຕ່ຳ (ຊິ້ນ)">
+            <div>
+                <label style="font-size:11px; margin:0;">⏰ ເວລາໝົດອາຍຸຄູປັອງ:</label>
+                <input id="newProdCouponExpiry" type="datetime-local">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div>
+            <label style="font-size:12px;">⏰ ຕັ້ງເວລາໝົດໂປໂມຊັນເກົ່າ:</label>
+            <input id="newProdTimer" type="datetime-local">
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+            <label class="checkbox-label">
+                <input id="newProdPin" type="checkbox">
+                <span>📌 ປັກໝຸດສິນຄ້ານີ້ໄວ້ເທິງສຸດ</span>
+            </label>
+        </div>
     </div>
 
     <!-- UI ເລືອກຮູບ/ວີດີໂອ -->
-    <label style="font-size:14px; font-weight:bold; margin-bottom:5px; display:block;">📷/🎥 ຮູບ ຫຼື ວີດີໂອສິນຄ້າ (ກົດ + ເພື່ອເພີ່ມ):</label>
+    <label style="font-size:14px; font-weight:bold; margin-bottom:5px; display:block; margin-top:10px;">📷/🎥 ຮູບ ຫຼື ວີດີໂອສິນຄ້າ (ກົດ + ເພື່ອເພີ່ມ):</label>
     <input id="newProdFile" type="file" accept="image/*,video/*" multiple style="display:none;" onchange="handleProductMediaUpload(event)">
     
     <div class="media-upload-wrapper">
@@ -667,6 +755,16 @@ textarea{ min-height:70px; }
         <div class="option-section" id="sizeSection">
             <div class="option-title">ເລືອກຂະໜາດ:</div>
             <div class="chip-grid" id="sizeGrid"></div>
+        </div>
+
+        <!-- 🎟️ ອິນພຸດປ້ອນໂຄດສ່ວນລົດໃນ Pop-up -->
+        <div class="option-section" id="couponInputBox" style="display:none;">
+            <div class="option-title">🎟️ ໃສ່ໂຄດສ່ວນລົດ (ຖ້າມີ):</div>
+            <div style="display:flex; gap:6px;">
+                <input type="text" id="inputCouponCode" placeholder="ກອກໂຄດສ່ວນລົດ..." style="text-transform:uppercase; padding:8px;">
+                <button type="button" onclick="applyCoupon()" style="padding:8px 14px; background:#0288d1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ນຳໃຊ້</button>
+            </div>
+            <div id="couponMsg" style="font-size:12px; margin-top:4px;"></div>
         </div>
 
         <div class="option-section" style="display:flex; justify-content:space-between; align-items:center;">
@@ -804,6 +902,7 @@ let selectedMediaIndex = 0;
 let selectedColor = "";
 let selectedSize = "";
 let selectedModalQty = 1;
+let appliedCouponCode = ""; 
 
 productsRef.on('value', (snapshot) => {
     const data = snapshot.val();
@@ -811,6 +910,14 @@ productsRef.on('value', (snapshot) => {
     if (data) {
         for (let id in data) { productList.push({ id, ...data[id] }); }
     }
+    
+    // ຈັດລຽງສິນຄ້າ: ສິນຄ້າທີ່ປັກໝຸດ (isPinned) ຈະຢູ່ທາງເທິງສຸດ
+    productList.sort((a, b) => {
+        const pinA = a.isPinned ? 1 : 0;
+        const pinB = b.isPinned ? 1 : 0;
+        return pinB - pinA;
+    });
+
     products = productList;
     renderProducts();
     updateCartCount();
@@ -921,7 +1028,14 @@ function addNewProduct(){
     const rawSizes = document.getElementById("newProdSizes").value.trim();
     const rawTiers = document.getElementById("newProdTierPrices").value.trim();
     const timerVal = document.getElementById("newProdTimer").value;
+    const isPinned = document.getElementById("newProdPin").checked;
     const desc = document.getElementById("newProdDesc").value.trim();
+
+    // ດຶງຂໍ້ມູນຄູປັອງ
+    const couponCode = document.getElementById("newProdCouponCode").value.trim().toUpperCase();
+    const couponDiscount = Number(document.getElementById("newProdCouponDiscount").value);
+    const couponMinQty = Number(document.getElementById("newProdCouponMinQty").value);
+    const couponExpiry = document.getElementById("newProdCouponExpiry").value;
 
     if(!name || isNaN(normalPrice) || normalPrice <= 0){
         alert("ກະລຸນາກອກຊື່ ແລະ ລາຄາເດີມສິນຄ້າໃຫ້ຖືກຕ້ອງ!");
@@ -940,6 +1054,7 @@ function addNewProduct(){
                 tierPrices.push({ q: parseInt(q.trim()), price: parseInt(pr.trim()) });
             }
         });
+        tierPrices.sort((a, b) => b.q - a.q);
     }
 
     let mediaList = [...tempMediaArray];
@@ -947,9 +1062,21 @@ function addNewProduct(){
         mediaList = [{ url: "https://via.placeholder.com/300?text=No+Media", type: 'image' }];
     }
 
+    // ໂຄງສ້າງຄູປັອງ
+    let coupon = null;
+    if(couponCode && !isNaN(couponDiscount) && couponDiscount > 0){
+        coupon = {
+            code: couponCode,
+            discount: couponDiscount,
+            minQty: isNaN(couponMinQty) ? 1 : couponMinQty,
+            expiry: couponExpiry ? new Date(couponExpiry).toISOString() : null
+        };
+    }
+
     const newProd = {
         name, description: desc, normalPrice, stock: isNaN(stock) ? 0 : stock,
-        category, colors, sizes, tierPrices,
+        category, colors, sizes, tierPrices, coupon,
+        isPinned: isPinned || false,
         timerEnd: timerVal ? new Date(timerVal).toISOString() : null,
         mediaList
     };
@@ -966,7 +1093,14 @@ function addNewProduct(){
         document.getElementById("newProdSizes").value = "";
         document.getElementById("newProdTierPrices").value = "";
         document.getElementById("newProdTimer").value = "";
+        document.getElementById("newProdPin").checked = false;
         document.getElementById("newProdDesc").value = "";
+        
+        document.getElementById("newProdCouponCode").value = "";
+        document.getElementById("newProdCouponDiscount").value = "";
+        document.getElementById("newProdCouponMinQty").value = "";
+        document.getElementById("newProdCouponExpiry").value = "";
+
         document.getElementById("previewGallery").innerHTML = "";
         tempMediaArray = [];
         alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
@@ -974,6 +1108,10 @@ function addNewProduct(){
         saveBtn.disabled = false;
         saveBtn.innerText = "✨ ບັນທຶກເພີ່ມສິນຄ້າ";
     });
+}
+
+function togglePinProduct(id, currentStatus){
+    productsRef.child(id).update({ isPinned: !currentStatus });
 }
 
 function deleteProduct(id){
@@ -987,13 +1125,51 @@ function isPromoActive(product){
     return (new Date(product.timerEnd).getTime()) > (new Date().getTime());
 }
 
-function calculatePriceForQty(product, qty){
+function isCouponValid(coupon, qty){
+    if(!coupon || !coupon.code) return false;
+    if(coupon.expiry && new Date(coupon.expiry).getTime() < new Date().getTime()) return false;
+    if(coupon.minQty && qty < coupon.minQty) return false;
+    return true;
+}
+
+// 📌 ລະບົບຄິດໄລ່ລາຄາ ( Tier Promotion + Percentage Coupon )
+function calculatePriceForQty(product, qty, inputCode = ""){
+    let totalPrice = 0;
+    let isPromoApplied = false;
+    let isCouponApplied = false;
+
     const activePromo = isPromoActive(product);
+    
+    // 1. ຄິດໄລ່ລາຄາຕາມໂປໂມຊັນເກົ່າ (Tier/Quantity) ກ່ອນ
     if(activePromo && product.tierPrices && product.tierPrices.length > 0){
-        const matchedTier = product.tierPrices.find(t => t.q === qty);
-        if(matchedTier) return { totalPrice: matchedTier.price, isPromo: true };
+        const sortedTiers = [...product.tierPrices].sort((a, b) => b.q - a.q);
+        let remainingQty = qty;
+
+        for (let tier of sortedTiers) {
+            if (remainingQty >= tier.q && tier.q > 0) {
+                const count = Math.floor(remainingQty / tier.q);
+                totalPrice += count * tier.price;
+                remainingQty %= tier.q;
+                isPromoApplied = true;
+            }
+        }
+        if (remainingQty > 0) {
+            totalPrice += remainingQty * (product.normalPrice || 0);
+        }
+    } else {
+        totalPrice = (product.normalPrice || 0) * qty;
     }
-    return { totalPrice: (product.normalPrice || 0) * qty, isPromo: false };
+
+    // 2. ຄິດໄລ່ສ່ວນລົດຈາກຄູປັອງ (%) ຖ້າປ້ອນໂຄດຖືກຕ້ອງ
+    if(product.coupon && inputCode && inputCode.toUpperCase() === product.coupon.code.toUpperCase()){
+        if(isCouponValid(product.coupon, qty)){
+            const discountAmount = totalPrice * (product.coupon.discount / 100);
+            totalPrice = Math.max(0, totalPrice - discountAmount);
+            isCouponApplied = true;
+        }
+    }
+
+    return { totalPrice: Math.round(totalPrice), isPromo: isPromoApplied, isCoupon: isCouponApplied };
 }
 
 function changeProductSlide(productId, direction, totalMedia, event){
@@ -1061,7 +1237,25 @@ function renderProducts(){
         let promoListHTML = (activePromo && p.tierPrices && p.tierPrices.length > 0)
             ? `<div class="promo-badge">🔥 ໂປ: ${p.tierPrices.map(t => `${t.q}ຊິ້ນ = ${money(t.price)}`).join(" | ")}</div>` : "";
 
-        const deleteBtnHTML = isAdminLoggedIn ? `<button class="delete-btn" onclick="deleteProduct('${p.id}')">🗑️ ລຶບສິນຄ້າ</button>` : "";
+        // UI ໃບປະກາດຄູປັອງ
+        let couponTagHTML = "";
+        if(p.coupon && p.coupon.code){
+            const expText = p.coupon.expiry ? ` (ໝົດ ${new Date(p.coupon.expiry).toLocaleDateString()})` : '';
+            const minText = p.coupon.minQty > 1 ? ` ຄົບ ${p.coupon.minQty} ຊິ້ນ` : '';
+            couponTagHTML = `<div class="coupon-tag">🎟️ ໂຄດ: <b>${p.coupon.code}</b> ລົດ ${p.coupon.discount}%${minText}${expText}</div>`;
+        }
+
+        const pinnedBadgeHTML = p.isPinned ? `<div class="pinned-badge">📌 ປັກໝຸດ</div>` : "";
+
+        const adminActionsHTML = isAdminLoggedIn ? `
+            <div class="admin-actions">
+                <button class="pin-btn" onclick="togglePinProduct('${p.id}', ${!!p.isPinned})">
+                    ${p.isPinned ? "📌 ຍົກເລີກ" : "📌 ປັກໝຸດ"}
+                </button>
+                <button class="delete-btn" onclick="deleteProduct('${p.id}')">🗑️ ລຶບ</button>
+            </div>
+        ` : "";
+
         const descHTML = p.description ? `<div class="product-desc">${p.description}</div>` : "";
         const hasStock = p.stock > 0;
         const stockHTML = hasStock ? `<div class="stock-tag">📦 ເຫຼືອ ${p.stock} ຊິ້ນ</div>` : `<div class="stock-tag stock-out">❌ ສິນຄ້າໝົດ</div>`;
@@ -1069,6 +1263,7 @@ function renderProducts(){
 
         return `
         <div class="product">
+            ${pinnedBadgeHTML}
             <div class="product-img-box">
                 ${mediaDisplay}
                 ${slideControlsHTML}
@@ -1078,6 +1273,7 @@ function renderProducts(){
                     <div class="product-name">${p.name}</div>
                     ${descHTML}
                     ${timerHTML}
+                    ${couponTagHTML}
                     ${promoListHTML}
                     ${stockHTML}
                 </div>
@@ -1089,7 +1285,7 @@ function renderProducts(){
                 <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="openOptionModal('${p.id}')">
                     ${hasStock ? "🛒 ເພີ່ມໃສ່ກະຕ່າ" : "ສິນຄ້າໝົດ"}
                 </button>
-                ${deleteBtnHTML}
+                ${adminActionsHTML}
             </div>
         </div>
         `;
@@ -1129,6 +1325,10 @@ function openOptionModal(id){
     selectedColor = (prod.colors && prod.colors.length > 0) ? prod.colors[0] : "";
     selectedSize = (prod.sizes && prod.sizes.length > 0) ? prod.sizes[0] : "";
     selectedModalQty = 1;
+    appliedCouponCode = ""; 
+
+    document.getElementById("inputCouponCode").value = "";
+    document.getElementById("couponMsg").innerHTML = "";
 
     updateModalUI();
     document.getElementById("optionModal").classList.add("show");
@@ -1136,12 +1336,44 @@ function openOptionModal(id){
 
 function closeOptionModal(){ document.getElementById("optionModal").classList.remove("show"); }
 
+function applyCoupon(){
+    const code = document.getElementById("inputCouponCode").value.trim().toUpperCase();
+    const msg = document.getElementById("couponMsg");
+    const prod = currentModalProduct;
+
+    if(!prod || !prod.coupon || !prod.coupon.code){
+        msg.style.color = "red"; msg.innerText = "❌ ສິນຄ້ານີ້ບໍ່ມີຄູປັອງສ່ວນລົດ";
+        return;
+    }
+
+    if(code !== prod.coupon.code.toUpperCase()){
+        msg.style.color = "red"; msg.innerText = "❌ ໂຄດສ່ວນລົດບໍ່ຖືກຕ້ອງ";
+        return;
+    }
+
+    if(prod.coupon.expiry && new Date(prod.coupon.expiry).getTime() < new Date().getTime()){
+        msg.style.color = "red"; msg.innerText = "❌ ໂຄດສ່ວນລົດນີ້ໝົດອາຍຸແລ້ວ";
+        return;
+    }
+
+    if(prod.coupon.minQty && selectedModalQty < prod.coupon.minQty){
+        msg.style.color = "orange"; msg.innerText = `⚠️ ຕ້ອງຊື້ຢ່າງໜ້ອຍ ${prod.coupon.minQty} ຊິ້ນ ຈຶ່ງໃຊ້ໂຄດນີ້ໄດ້`;
+        return;
+    }
+
+    appliedCouponCode = code;
+    msg.style.color = "green"; msg.innerText = `✅ ນຳໃຊ້ໂຄດສ່ວນລົດ ${prod.coupon.discount}% ສຳເລັດ!`;
+    updateModalUI();
+}
+
 function updateModalUI(){
     const prod = currentModalProduct;
     if(!prod) return;
 
     const mediaList = prod.mediaList || (prod.images ? prod.images.map(img => ({url: img, type:'image'})) : [{url: prod.image || "https://via.placeholder.com/300?text=No+Media", type:'image'}]);
-    const priceRes = calculatePriceForQty(prod, selectedModalQty);
+    
+    // ຄິດໄລ່ລາຄາລວມຄູປັອງ
+    const priceRes = calculatePriceForQty(prod, selectedModalQty, appliedCouponCode);
     const activeMedia = mediaList[selectedMediaIndex] || mediaList[0];
 
     const mediaContainer = document.getElementById("modalMediaContainer");
@@ -1151,7 +1383,13 @@ function updateModalUI(){
         mediaContainer.innerHTML = `<img src="${activeMedia.url}" onclick="viewFullMedia('${activeMedia.url}', 'image')">`;
     }
 
-    document.getElementById("modalPrice").innerText = money(priceRes.totalPrice);
+    let priceText = money(priceRes.totalPrice);
+    if(priceRes.isCoupon){
+        priceText += ` <span style="font-size:12px; color:#0288d1;">(ຫຼຸດ ${prod.coupon.discount}% 🎟️)</span>`;
+    } else if(priceRes.isPromo){
+        priceText += ` <span style="font-size:12px; color:#28a745;">(ລາຄາໂປໂມຊັນພິເສດ 🔥)</span>`;
+    }
+    document.getElementById("modalPrice").innerHTML = priceText;
     document.getElementById("modalQty").innerText = selectedModalQty;
 
     let selectedText = [];
@@ -1159,6 +1397,14 @@ function updateModalUI(){
     if(selectedColor) selectedText.push(`ສີ: ${selectedColor}`);
     if(selectedSize) selectedText.push(`ຂະໜາດ: ${selectedSize}`);
     document.getElementById("modalSelectedText").innerText = selectedText.length > 0 ? "ເລືອກ: " + selectedText.join(" | ") : "ເລືອກແລ້ວ";
+
+    // ສະແດງ/ຊ່ອນ ມ້ອງໃສ່ຄູປັອງ
+    const couponInputBox = document.getElementById("couponInputBox");
+    if(prod.coupon && prod.coupon.code){
+        couponInputBox.style.display = "block";
+    } else {
+        couponInputBox.style.display = "none";
+    }
 
     const variantSection = document.getElementById("variantSection");
     if(mediaList.length > 1){
@@ -1197,6 +1443,16 @@ function changeModalQty(delta){
     if(newQty < 1) newQty = 1;
     if(currentModalProduct && newQty > currentModalProduct.stock) newQty = currentModalProduct.stock;
     selectedModalQty = newQty;
+
+    // ກວດສອບເງື່ອນໄຂຄູປັອງຄືນໃໝ່ເມື່ອປ່ຽນຈຳນວນ
+    if(appliedCouponCode && currentModalProduct && currentModalProduct.coupon){
+        if(currentModalProduct.coupon.minQty && selectedModalQty < currentModalProduct.coupon.minQty){
+            appliedCouponCode = "";
+            document.getElementById("couponMsg").style.color = "orange";
+            document.getElementById("couponMsg").innerText = `⚠️ ຍົກເລີກຄູປັອງເນື່ອງຈາກຈຳນວນບໍ່ຮອດ ${currentModalProduct.coupon.minQty} ຊິ້ນ`;
+        }
+    }
+
     updateModalUI();
 }
 
@@ -1205,14 +1461,14 @@ function confirmAddToCart(){
     if(!prod) return;
 
     const mediaList = prod.mediaList || (prod.images ? prod.images.map(img => ({url: img, type:'image'})) : [{url: prod.image || "https://via.placeholder.com/300?text=No+Media", type:'image'}]);
-    const itemKey = `${prod.id}_${selectedMediaIndex}_${selectedColor}_${selectedSize}`;
+    const itemKey = `${prod.id}_${selectedMediaIndex}_${selectedColor}_${selectedSize}_${appliedCouponCode}`;
 
     const existingItem = cart.find(x => x.cartKey === itemKey);
     const totalQty = (existingItem ? existingItem.qty : 0) + selectedModalQty;
 
     if(prod.stock && totalQty > prod.stock){ alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!"); return; }
 
-    const priceRes = calculatePriceForQty(prod, totalQty);
+    const priceRes = calculatePriceForQty(prod, totalQty, appliedCouponCode);
     const unitPrice = Math.round(priceRes.totalPrice / totalQty);
     const activeMedia = mediaList[selectedMediaIndex] || mediaList[0];
 
@@ -1223,6 +1479,7 @@ function confirmAddToCart(){
         cart.push({
             cartKey: itemKey, id: prod.id, name: prod.name,
             color: selectedColor, size: selectedSize,
+            couponCode: appliedCouponCode,
             variantName: mediaList.length > 1 ? `ແບບທີ ${selectedMediaIndex + 1}` : '',
             media: activeMedia,
             qty: selectedModalQty, unitPrice
@@ -1258,11 +1515,13 @@ function renderCart(){
                 ? `<video src="${item.media.url}" muted onclick="viewFullMedia('${item.media.url}', 'video')"></video>`
                 : `<img src="${item.media ? item.media.url : 'https://via.placeholder.com/300'}" onclick="viewFullMedia('${item.media ? item.media.url : ''}', 'image')">`;
 
+            const couponText = item.couponCode ? ` <span style="color:#0288d1; font-size:11px;">[🎟️${item.couponCode}]</span>` : '';
+
             return `
             <div class="cart-item">
                 ${mDisplay}
                 <div class="cart-item-info">
-                    <b>${item.name}${item.variantName ? ' ('+item.variantName+')' : ''}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}</b>
+                    <b>${item.name}${item.variantName ? ' ('+item.variantName+')' : ''}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}${couponText}</b>
                     <div>${money(item.unitPrice * item.qty)}</div>
                     <div class="qty">
                         <button onclick="changeCartQty(${index},-1)">−</button>
@@ -1292,7 +1551,7 @@ function changeCartQty(index, amount){
             if(p && newQty > p.stock){ alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!"); return; }
             item.qty = newQty;
             if(p){
-                const priceRes = calculatePriceForQty(p, newQty);
+                const priceRes = calculatePriceForQty(p, newQty, item.couponCode || "");
                 item.unitPrice = Math.round(priceRes.totalPrice / newQty);
             }
         }
@@ -1313,7 +1572,7 @@ function renderCheckout(){
     const box = document.getElementById("checkoutItems");
     box.innerHTML = cart.map(item => `
         <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px;">
-            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''} × ${item.qty}</span>
+            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}${item.couponCode ? ' (🎟️'+item.couponCode+')' : ''} × ${item.qty}</span>
             <b>${money(item.unitPrice * item.qty)}</b>
         </div>
     `).join("");
@@ -1423,7 +1682,8 @@ async function sendToWhatsApp(type) {
         const colorText = item.color ? ` [ສີ: ${item.color}]` : "";
         const sizeText = item.size ? ` [ຂະໜາດ: ${item.size}]` : "";
         const variantText = item.variantName ? ` (${item.variantName})` : "";
-        message += `• ${item.name}${variantText}${colorText}${sizeText} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
+        const couponText = item.couponCode ? ` [🎟️ໂຄດ: ${item.couponCode}]` : "";
+        message += `• ${item.name}${variantText}${colorText}${sizeText}${couponText} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
     });
 
     message += `--------------------\n💰 *ລວມທັງໝົດ: ${money(getTotal())}*\n`;
