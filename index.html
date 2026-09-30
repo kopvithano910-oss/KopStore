@@ -4,11 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>KOP STORE - E-Commerce</title>
-<meta property="og:title" content="KOP STORE - E-Commerce">
-<meta property="og:description" content="KOP STORE ຮ້ານຄ້າອອນໄລນ໌">
-<meta property="og:image" content="https://kopstore.pages.dev/1000068704.png">
-<meta property="og:url" content="https://kopstore.pages.dev/">
-<meta property="og:type" content="website">
 
 <style>
 *{
@@ -1577,7 +1572,7 @@ function renderCheckout(){
     const box = document.getElementById("checkoutItems");
     box.innerHTML = cart.map(item => `
         <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px;">
-            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}${item.couponCode ? ' (🎟️'+item.couponCode+')' : ''} × ${item.qty}</span>
+            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}${item.couponCode ? ' (🎟️️'+item.couponCode+')' : ''} × ${item.qty}</span>
             <b>${money(item.unitPrice * item.qty)}</b>
         </div>
     `).join("");
@@ -1632,6 +1627,17 @@ async function uploadSlipToImgBB(file) {
     } catch (error) {
         console.error("Upload error:", error);
         return null;
+    }
+}
+
+// 📌 ຟັງຊັນຫັກສະຕັອກສິນຄ້າໃນ Firebase
+async function deductStock() {
+    for (let item of cart) {
+        const prod = products.find(p => p.id === item.id);
+        if (prod) {
+            const newStock = Math.max(0, (prod.stock || 0) - item.qty);
+            await productsRef.child(item.id).update({ stock: newStock });
+        }
     }
 }
 
@@ -1700,9 +1706,19 @@ async function sendToWhatsApp(type) {
         message += imageUrl ? `📸 *ສະລິບມັດຈຳ:* ${imageUrl}` : `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ`;
     }
 
+    // ຕັດສະຕັອກສິນຄ້າໃນຖານຂໍ້ມູນ
+    await deductStock();
+
+    // ລ້າງກະຕ່າ ແລະ ປິດໜ້າ Checkout
+    cart = [];
+    saveCart();
+    updateCartCount();
+    closeCheckout();
+
     window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
 }
 </script>
 
 </body>
-    </html>
+</html>
+
