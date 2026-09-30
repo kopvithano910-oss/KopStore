@@ -606,7 +606,7 @@ textarea{ min-height:70px; }
 .confirm-btn{ width: 100%; padding: 14px; font-size: 16px; font-weight: bold; background-color: #25D366; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
 .confirm-btn:disabled{ background-color: #a5d6a7; cursor: not-allowed; }
 
-.empty{ text-align:center; color:#777; padding:20px 10px; font-size:14px; }
+.empty{ text-align:center; color:#777; padding:40px 10px; font-size:16px; grid-column: 1 / -1; }
 
 @media(min-width:768px){
     .products{ grid-template-columns:repeat(4,1fr); gap:15px; }
@@ -723,10 +723,12 @@ textarea{ min-height:70px; }
 <button onclick="setCategory('ເຄື່ອງສໍາອາງ',this)">💄 ເຄື່ອງສໍາອາງ</button>
 <button onclick="setCategory('ເສື້ອຜ້າ',this)">👕 ເສື້ອຜ້າ</button>
 <button onclick="setCategory('ອຸປະກອນ',this)">📱 ອຸປະກອນ</button>
-<button onclick="setCategory('ອື່ນໆ',this)">📦 ອື່ນໆ</button>
+<button onclick="setCategory('ອື່ນໆ',this)">📦 ອື່ນໆ</option>
 </div>
 
-<div id="products" class="products"></div>
+<div id="products" class="products">
+    <div class="empty">⏳ ກຳລັງໂຫຼດຂໍ້ມູນສິນຄ້າ...</div>
+</div>
 
 </div>
 
@@ -837,7 +839,7 @@ textarea{ min-height:70px; }
     <input type="tel" id="originPhone" placeholder="020 XXXXXXXX">
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
     <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
-    <div class="qr"><img src="qr.png" alt="QR ບັນຊີ" onclick="viewFullMedia('qr.png', 'image')"></div>
+    <div class="qr"><img src="qr.png" alt="QR ບັນຊີ" loading="lazy" onclick="viewFullMedia('qr.png', 'image')"></div>
     <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
     <label>📎 ສະລິບໂອນເງິນ</label>
     <label class="upload" for="slip">
@@ -861,7 +863,7 @@ textarea{ min-height:70px; }
     <div class="deposit-box-style">
         <p style="margin:0; font-size:15px;">⚠️ <b style="color:#d35400;">ເງື່ອນໄຂການຊຳລະປາຍທາງ:</b></p>
         <p style="margin:5px 0; font-size:16px;">ຕ້ອງໂອນມັດຈຳ <b style="color:#e53935; font-size:18px;">20,000 ₭</b> ຕໍ່ 1 ອໍເດີ້</p>
-        <div class="qr"><img src="qr.png" alt="QR ໂອນມັດຈຳ" onclick="viewFullMedia('qr.png', 'image')"></div>
+        <div class="qr"><img src="qr.png" alt="QR ໂອນມັດຈຳ" loading="lazy" onclick="viewFullMedia('qr.png', 'image')"></div>
         <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
     </div>
     <label>📎 ສະລິບໂອນເງິນມັດຈຳ (20,000₭) <span style="color:red;">*ບັງຄັບ</span></label>
@@ -904,6 +906,7 @@ let selectedSize = "";
 let selectedModalQty = 1;
 let appliedCouponCode = ""; 
 
+// ດຶງຂໍ້ມູນສິນຄ້າຈາກ Firebase (ເພີ່ມ Error Handling + Fast Load)
 productsRef.on('value', (snapshot) => {
     const data = snapshot.val();
     const productList = [];
@@ -921,6 +924,9 @@ productsRef.on('value', (snapshot) => {
     products = productList;
     renderProducts();
     updateCartCount();
+}, (error) => {
+    console.error("Firebase Error:", error);
+    document.getElementById("products").innerHTML = `<div class="empty" style="color:red;">❌ ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດຂໍ້ມູນສິນຄ້າ</div>`;
 });
 
 function saveCart(){ localStorage.setItem("kop_cart", JSON.stringify(cart)); }
@@ -1217,9 +1223,10 @@ function renderProducts(){
 
         const currentMedia = mediaList[activeIdx] || mediaList[0];
 
+        // ເພີ່ມ loading="lazy" ເພື່ອໃຫ້ຮູບພາບໂຫຼດໄວຂຶ້ນ
         let mediaDisplay = currentMedia.type === 'video'
             ? `<video class="main-img" src="${currentMedia.url}" autoplay loop muted playsinline onclick="viewFullMedia('${currentMedia.url}', 'video')"></video>`
-            : `<img class="main-img" src="${currentMedia.url}" alt="${p.name}" onclick="viewFullMedia('${currentMedia.url}', 'image')">`;
+            : `<img class="main-img" src="${currentMedia.url}" alt="${p.name}" loading="lazy" onclick="viewFullMedia('${currentMedia.url}', 'image')">`;
 
         let slideControlsHTML = "";
         if (mediaList.length > 1) {
@@ -1380,7 +1387,7 @@ function updateModalUI(){
     if(activeMedia.type === 'video'){
         mediaContainer.innerHTML = `<video src="${activeMedia.url}" autoplay loop muted onclick="viewFullMedia('${activeMedia.url}', 'video')"></video>`;
     } else {
-        mediaContainer.innerHTML = `<img src="${activeMedia.url}" onclick="viewFullMedia('${activeMedia.url}', 'image')">`;
+        mediaContainer.innerHTML = `<img src="${activeMedia.url}" loading="lazy" onclick="viewFullMedia('${activeMedia.url}', 'image')">`;
     }
 
     let priceText = money(priceRes.totalPrice);
@@ -1411,7 +1418,7 @@ function updateModalUI(){
         variantSection.style.display = "block";
         document.getElementById("variantGrid").innerHTML = mediaList.map((m, idx) => `
             <div class="variant-chip ${idx === selectedMediaIndex ? 'active' : ''}" onclick="selectModalMedia(${idx})">
-                ${m.type === 'video' ? `<video src="${m.url}" muted></video>` : `<img src="${m.url}">`}
+                ${m.type === 'video' ? `<video src="${m.url}" muted></video>` : `<img src="${m.url}" loading="lazy">`}
                 <div>ແບບທີ ${idx + 1}</div>
             </div>
         `).join("");
@@ -1513,7 +1520,7 @@ function renderCart(){
         box.innerHTML = cart.map((item, index) => {
             let mDisplay = (item.media && item.media.type === 'video')
                 ? `<video src="${item.media.url}" muted onclick="viewFullMedia('${item.media.url}', 'video')"></video>`
-                : `<img src="${item.media ? item.media.url : 'https://via.placeholder.com/300'}" onclick="viewFullMedia('${item.media ? item.media.url : ''}', 'image')">`;
+                : `<img src="${item.media ? item.media.url : 'https://via.placeholder.com/300'}" loading="lazy" onclick="viewFullMedia('${item.media ? item.media.url : ''}', 'image')">`;
 
             const couponText = item.couponCode ? ` <span style="color:#0288d1; font-size:11px;">[🎟️${item.couponCode}]</span>` : '';
 
@@ -1630,17 +1637,6 @@ async function uploadSlipToImgBB(file) {
     }
 }
 
-// 📌 ຟັງຊັນຫັກສະຕັອກສິນຄ້າໃນ Firebase
-async function deductStock() {
-    for (let item of cart) {
-        const prod = products.find(p => p.id === item.id);
-        if (prod) {
-            const newStock = Math.max(0, (prod.stock || 0) - item.qty);
-            await productsRef.child(item.id).update({ stock: newStock });
-        }
-    }
-}
-
 async function sendToWhatsApp(type) {
     let name = "", address = "", phone = "", typeText = "";
     
@@ -1706,19 +1702,9 @@ async function sendToWhatsApp(type) {
         message += imageUrl ? `📸 *ສະລິບມັດຈຳ:* ${imageUrl}` : `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ`;
     }
 
-    // ຕັດສະຕັອກສິນຄ້າໃນຖານຂໍ້ມູນ
-    await deductStock();
-
-    // ລ້າງກະຕ່າ ແລະ ປິດໜ້າ Checkout
-    cart = [];
-    saveCart();
-    updateCartCount();
-    closeCheckout();
-
     window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
 }
 </script>
 
 </body>
 </html>
-
