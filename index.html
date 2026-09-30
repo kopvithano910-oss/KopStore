@@ -665,7 +665,7 @@ textarea{ min-height:70px; }
     </div>
 
     <div class="form-group">
-        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນເກົ່າ (ເຊັ່ນ: 1:99000, 3:290000)">
+        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂໂປໂມຊັນເກົ່າ (ເຊັ່ນ: 1:99000, 3:290000)">
     </div>
 
     <!-- 🎟️ ໂຊນຕັ້ງຄ່າຄູປັອງ/ໂຄດສ່ວນລົດເປີເຊັນ -->
@@ -723,7 +723,7 @@ textarea{ min-height:70px; }
 <button onclick="setCategory('ເຄື່ອງສໍາອາງ',this)">💄 ເຄື່ອງສໍາອາງ</button>
 <button onclick="setCategory('ເສື້ອຜ້າ',this)">👕 ເສື້ອຜ້າ</button>
 <button onclick="setCategory('ອຸປະກອນ',this)">📱 ອຸປະກອນ</button>
-<button onclick="setCategory('ອື່ນໆ',this)">📦 ອື່ນໆ</option>
+<button onclick="setCategory('ອື່ນໆ',this)">📦 ອື່ນໆ</button>
 </div>
 
 <div id="products" class="products">
@@ -759,7 +759,7 @@ textarea{ min-height:70px; }
             <div class="chip-grid" id="sizeGrid"></div>
         </div>
 
-        <!-- 🎟️ ອິນພຸດປ້ອນໂຄດສ່ວນລົດໃນ Pop-up -->
+        <!-- 🎟️️ ອິນພຸດປ້ອນໂຄດສ່ວນລົດໃນ Pop-up -->
         <div class="option-section" id="couponInputBox" style="display:none;">
             <div class="option-title">🎟️ ໃສ່ໂຄດສ່ວນລົດ (ຖ້າມີ):</div>
             <div style="display:flex; gap:6px;">
@@ -1579,7 +1579,7 @@ function renderCheckout(){
     const box = document.getElementById("checkoutItems");
     box.innerHTML = cart.map(item => `
         <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px;">
-            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}${item.couponCode ? ' (🎟️️'+item.couponCode+')' : ''} × ${item.qty}</span>
+            <span>${item.name}${item.color ? ' ['+item.color+']' : ''}${item.size ? ' ['+item.size+']' : ''}${item.couponCode ? ' (🎟'+item.couponCode+')' : ''} × ${item.qty}</span>
             <b>${money(item.unitPrice * item.qty)}</b>
         </div>
     `).join("");
@@ -1637,6 +1637,22 @@ async function uploadSlipToImgBB(file) {
     }
 }
 
+// 📦 ຟັງຊັນຕັດ/ລົບຈຳນວນສະຕັອກສິນຄ້າໃນ Firebase
+async function deductStockFromFirebase() {
+    for (const item of cart) {
+        if (!item.id) continue;
+        const itemRef = db.ref(`products/${item.id}`);
+        await itemRef.transaction((product) => {
+            if (product) {
+                if (product.stock !== undefined && product.stock !== null) {
+                    product.stock = Math.max(0, product.stock - item.qty);
+                }
+            }
+            return product;
+        });
+    }
+}
+
 async function sendToWhatsApp(type) {
     let name = "", address = "", phone = "", typeText = "";
     
@@ -1668,41 +1684,58 @@ async function sendToWhatsApp(type) {
     let imageUrl = "";
     const activeFile = type === 'origin' ? selectedFile : selectedDestFile;
 
-    if (activeFile) {
-        btn.disabled = true;
-        btn.innerText = "⏳ ກຳລັງອັບໂຫຼດຮູບສະລິບ...";
-        imageUrl = await uploadSlipToImgBB(activeFile);
+    btn.disabled = true;
+
+    try {
+        if (activeFile) {
+            btn.innerText = "⏳ ກຳລັງອັບໂຫຼດຮູບສະລິບ...";
+            imageUrl = await uploadSlipToImgBB(activeFile);
+        }
+
+        // 🔄 ເລີ່ມຕັດສະຕັອກໃນ Firebase
+        btn.innerText = "⏳ ກຳລັງອັບເດດສະຕັອກສິນຄ້າ...";
+        await deductStockFromFirebase();
+
+        let message = `🛒 *ລາຍການສັ່ງເຄື່ອງ KOP STORE*\n` +
+                      `--------------------\n` +
+                      `📌 *ປະເພດ:* ${typeText}\n` +
+                      `👤 *ຊື່:* ${name}\n` +
+                      `🏠 *ທີ່ຢູ່:* ${address}\n` +
+                      `📞 *ເບີໂທ:* ${phone}\n` +
+                      `--------------------\n` +
+                      `🛒 *ລາຍການສິນຄ້າ:* \n`;
+
+        cart.forEach(item => {
+            const colorText = item.color ? ` [ສີ: ${item.color}]` : "";
+            const sizeText = item.size ? ` [ຂະໜາດ: ${item.size}]` : "";
+            const variantText = item.variantName ? ` (${item.variantName})` : "";
+            const couponText = item.couponCode ? ` [🎟️ໂຄດ: ${item.couponCode}]` : "";
+            message += `• ${item.name}${variantText}${colorText}${sizeText}${couponText} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
+        });
+
+        message += `--------------------\n💰 *ລວມທັງໝົດ: ${money(getTotal())}*\n`;
+
+        if (type === 'origin') {
+            message += imageUrl ? `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}` : `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
+        } else {
+            message += `💵 *ຄ່າມັດຈຳ:* 20,000 ₭ (ໂອນແລ້ວ)\n`;
+            message += imageUrl ? `📸 *ສະລິບມັດຈຳ:* ${imageUrl}` : `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ`;
+        }
+
+        // 🧹 ເຄຼຍກະຕ່າສິນຄ້າ ແລະ ປິດໜ້າ Checkout
+        cart = [];
+        saveCart();
+        updateCartCount();
+        closeCheckout();
+
+        window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+    } catch (err) {
+        console.error("Error processing order:", err);
+        alert("ເກີດຂໍ້ຜິດພາດໃນການຕັດສະຕັອກ ຫຼື ອັບໂຫຼດຂໍ້ມູນ ກະລຸນາລອງໃໝ່!");
+    } finally {
         btn.disabled = false;
         btn.innerText = originalBtnText;
     }
-
-    let message = `🛒 *ລາຍການສັ່ງເຄື່ອງ KOP STORE*\n` +
-                  `--------------------\n` +
-                  `📌 *ປະເພດ:* ${typeText}\n` +
-                  `👤 *ຊື່:* ${name}\n` +
-                  `🏠 *ທີ່ຢູ່:* ${address}\n` +
-                  `📞 *ເບີໂທ:* ${phone}\n` +
-                  `--------------------\n` +
-                  `🛒 *ລາຍການສິນຄ້າ:* \n`;
-
-    cart.forEach(item => {
-        const colorText = item.color ? ` [ສີ: ${item.color}]` : "";
-        const sizeText = item.size ? ` [ຂະໜາດ: ${item.size}]` : "";
-        const variantText = item.variantName ? ` (${item.variantName})` : "";
-        const couponText = item.couponCode ? ` [🎟️ໂຄດ: ${item.couponCode}]` : "";
-        message += `• ${item.name}${variantText}${colorText}${sizeText}${couponText} × ${item.qty} = ${money(item.unitPrice * item.qty)}\n`;
-    });
-
-    message += `--------------------\n💰 *ລວມທັງໝົດ: ${money(getTotal())}*\n`;
-
-    if (type === 'origin') {
-        message += imageUrl ? `📸 *ສະລິບໂອນເງິນ:* ${imageUrl}` : `📸 *ສະລິບ:* ຍັງບໍ່ໄດ້ເລືອກຮູບ`;
-    } else {
-        message += `💵 *ຄ່າມັດຈຳ:* 20,000 ₭ (ໂອນແລ້ວ)\n`;
-        message += imageUrl ? `📸 *ສະລິບມັດຈຳ:* ${imageUrl}` : `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ`;
-    }
-
-    window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
 }
 </script>
 
