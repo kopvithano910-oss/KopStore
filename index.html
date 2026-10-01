@@ -58,7 +58,6 @@ header{
     font-size:14px;
 }
 
-/* 🌟 ຈຸດທີ 4: ປຸ່ມກະຕ່າ ແລະ ຈຸດແດງ (Cart Badge Notification) */
 .cart-btn{
     position: relative;
     background:#25D366;
@@ -163,37 +162,81 @@ header{
 .add-media-btn { width: 75px; height: 75px; flex-shrink: 0; border: 2px dashed #007bff; background: #eef6ff; color: #007bff; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 20px; text-align: center; }
 .add-media-btn span { font-size: 10px; margin-top: 2px; }
 
-.search{
-    width:100%;
-    padding:12px 15px;
-    border:1px solid #ddd;
-    border-radius:12px;
-    font-size:16px;
-    margin-bottom:15px;
+/* 🌟 ຈຸດທີ 6: ແກ້ໄຂ UI ช่องຄົ້ນຫາ + ປຸ່ມ 3 ຂີດ (Menu Category) */
+.search-cat-wrapper {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    margin-bottom: 15px;
 }
 
-.categories{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding-bottom:10px;
-    margin-bottom:15px;
+.cat-menu-btn {
+    background: #111;
+    color: white;
+    border: none;
+    padding: 0 16px;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
 }
 
-.categories button{
-    border:0;
-    background:white;
-    padding:8px 16px;
-    border-radius:20px;
-    white-space:nowrap;
-    cursor:pointer;
-    font-weight:bold;
-    font-size:14px;
+.cat-menu-btn:hover {
+    background: #333;
 }
 
-.categories button.active{
-    background:#111;
-    color:white;
+.search-input-box {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+}
+
+/* Dropdown Menu ສຳລັບໝວດໝູ່ */
+.cat-dropdown {
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border-radius: 14px;
+    width: 220px;
+    z-index: 90;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.cat-dropdown.show {
+    display: block;
+    animation: fadeInDown 0.2s ease-out;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cat-dropdown-item {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s;
+}
+
+.cat-dropdown-item:hover, .cat-dropdown-item.active {
+    background: #f0f4f8;
+    color: #007bff;
 }
 
 .products{
@@ -227,7 +270,6 @@ header{
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* UI GALLERY */
 .product-img-box{
     position:relative;
     width:100%;
@@ -633,14 +675,14 @@ textarea{ min-height:70px; }
 
 .empty{ text-align:center; color:#777; padding:40px 10px; font-size:16px; grid-column: 1 / -1; }
 
-/* 🌟 STYLES FOR CUSTOM MODALS */
+/* 🌟 STYLES FOR CUSTOM MODALS (ຈຸດທີ 2, 3, 4, 5) */
 .custom-modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
-    z-index: 500;
+    backdrop-filter: blur(5px);
+    z-index: 550;
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -654,37 +696,24 @@ textarea{ min-height:70px; }
     border-radius: 20px;
     padding: 25px 20px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
     animation: popupAnim 0.25s ease-out;
 }
 
-.success-icon-circle {
+.modal-icon-circle {
     width: 65px;
     height: 65px;
-    background: #e8f5e9;
-    color: #2e7d32;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 32px;
     margin: 0 auto 15px;
-    border: 2px solid #a5d6a7;
 }
 
-.logout-icon-circle {
-    width: 65px;
-    height: 65px;
-    background: #fff3e0;
-    color: #e65100;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
-    margin: 0 auto 15px;
-    border: 2px solid #ffe0b2;
-}
+.icon-danger { background: #ffebee; color: #d32f2f; border: 2px solid #ffcdd2; }
+.icon-warning { background: #fff3e0; color: #f57c00; border: 2px solid #ffe0b2; }
+.icon-success { background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7; }
 
 .custom-alert-btn {
     width: 100%;
@@ -720,7 +749,6 @@ textarea{ min-height:70px; }
 .admin-modal-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 6px; }
 .admin-modal-sub { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 20px; }
 
-/* 🌟 ຈຸດທີ 1: ປັບປຸງ UI ช่องລະຫັດຜ່ານ ໃຫ້ມີປຸ່ມກົດເບິ່ງລະຫັດຜ່ານ */
 .password-wrapper {
     position: relative;
     width: 100%;
@@ -730,7 +758,7 @@ textarea{ min-height:70px; }
 .admin-input-box {
     width: 100%;
     padding: 14px;
-    padding-right: 45px; /* ເວັ້ນໄລຍະໃຫ້ປຸ່ມຕາ */
+    padding-right: 45px;
     background: #2a2a32;
     border: 1px solid #444;
     border-radius: 12px;
@@ -755,7 +783,6 @@ textarea{ min-height:70px; }
     align-items: center;
     justify-content: center;
 }
-.toggle-password-btn:hover { color: #fff; }
 
 .forgot-btn {
     background: none;
@@ -776,8 +803,8 @@ textarea{ min-height:70px; }
 
 .btn-cancel {
     padding: 12px;
-    background: #333;
-    color: #ccc;
+    background: #dc3545;
+    color: white;
     border: none;
     border-radius: 10px;
     font-weight: bold;
@@ -786,7 +813,7 @@ textarea{ min-height:70px; }
 
 .btn-confirm {
     padding: 12px;
-    background: #007bff;
+    background: #28a745;
     color: white;
     border: none;
     border-radius: 10px;
@@ -813,7 +840,6 @@ textarea{ min-height:70px; }
 <div class="logo">🛍️ KOP STORE</div>
 <div class="header-btns">
     <button class="admin-login-btn" onclick="openAdminModal()">🔒 ຈັດການສິນຄ້າ</button>
-    <!-- 🌟 ຈຸດທີ 4: ເພີ່ມຈຸດແດງ cart-badge-dot -->
     <button class="cart-btn" onclick="openCart()">
         🛒 (<span id="cartCount">0</span>)
         <span id="cartBadgeDot" class="cart-badge-dot"></span>
@@ -906,14 +932,19 @@ textarea{ min-height:70px; }
     <button id="saveProdBtn" class="add-btn" style="background:#28a745; padding:12px;" onclick="addNewProduct()">✨ ບັນທຶກເພີ່ມສິນຄ້າ</button>
 </div>
 
-<input id="search" class="search" type="text" placeholder="🔎 ຄົ້ນຫາສິນຄ້າ..." oninput="renderProducts()">
-
-<div class="categories">
-<button class="active" onclick="setCategory('all',this)">ທັງໝົດ</button>
-<button onclick="setCategory('ເຄື່ອງສໍາອາງ',this)">💄 ເຄື່ອງສໍາອາງ</button>
-<button onclick="setCategory('ເສື້ອຜ້າ',this)">👕 ເສື້ອຜ້າ</button>
-<button onclick="setCategory('ອຸປະກອນ',this)">📱 ອຸປະກອນ</button>
-<button onclick="setCategory('ອື່ນໆ',this)">📦 ອື່ນໆ</button>
+<!-- 🌟 ຈຸດທີ 6: UI ຄົ້ນຫາ ພ້ອມປຸ່ມ 3 ຂີດ (☰) ຢູ່ຂ້າງຊ້າຍ -->
+<div class="search-cat-wrapper">
+    <button class="cat-menu-btn" onclick="toggleCategoryMenu(event)" title="ເລືອກໝວດໝູ່">☰</button>
+    <input id="search" class="search-input-box" type="text" placeholder="🔎 ຄົ້ນຫາສິນຄ້າ..." oninput="renderProducts()">
+    
+    <!-- Dropdown Menu ໝວດໝູ່ -->
+    <div id="catDropdown" class="cat-dropdown">
+        <div class="cat-dropdown-item active" onclick="selectCategory('all', this)"><span>🌐 ທັງໝົດ</span></div>
+        <div class="cat-dropdown-item" onclick="selectCategory('ເຄື່ອງສໍາອາງ', this)"><span>💄 ເຄື່ອງສໍາອາງ</span></div>
+        <div class="cat-dropdown-item" onclick="selectCategory('ເສື້ອຜ້າ', this)"><span>👕 ເສື້ອຜ້າ</span></div>
+        <div class="cat-dropdown-item" onclick="selectCategory('ອຸປະກອນ', this)"><span>📱 ອຸປະກອນ</span></div>
+        <div class="cat-dropdown-item" onclick="selectCategory('ອື່ນໆ', this)"><span>📦 ອື່ນໆ</span></div>
+    </div>
 </div>
 
 <div id="products" class="products">
@@ -1069,30 +1100,42 @@ textarea{ min-height:70px; }
 </div>
 </div>
 
-<!-- 1. MODAL ແຈ້ງເຕືອນເພີ່ມໃສ່ກະຕ່າ -->
-<div id="successCartModal" class="custom-modal-overlay">
+<!-- 🌟 ຈຸດທີ 1: MODAL ຢືນຢັນການຍົກເລີກສິນຄ້າ (ເຈົ້າແນ່ໃຈບໍ່ຈະຍົກເລີກ) -->
+<div id="confirmDeleteModal" class="custom-modal-overlay">
     <div class="custom-alert-box">
-        <div class="success-icon-circle">✓</div>
-        <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ເພີ່ມໃສ່ກະຕ່າຮຽບຮ້ອຍ!</h3>
-        <p style="font-size: 14px; color: #666;">ສິນຄ້າຖືກເພີ່ມລົງໃນກະຕ່າຂອງທ່ານແລ້ວ</p>
-        <button class="custom-alert-btn" onclick="closeSuccessModal()">ຕົກລົງ</button>
+        <div class="modal-icon-circle icon-danger">❓</div>
+        <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px; color:#222;">ເຈົ້າແນ່ໃຈບໍ່ຈະຍົກເລີກ?</h3>
+        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">ສິນຄ້ານີ້ຈະຖືກລຶບອອກຈາກກະຕ່າຂອງທ່ານ</p>
+        <div class="modal-actions-grid">
+            <button class="btn-cancel" onclick="closeConfirmDeleteModal()">ຍົກເລີກ</button>
+            <button class="btn-confirm" onclick="executeDeleteFromCart()">ຢືນຢັນ</button>
+        </div>
     </div>
 </div>
 
-<!-- 🌟 ຈຸດທີ 3: MODAL ອອກຈາກລະບົບ ADMIN ໃຫ້ຄວາມເທ້ ແລະ ທັນສະໄໝ -->
+<!-- 🌟 ຈຸດທີ 2, 3, 4, 5: CUSTOM MODERN ALERT MODALS -->
+<div id="customAlertModal" class="custom-modal-overlay">
+    <div class="custom-alert-box">
+        <div id="customAlertIcon" class="modal-icon-circle icon-warning">⚠️</div>
+        <h3 id="customAlertTitle" style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ແຈ້ງເຕືອນ</h3>
+        <p id="customAlertMsg" style="font-size: 14px; color: #666; margin-bottom: 10px;">ຂໍ້ຄວາມແຈ້ງເຕືອນ</p>
+        <button class="custom-alert-btn" id="customAlertBtn" onclick="closeCustomAlert()">ຕົກລົງ</button>
+    </div>
+</div>
+
+<!-- MODAL ອອກຈາກລະບົບ ADMIN -->
 <div id="adminLogoutModal" class="custom-modal-overlay">
     <div class="custom-alert-box">
-        <div class="logout-icon-circle">🚪</div>
+        <div class="modal-icon-circle icon-warning">🚪</div>
         <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ອອກຈາກລະບົບຮຽບຮ້ອຍ</h3>
         <p style="font-size: 14px; color: #666;">ທ່ານໄດ້ອອກຈາກລະບົບ Admin ເປັນທີ່ຮຽບຮ້ອຍແລ້ວ!</p>
         <button class="custom-alert-btn" style="background: #e65100; box-shadow: 0 4px 12px rgba(230,81,0,0.3);" onclick="closeAdminLogoutModal()">ຕົກລົງ</button>
     </div>
 </div>
 
-<!-- 🌟 ຈຸດທີ 1 & ຈຸດທີ 2: MODAL ເຂົ້າສູ່ລະບົບ ADMIN + ປຸ່ມຕາເບິ່ງລະຫັດ + ຟອມລືມລະຫັດຜ່ານ PIN (555296) -->
+<!-- MODAL ເຂົ້າສູ່ລະບົບ ADMIN + PIN -->
 <div id="adminLoginModal" class="custom-modal-overlay">
     <div class="admin-login-modal">
-        <!-- ຟອມເຂົ້າສູ່ລະບົບປົກກະຕິ -->
         <div id="loginFormSection">
             <div class="admin-modal-title">🔐 ເຂົ້າສູ່ລະບົບເຈົ້າຂອງຮ້ານ</div>
             <div class="admin-modal-sub">ກະລຸນາກອກລະຫັດຜ່ານເພື່ອຈັດການສິນຄ້າ</div>
@@ -1105,12 +1148,11 @@ textarea{ min-height:70px; }
             <button class="forgot-btn" onclick="showResetPasswordForm()">🔑 ລືມລະຫັດຜ່ານ?</button>
             
             <div class="modal-actions-grid">
-                <button class="btn-cancel" onclick="closeAdminModal()">ຍົກເລີກ</button>
-                <button class="btn-confirm" onclick="submitAdminLogin()">ຕົກລົງ</button>
+                <button class="btn-cancel" style="background:#555;" onclick="closeAdminModal()">ຍົກເລີກ</button>
+                <button class="btn-confirm" style="background:#007bff;" onclick="submitAdminLogin()">ຕົກລົງ</button>
             </div>
         </div>
 
-        <!-- 🌟 ຈຸດທີ 2: ຟອມກູ້ຄືນ/ປ່ຽນລະຫັດຜ່ານ ໂດຍໃຊ້ PIN: 555296 -->
         <div id="resetFormSection" style="display: none;">
             <div class="admin-modal-title">🔑 ປ່ຽນລະຫັດຜ່ານເຈົ້າຂອງຮ້ານ</div>
             <div class="admin-modal-sub">ໃສ່ລະຫັດ PIN ຢືນຢັນເພື່ອຕັ້ງລະຫັດຜ່ານໃໝ່</div>
@@ -1125,7 +1167,7 @@ textarea{ min-height:70px; }
             </div>
 
             <div class="modal-actions-grid" style="margin-top: 15px;">
-                <button class="btn-cancel" onclick="showLoginForm()">ກັບຄືນ</button>
+                <button class="btn-cancel" style="background:#555;" onclick="showLoginForm()">ກັບຄືນ</button>
                 <button class="btn-confirm" style="background: #28a745;" onclick="submitResetPassword()">ປ່ຽນລະຫັດ</button>
             </div>
         </div>
@@ -1136,7 +1178,7 @@ textarea{ min-height:70px; }
 const MY_WHATSAPP_NUMBER = "8562055970908"; 
 const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
 let DEFAULT_ADMIN_PASSWORD = "kop78900"; 
-const RECOVERY_PIN = "555296"; // 🌟 ຈຸດທີ 2: PIN ສຳລັບປ່ຽນລະຫັດຜ່ານ
+const RECOVERY_PIN = "555296"; 
 
 // Firebase Init
 const firebaseConfig = { databaseURL: "https://kopstore-1040b-default-rtdb.firebaseio.com/" };
@@ -1160,6 +1202,7 @@ let selectedColor = "";
 let selectedSize = "";
 let selectedModalQty = 1;
 let appliedCouponCode = ""; 
+let pendingDeleteCartIndex = null; // 🌟 ຕົວແປເກັບດັດຊະນີສິນຄ້າທີ່ຈະລຶບ
 
 // ດຶງລະຫັດຜ່ານ Admin ຈາກ Firebase
 adminConfigRef.child('password').on('value', (snapshot) => {
@@ -1197,7 +1240,83 @@ function money(number){
     return "₭" + Number(number).toLocaleString();
 }
 
-/* 🌟 ຈຸດທີ 1: ຟັງຊັນ ກົດເບິ່ງ / ເຊື່ອງລະຫັດຜ່ານ */
+/* 🌟 CUSTOM ALERT FUNCTIONS (ຈຸດທີ 2, 3, 4, 5) */
+function showAlert(title, msg, type = 'warning'){
+    const modal = document.getElementById("customAlertModal");
+    const iconEl = document.getElementById("customAlertIcon");
+    const titleEl = document.getElementById("customAlertTitle");
+    const msgEl = document.getElementById("customAlertMsg");
+    const btnEl = document.getElementById("customAlertBtn");
+
+    titleEl.innerText = title;
+    msgEl.innerText = msg;
+
+    iconEl.className = "modal-icon-circle";
+    if(type === 'success'){
+        iconEl.classList.add("icon-success");
+        iconEl.innerText = "✓";
+        btnEl.style.background = "#28a745";
+    } else if(type === 'danger'){
+        iconEl.classList.add("icon-danger");
+        iconEl.innerText = "✕";
+        btnEl.style.background = "#dc3545";
+    } else {
+        iconEl.classList.add("icon-warning");
+        iconEl.innerText = "⚠️";
+        btnEl.style.background = "#007bff";
+    }
+
+    modal.classList.add("show");
+}
+
+function closeCustomAlert(){
+    document.getElementById("customAlertModal").classList.remove("show");
+}
+
+/* 🌟 ຈຸດທີ 1: Modal ຢືນຢັນການຍົກເລີກສິນຄ້າ */
+function removeFromCart(index){
+    pendingDeleteCartIndex = index;
+    document.getElementById("confirmDeleteModal").classList.add("show");
+}
+
+function closeConfirmDeleteModal(){
+    pendingDeleteCartIndex = null;
+    document.getElementById("confirmDeleteModal").classList.remove("show");
+}
+
+function executeDeleteFromCart(){
+    if(pendingDeleteCartIndex !== null && pendingDeleteCartIndex !== undefined){
+        cart.splice(pendingDeleteCartIndex, 1);
+        saveCart();
+        updateCartCount();
+        renderCart();
+    }
+    closeConfirmDeleteModal();
+}
+
+/* 🌟 ຈຸດທີ 6: ຟັງຊັນ ປຸ່ມ 3 ຂີດ (Dropdown Category Menu) */
+function toggleCategoryMenu(e){
+    e.stopPropagation();
+    document.getElementById("catDropdown").classList.toggle("show");
+}
+
+function selectCategory(cat, el){
+    currentCategory = cat;
+    document.querySelectorAll(".cat-dropdown-item").forEach(item => item.classList.remove("active"));
+    if(el) el.classList.add("active");
+    document.getElementById("catDropdown").classList.remove("show");
+    renderProducts();
+}
+
+// ເຊື່ອງ Dropdown ເມື່ອກົດບ່ອນອື່ນ
+document.addEventListener("click", function(e) {
+    const dropdown = document.getElementById("catDropdown");
+    const menuBtn = document.querySelector(".cat-menu-btn");
+    if (dropdown && !dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
+        dropdown.classList.remove("show");
+    }
+});
+
 function togglePasswordVisibility(inputId, btn) {
     const input = document.getElementById(inputId);
     if (input.type === "password") {
@@ -1209,7 +1328,6 @@ function togglePasswordVisibility(inputId, btn) {
     }
 }
 
-/* 🌟 ຈັດການປັອບອັບ ADMIN & LOGOUT (ຈຸດທີ 2 & 3) */
 function openAdminModal(){
     if(!isAdminLoggedIn){
         showLoginForm();
@@ -1219,7 +1337,6 @@ function openAdminModal(){
     } else {
         isAdminLoggedIn = false;
         document.getElementById("adminCard").classList.remove("show");
-        // 🌟 ຈຸດທີ 3: ສະແດງ UI ອອກຈາກລະບົບ Admin ແບບເທ້ໆ
         showAdminLogoutModal();
         renderProducts();
     }
@@ -1235,14 +1352,13 @@ function submitAdminLogin(){
         isAdminLoggedIn = true;
         document.getElementById("adminCard").classList.add("show");
         closeAdminModal();
-        showSuccessModal();
+        showAlert("ເຂົ້າສູ່ລະບົບສຳເລັດ", "ຍິນດີຕ້ອນຮັບເຈົ້າຂອງຮ້ານ!", "success");
         renderProducts();
     } else {
-        alert("❌ ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
+        showAlert("ຂໍ້ຜິດພາດ", "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!", "danger");
     }
 }
 
-/* 🌟 ຈຸດທີ 2: ສະແດງ ແລະ ປະມວນຜົນຟອມລືມລະຫັດຜ່ານຜ່ານ PIN (555296) */
 function showResetPasswordForm() {
     document.getElementById("loginFormSection").style.display = "none";
     document.getElementById("resetFormSection").style.display = "block";
@@ -1260,40 +1376,30 @@ function submitResetPassword() {
     const newPwd = document.getElementById("newAdminPasswordInput").value.trim();
 
     if (pin !== RECOVERY_PIN) {
-        alert("❌ ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ!");
+        showAlert("ຂໍ້ຜິດພາດ", "ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ!", "danger");
         return;
     }
 
     if (!newPwd) {
-        alert("⚠️ ກະລຸນາກອກລະຫັດຜ່ານໃໝ່!");
+        showAlert("ແຈ້ງເຕືອນ", "ກະລຸນາກອກລະຫັດຜ່ານໃໝ່!", "warning");
         return;
     }
 
     adminConfigRef.set({ password: newPwd }).then(() => {
-        alert("✅ ປ່ຽນລະຫັດຜ່ານ Admin ສຳເລັດແລ້ວ!");
+        showAlert("ສຳເລັດ", "ປ່ຽນລະຫັດຜ່ານ Admin ສຳເລັດແລ້ວ!", "success");
         showLoginForm();
         document.getElementById("adminPasswordInput").value = newPwd;
     }).catch(err => {
-        alert("❌ ເກີດຂໍ້ຜິດພາດ: " + err.message);
+        showAlert("ຂໍ້ຜິດພາດ", "ເກີດຂໍ້ຜິດພາດ: " + err.message, "danger");
     });
 }
 
-/* 🌟 ຈຸດທີ 3: Custom Modal ສຳລັບອອກຈາກລະບົບ Admin */
 function showAdminLogoutModal(){
     document.getElementById("adminLogoutModal").classList.add("show");
 }
 
 function closeAdminLogoutModal(){
     document.getElementById("adminLogoutModal").classList.remove("show");
-}
-
-/* Custom Alert ເພີ່ມໃສ່ກະຕ່າ */
-function showSuccessModal(){
-    document.getElementById("successCartModal").classList.add("show");
-}
-
-function closeSuccessModal(){
-    document.getElementById("successCartModal").classList.remove("show");
 }
 
 function viewFullMedia(url, type='image'){
@@ -1387,7 +1493,7 @@ function addNewProduct(){
     const couponExpiry = document.getElementById("newProdCouponExpiry").value;
 
     if(!name || isNaN(normalPrice) || normalPrice <= 0){
-        alert("ກະລຸນາກອກຊື່ ແລະ ລາຄາເດີມສິນຄ້າໃຫ້ຖືກຕ້ອງ!");
+        showAlert("ແຈ້ງເຕືອນ", "ກະລຸນາກອກຊື່ ແລະ ລາຄາເດີມສິນຄ້າໃຫ້ຖືກຕ້ອງ!", "warning");
         return;
     }
 
@@ -1451,7 +1557,7 @@ function addNewProduct(){
 
         document.getElementById("previewGallery").innerHTML = "";
         tempMediaArray = [];
-        alert("ເພີ່ມສິນຄ້າສຳເລັດ!");
+        showAlert("ສຳເລັດ", "ເພີ່ມສິນຄ້າສຳເລັດ!", "success");
     }).finally(() => {
         saveBtn.disabled = false;
         saveBtn.innerText = "✨ ບັນທຶກເພີ່ມສິນຄ້າ";
@@ -1464,7 +1570,7 @@ function togglePinProduct(id, currentStatus){
 
 function deleteProduct(id){
     if(confirm("ທ່ານຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")){
-        productsRef.child(id).remove().then(() => alert("ລຶບສິນຄ້າສຳເລັດ!"));
+        productsRef.child(id).remove().then(() => showAlert("ສຳເລັດ", "ລຶບສິນຄ້າສຳເລັດ!", "success"));
     }
 }
 
@@ -1807,7 +1913,10 @@ function confirmAddToCart(){
     const existingItem = cart.find(x => x.cartKey === itemKey);
     const totalQty = (existingItem ? existingItem.qty : 0) + selectedModalQty;
 
-    if(prod.stock && totalQty > prod.stock){ alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!"); return; }
+    if(prod.stock && totalQty > prod.stock){ 
+        showAlert("ຂໍ້ຜິດພາດ", "ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!", "warning"); 
+        return; 
+    }
 
     const priceRes = calculatePriceForQty(prod, totalQty, appliedCouponCode);
     const unitPrice = Math.round(priceRes.totalPrice / totalQty);
@@ -1830,19 +1939,9 @@ function confirmAddToCart(){
     saveCart();
     updateCartCount();
     closeOptionModal();
-    
-    // ສະແດງ Alert ເພີ່ມສິນຄ້າ
-    showSuccessModal();
+    showAlert("ເພີ່ມໃສ່ກະຕ່າແລ້ວ", "ເພີ່ມສິນຄ້າລົງໃນກະຕ່າຮຽບຮ້ອຍ!", "success");
 }
 
-function setCategory(category, button){
-    currentCategory = category;
-    document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
-    button.classList.add("active");
-    renderProducts();
-}
-
-/* 🌟 ຈຸດທີ 4: ອັບເດດຈຳນວນ ແລະ ສະແດງຈຸດແດງຢູ່ປຸ່ມກະຕ່າ */
 function updateCartCount(){ 
     const totalQty = cart.reduce((sum,item)=>sum+item.qty,0);
     document.getElementById("cartCount").innerText = totalQty; 
@@ -1884,6 +1983,7 @@ function renderCart(){
                         <button onclick="changeCartQty(${index},1)">+</button>
                     </div>
                 </div>
+                <!-- 🌟 ຈຸດທີ 1: ເມື່ອກົດປຸ່ມ X ຈະເປີດ Modal ຢືນຢັນ -->
                 <button class="remove-item-btn" onclick="removeFromCart(${index})">&times;</button>
             </div>
             `;
@@ -1892,8 +1992,6 @@ function renderCart(){
     document.getElementById("cartTotal").innerText = "ລວມ: " + money(getTotal());
 }
 
-function removeFromCart(index){ cart.splice(index, 1); saveCart(); updateCartCount(); renderCart(); }
-
 function changeCartQty(index, amount){
     if(cart[index]){
         const item = cart[index];
@@ -1901,9 +1999,13 @@ function changeCartQty(index, amount){
         const newQty = item.qty + amount;
 
         if(newQty <= 0){
-            cart.splice(index, 1);
+            removeFromCart(index); // ໃຊ້ Modal ຢືນຢັນການຍົກເລີກ
+            return;
         } else {
-            if(p && newQty > p.stock){ alert("ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!"); return; }
+            if(p && newQty > p.stock){ 
+                showAlert("ແຈ້ງເຕືອນ", "ສິນຄ້າໃນສະຕັອກບໍ່ພໍ!", "warning"); 
+                return; 
+            }
             item.qty = newQty;
             if(p){
                 const priceRes = calculatePriceForQty(p, newQty, item.couponCode || "");
@@ -1915,7 +2017,11 @@ function changeCartQty(index, amount){
 }
 
 function openCheckout(){
-    if(cart.length === 0){ alert("ກະຕ່າຍັງວ່າງ!"); return; }
+    /* 🌟 ຈຸດທີ 2: ເຕືອນເມື່ອກະຕ່າຍັງວ່າງດ້ວຍ Custom Alert Modal */
+    if(cart.length === 0){ 
+        showAlert("ແຈ້ງເຕືອນ", "ກະຕ່າຍັງວ່າງ! ກະລຸນາເລືອກສິນຄ້າກ່ອນ", "warning"); 
+        return; 
+    }
     closeCart();
     renderCheckout();
     document.getElementById("checkout").classList.add("show");
@@ -2015,13 +2121,14 @@ async function sendToWhatsApp(type) {
         phone = document.getElementById("destPhone").value.trim();
 
         if (!selectedDestFile) {
-            alert("ກະລຸນາອັບໂຫຼດສະລິບໂອນເງິນມັດຈຳ 20,000 ₭ ກ່ອນ!");
+            showAlert("ແຈ້ງເຕືອນ", "ກະລຸນາອັບໂຫຼດສະລິບໂອນເງິນມັດຈຳ 20,000 ₭ ກ່ອນ!", "warning");
             return;
         }
     }
 
+    /* 🌟 ຈຸດທີ 3: ເຕືອນໃຫ້ກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນດ້ວຍ Custom Modern Modal */
     if (!name || !address || !phone) {
-        alert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!");
+        showAlert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!", "ກະລຸນາປ້ອນຊື່, ທີ່ຢູ່ ແລະ ເບີໂທຕິດຕໍ່ໃຫ້ຄົບຖ້ວນກ່ອນດຳເນີນການ.", "warning");
         return;
     }
 
@@ -2076,7 +2183,7 @@ async function sendToWhatsApp(type) {
         window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
     } catch (err) {
         console.error("Error processing order:", err);
-        alert("ເກີດຂໍ້ຜິດພາດໃນການຕັດສະຕັອກ ຫຼື ອັບໂຫຼດຂໍ້ມູນ ກະລຸນາລອງໃໝ່!");
+        showAlert("ຂໍ້ຜິດພາດ", "ເກີດຂໍ້ຜິດພາດໃນການຕັດສະຕັອກ ຫຼື ອັບໂຫຼດຂໍ້ມູນ ກະລຸນາລອງໃໝ່!", "danger");
     } finally {
         btn.disabled = false;
         btn.innerText = originalBtnText;
