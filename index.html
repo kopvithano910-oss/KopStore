@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>KOP STORE - E-Commerce</title>
+<title>SK-KOP STORE.E-Commerce</title>
 
 <style>
 *{
@@ -683,7 +683,7 @@ textarea{ min-height:70px; }
     inset: 0;
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(5px);
-    z-index: 1000; /* 🌟 ປັບ z-index ໃຫ້ຢູ່ສູງສຸດສະເໝີ */
+    z-index: 1000; 
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -838,7 +838,7 @@ textarea{ min-height:70px; }
 <!-- HEADER -->
 <header>
 <div class="header-top">
-<div class="logo">🛍️ KOP STORE</div>
+<div class="logo">🛍 SK-KOP STORE</div>
 <div class="header-btns">
     <button class="admin-login-btn" onclick="openAdminModal()">🔒 ຈັດການສິນຄ້າ</button>
     <button class="cart-btn" onclick="openCart()">
@@ -985,7 +985,7 @@ textarea{ min-height:70px; }
         <div class="option-section" id="couponInputBox" style="display:none;">
             <div class="option-title">🎟️ ໃສ່ໂຄດສ່ວນລົດ (ຖ້າມີ):</div>
             <div style="display:flex; gap:6px;">
-                <input type="text" id="inputCouponCode" placeholder="ກອກໂຄດສ່ວນລົດ..." style="text-transform:uppercase; padding:8px;">
+                <input type="text" id="inputCouponCode" placeholder="ກອກໂຄດສ່ວນລົດ..." style="padding:8px;">
                 <button type="button" onclick="applyCoupon()" style="padding:8px 14px; background:#0288d1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ນຳໃຊ້</button>
             </div>
             <div id="couponMsg" style="font-size:12px; margin-top:4px;"></div>
@@ -1318,7 +1318,7 @@ function togglePasswordVisibility(inputId, btn) {
         btn.innerText = "🙈";
     } else {
         input.type = "password";
-        btn.innerText = "👁️️";
+        btn.innerText = "👁";
     }
 }
 
@@ -1341,7 +1341,6 @@ function closeAdminModal(){
     document.getElementById("adminLoginModal").classList.remove("show");
 }
 
-// 🌟 ແກ້ໄຂຈຸດທີ 1: ເມື່ອໃສ່ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ ໃຫ້ Alert ສະແດງເທິງ Modal
 function submitAdminLogin(){
     const inputPwd = document.getElementById("adminPasswordInput").value;
     if(inputPwd === DEFAULT_ADMIN_PASSWORD){
@@ -1351,7 +1350,7 @@ function submitAdminLogin(){
         showAlert("ເຂົ້າສູ່ລະບົບສຳເລັດ", "ຍິນດີຕ້ອນຮັບເຈົ້າຂອງຮ້ານ!", "success");
         renderProducts();
     } else {
-        closeAdminModal(); // 🌟 ປິດ Modal ເຂົ້າສູ່ລະບົບອອກກ່ອນ ເພື່ອໃຫ້ Alert ເທິງສຸດສະແດງຊັດເຈນ
+        closeAdminModal();
         showAlert("ຂໍ້ຜິດພາດ", "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!", "danger");
     }
 }
@@ -1368,13 +1367,12 @@ function showLoginForm() {
     document.getElementById("loginFormSection").style.display = "block";
 }
 
-// 🌟 ແກ້ໄຂຈຸດທີ 2 & 3: ເມື່ອໃສ່ລະຫັດ PIN ບໍ່ຖືກ ຫຼື ປ່ຽນລະຫັດສຳເລັດ ໃຫ້ Alert ສະແດງຢ່າງຖືກຕ້ອງ
 function submitResetPassword() {
     const pin = document.getElementById("pinInput").value.trim();
     const newPwd = document.getElementById("newAdminPasswordInput").value.trim();
 
     if (pin !== RECOVERY_PIN) {
-        closeAdminModal(); // 🌟 ປິດ Modal ລືມລະຫັດຜ່ານອອກກ່ອນ ເພື່ອໃຫ້ Alert ເທິງສຸດສະແດງຊັດເຈນ
+        closeAdminModal();
         showAlert("ຂໍ້ຜິດພາດ", "ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ!", "danger");
         return;
     }
@@ -1386,7 +1384,7 @@ function submitResetPassword() {
     }
 
     adminConfigRef.set({ password: newPwd }).then(() => {
-        closeAdminModal(); // 🌟 ປິດ Modal ລືມລະຫັດຜ່ານອອກ
+        closeAdminModal();
         showAlert("ສຳເລັດ", "ປ່ຽນລະຫັດຜ່ານ Admin ສຳເລັດແລ້ວ!", "success");
         showLoginForm();
         document.getElementById("adminPasswordInput").value = newPwd;
@@ -1562,6 +1560,7 @@ function editProduct(id){
     document.getElementById("adminCard").scrollIntoView({ behavior: 'smooth' });
 }
 
+// 🌟 ແກ້ໄຂຟັງຊັນບັນທຶກສິນຄ້າ: ເອົາ .toUpperCase() ອອກ ເພື່ອໃຫ້ຮອງຮັບພາສາລາວ/ສັນຍາລັກ
 function addNewProduct(){
     const name = document.getElementById("newProdName").value.trim();
     const normalPrice = Number(document.getElementById("newProdPrice").value);
@@ -1574,7 +1573,7 @@ function addNewProduct(){
     const isPinned = document.getElementById("newProdPin").checked;
     const desc = document.getElementById("newProdDesc").value.trim();
 
-    const couponCode = document.getElementById("newProdCouponCode").value.trim().toUpperCase();
+    const couponCode = document.getElementById("newProdCouponCode").value.trim(); // 🌟 ຮອງຮັບທຸກພາສາ
     const couponDiscount = Number(document.getElementById("newProdCouponDiscount").value);
     const couponMinQty = Number(document.getElementById("newProdCouponMinQty").value);
     const couponExpiry = document.getElementById("newProdCouponExpiry").value;
@@ -1609,7 +1608,7 @@ function addNewProduct(){
         coupon = {
             code: couponCode,
             discount: couponDiscount,
-            minQty: isNaN(couponMinQty) ? 1 : couponMinQty,
+            minQty: isNaN(couponMinQty) || couponMinQty < 1 ? 1 : couponMinQty,
             expiry: couponExpiry ? new Date(couponExpiry).toISOString() : null
         };
     }
@@ -1658,13 +1657,14 @@ function isPromoActive(product){
     return (new Date(product.timerEnd).getTime()) > (new Date().getTime());
 }
 
-function isCouponValid(coupon, qty = 1){
+// 🌟 ແກ້ໄຂການເຊັກຄູປ໋ອງ: ເຊັກພຽງແຕ່ໂຄດ ແລະ ວັນໝົດອາຍຸ (ສ່ວນ MinQty ໃຫ້ໄປແຈ້ງເຕືອນຕອນກົດນຳໃຊ້)
+function isCouponValid(coupon){
     if(!coupon || !coupon.code) return false;
     if(coupon.expiry && new Date(coupon.expiry).getTime() < new Date().getTime()) return false;
-    if(coupon.minQty && qty < coupon.minQty) return false;
     return true;
 }
 
+// 🌟 ແກ້ໄຂການຄິດໄລ່ລາຄາເມື່ອໃຊ້ໂຄດສ່ວນລົດ
 function calculatePriceForQty(product, qty, inputCode = ""){
     let totalPrice = 0;
     let isPromoApplied = false;
@@ -1691,8 +1691,8 @@ function calculatePriceForQty(product, qty, inputCode = ""){
         totalPrice = (product.normalPrice || 0) * qty;
     }
 
-    if(product.coupon && inputCode && inputCode.toUpperCase() === product.coupon.code.toUpperCase()){
-        if(isCouponValid(product.coupon, qty)){
+    if(product.coupon && inputCode && inputCode.trim() === product.coupon.code.trim()){
+        if(isCouponValid(product.coupon) && qty >= (product.coupon.minQty || 1)){
             const discountAmount = totalPrice * (product.coupon.discount / 100);
             totalPrice = Math.max(0, totalPrice - discountAmount);
             isCouponApplied = true;
@@ -1874,8 +1874,9 @@ function openOptionModal(id){
 
 function closeOptionModal(){ document.getElementById("optionModal").classList.remove("show"); }
 
+// 🌟 ແກ້ໄຂຟັງຊັນການນຳໃຊ້ຄູປ໋ອງ:
 function applyCoupon(){
-    const code = document.getElementById("inputCouponCode").value.trim().toUpperCase();
+    const code = document.getElementById("inputCouponCode").value.trim();
     const msg = document.getElementById("couponMsg");
     const prod = currentModalProduct;
 
@@ -1884,7 +1885,7 @@ function applyCoupon(){
         return;
     }
 
-    if(code !== prod.coupon.code.toUpperCase()){
+    if(code !== prod.coupon.code.trim()){
         msg.style.color = "red"; msg.innerText = "❌ ໂຄດສ່ວນລົດບໍ່ຖືກຕ້ອງ";
         return;
     }
@@ -1935,6 +1936,7 @@ function updateModalUI(){
     if(selectedSize) selectedText.push(`ຂະໜາດ: ${selectedSize}`);
     document.getElementById("modalSelectedText").innerText = selectedText.length > 0 ? "ເລືອກ: " + selectedText.join(" | ") : "ເລືອກແລ້ວ";
 
+    // 🌟 ໃຫ້ກ່ອງໃສ່ໂຄດສ່ວນລົດສະແດງສະເໝີຖ້າສິນຄ້ານັ້ນມີການຕັ້ງຄ່າຄູປ໋ອງໄວ້
     const couponInputBox = document.getElementById("couponInputBox");
     if(prod.coupon && prod.coupon.code && isCouponValid(prod.coupon)){
         couponInputBox.style.display = "block";
