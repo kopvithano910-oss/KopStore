@@ -58,7 +58,9 @@ header{
     font-size:14px;
 }
 
+/* 🌟 ຈຸດທີ 4: ປຸ່ມກະຕ່າ ແລະ ຈຸດແດງ (Cart Badge Notification) */
 .cart-btn{
+    position: relative;
     background:#25D366;
     color:white;
     border:0;
@@ -67,6 +69,29 @@ header{
     font-size:15px;
     font-weight:bold;
     cursor:pointer;
+}
+
+.cart-badge-dot {
+    display: none;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    background-color: #ff3b30;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: pulseBadge 1.5s infinite;
+}
+
+.cart-badge-dot.active {
+    display: block;
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255, 59, 48, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
 }
 
 .hero{
@@ -608,6 +633,167 @@ textarea{ min-height:70px; }
 
 .empty{ text-align:center; color:#777; padding:40px 10px; font-size:16px; grid-column: 1 / -1; }
 
+/* 🌟 STYLES FOR CUSTOM MODALS */
+.custom-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.custom-modal-overlay.show { display: flex; }
+
+.custom-alert-box {
+    background: #fff;
+    width: 100%;
+    max-width: 340px;
+    border-radius: 20px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: popupAnim 0.25s ease-out;
+}
+
+.success-icon-circle {
+    width: 65px;
+    height: 65px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 15px;
+    border: 2px solid #a5d6a7;
+}
+
+.logout-icon-circle {
+    width: 65px;
+    height: 65px;
+    background: #fff3e0;
+    color: #e65100;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin: 0 auto 15px;
+    border: 2px solid #ffe0b2;
+}
+
+.custom-alert-btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 18px;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.admin-login-modal {
+    background: #1e1e24;
+    color: #fff;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 20px;
+    padding: 25px 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    border: 1px solid #333;
+    animation: popupAnim 0.25s ease-out;
+}
+
+@keyframes popupAnim {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.admin-modal-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 6px; }
+.admin-modal-sub { font-size: 13px; color: #aaa; text-align: center; margin-bottom: 20px; }
+
+/* 🌟 ຈຸດທີ 1: ປັບປຸງ UI ช่องລະຫັດຜ່ານ ໃຫ້ມີປຸ່ມກົດເບິ່ງລະຫັດຜ່ານ */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.admin-input-box {
+    width: 100%;
+    padding: 14px;
+    padding-right: 45px; /* ເວັ້ນໄລຍະໃຫ້ປຸ່ມຕາ */
+    background: #2a2a32;
+    border: 1px solid #444;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+}
+.admin-input-box:focus { border-color: #007bff; }
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.toggle-password-btn:hover { color: #fff; }
+
+.forgot-btn {
+    background: none;
+    border: none;
+    color: #0088ff;
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 15px;
+    text-decoration: underline;
+}
+
+.modal-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-cancel {
+    padding: 12px;
+    background: #333;
+    color: #ccc;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-confirm {
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 @media(min-width:768px){
     .products{ grid-template-columns:repeat(4,1fr); gap:15px; }
     .product-img-box{ height:220px; }
@@ -626,8 +812,12 @@ textarea{ min-height:70px; }
 <div class="header-top">
 <div class="logo">🛍️ KOP STORE</div>
 <div class="header-btns">
-    <button class="admin-login-btn" onclick="toggleAdmin()">🔒 ຈັດການສິນຄ້າ</button>
-    <button class="cart-btn" onclick="openCart()">🛒 (<span id="cartCount">0</span>)</button>
+    <button class="admin-login-btn" onclick="openAdminModal()">🔒 ຈັດການສິນຄ້າ</button>
+    <!-- 🌟 ຈຸດທີ 4: ເພີ່ມຈຸດແດງ cart-badge-dot -->
+    <button class="cart-btn" onclick="openCart()">
+        🛒 (<span id="cartCount">0</span>)
+        <span id="cartBadgeDot" class="cart-badge-dot"></span>
+    </button>
 </div>
 </div>
 </header>
@@ -665,7 +855,7 @@ textarea{ min-height:70px; }
     </div>
 
     <div class="form-group">
-        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂໂປໂມຊັນເກົ່າ (ເຊັ່ນ: 1:99000, 3:290000)">
+        <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນເກົ່າ (ເຊັ່ນ: 1:99000, 3:290000)">
     </div>
 
     <!-- 🎟️ ໂຊນຕັ້ງຄ່າຄູປັອງ/ໂຄດສ່ວນລົດເປີເຊັນ -->
@@ -759,7 +949,7 @@ textarea{ min-height:70px; }
             <div class="chip-grid" id="sizeGrid"></div>
         </div>
 
-        <!-- 🎟️️ ອິນພຸດປ້ອນໂຄດສ່ວນລົດໃນ Pop-up -->
+        <!-- 🎟 ອິນພຸດປ້ອນໂຄດສ່ວນລົດໃນ Pop-up -->
         <div class="option-section" id="couponInputBox" style="display:none;">
             <div class="option-title">🎟️ ໃສ່ໂຄດສ່ວນລົດ (ຖ້າມີ):</div>
             <div style="display:flex; gap:6px;">
@@ -879,16 +1069,81 @@ textarea{ min-height:70px; }
 </div>
 </div>
 
+<!-- 1. MODAL ແຈ້ງເຕືອນເພີ່ມໃສ່ກະຕ່າ -->
+<div id="successCartModal" class="custom-modal-overlay">
+    <div class="custom-alert-box">
+        <div class="success-icon-circle">✓</div>
+        <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ເພີ່ມໃສ່ກະຕ່າຮຽບຮ້ອຍ!</h3>
+        <p style="font-size: 14px; color: #666;">ສິນຄ້າຖືກເພີ່ມລົງໃນກະຕ່າຂອງທ່ານແລ້ວ</p>
+        <button class="custom-alert-btn" onclick="closeSuccessModal()">ຕົກລົງ</button>
+    </div>
+</div>
+
+<!-- 🌟 ຈຸດທີ 3: MODAL ອອກຈາກລະບົບ ADMIN ໃຫ້ຄວາມເທ້ ແລະ ທັນສະໄໝ -->
+<div id="adminLogoutModal" class="custom-modal-overlay">
+    <div class="custom-alert-box">
+        <div class="logout-icon-circle">🚪</div>
+        <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ອອກຈາກລະບົບຮຽບຮ້ອຍ</h3>
+        <p style="font-size: 14px; color: #666;">ທ່ານໄດ້ອອກຈາກລະບົບ Admin ເປັນທີ່ຮຽບຮ້ອຍແລ້ວ!</p>
+        <button class="custom-alert-btn" style="background: #e65100; box-shadow: 0 4px 12px rgba(230,81,0,0.3);" onclick="closeAdminLogoutModal()">ຕົກລົງ</button>
+    </div>
+</div>
+
+<!-- 🌟 ຈຸດທີ 1 & ຈຸດທີ 2: MODAL ເຂົ້າສູ່ລະບົບ ADMIN + ປຸ່ມຕາເບິ່ງລະຫັດ + ຟອມລືມລະຫັດຜ່ານ PIN (555296) -->
+<div id="adminLoginModal" class="custom-modal-overlay">
+    <div class="admin-login-modal">
+        <!-- ຟອມເຂົ້າສູ່ລະບົບປົກກະຕິ -->
+        <div id="loginFormSection">
+            <div class="admin-modal-title">🔐 ເຂົ້າສູ່ລະບົບເຈົ້າຂອງຮ້ານ</div>
+            <div class="admin-modal-sub">ກະລຸນາກອກລະຫັດຜ່ານເພື່ອຈັດການສິນຄ້າ</div>
+            
+            <div class="password-wrapper">
+                <input type="password" id="adminPasswordInput" class="admin-input-box" placeholder="ກອກລະຫັດຜ່ານ..." onkeyup="if(event.key==='Enter') submitAdminLogin()">
+                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPasswordInput', this)">👁️</button>
+            </div>
+            
+            <button class="forgot-btn" onclick="showResetPasswordForm()">🔑 ລືມລະຫັດຜ່ານ?</button>
+            
+            <div class="modal-actions-grid">
+                <button class="btn-cancel" onclick="closeAdminModal()">ຍົກເລີກ</button>
+                <button class="btn-confirm" onclick="submitAdminLogin()">ຕົກລົງ</button>
+            </div>
+        </div>
+
+        <!-- 🌟 ຈຸດທີ 2: ຟອມກູ້ຄືນ/ປ່ຽນລະຫັດຜ່ານ ໂດຍໃຊ້ PIN: 555296 -->
+        <div id="resetFormSection" style="display: none;">
+            <div class="admin-modal-title">🔑 ປ່ຽນລະຫັດຜ່ານເຈົ້າຂອງຮ້ານ</div>
+            <div class="admin-modal-sub">ໃສ່ລະຫັດ PIN ຢືນຢັນເພື່ອຕັ້ງລະຫັດຜ່ານໃໝ່</div>
+            
+            <div style="margin-bottom: 10px;">
+                <input type="text" id="pinInput" class="admin-input-box" placeholder="ກອກລະຫັດ PIN (6 ຫຼັກ)..." maxlength="6">
+            </div>
+
+            <div class="password-wrapper">
+                <input type="password" id="newAdminPasswordInput" class="admin-input-box" placeholder="ກອກລະຫັດຜ່ານໃໝ່...">
+                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('newAdminPasswordInput', this)">👁️</button>
+            </div>
+
+            <div class="modal-actions-grid" style="margin-top: 15px;">
+                <button class="btn-cancel" onclick="showLoginForm()">ກັບຄືນ</button>
+                <button class="btn-confirm" style="background: #28a745;" onclick="submitResetPassword()">ປ່ຽນລະຫັດ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 const MY_WHATSAPP_NUMBER = "8562055970908"; 
 const IMGBB_API_KEY = "226a5339c1467111f898e44fa9b365f8"; 
-const ADMIN_PASSWORD = "kop78900"; 
+let DEFAULT_ADMIN_PASSWORD = "kop78900"; 
+const RECOVERY_PIN = "555296"; // 🌟 ຈຸດທີ 2: PIN ສຳລັບປ່ຽນລະຫັດຜ່ານ
 
 // Firebase Init
 const firebaseConfig = { databaseURL: "https://kopstore-1040b-default-rtdb.firebaseio.com/" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const productsRef = db.ref('products');
+const adminConfigRef = db.ref('adminConfig');
 
 let isAdminLoggedIn = false;
 let tempMediaArray = []; 
@@ -906,7 +1161,14 @@ let selectedSize = "";
 let selectedModalQty = 1;
 let appliedCouponCode = ""; 
 
-// ດຶງຂໍ້ມູນສິນຄ້າຈາກ Firebase (ເພີ່ມ Error Handling + Fast Load)
+// ດຶງລະຫັດຜ່ານ Admin ຈາກ Firebase
+adminConfigRef.child('password').on('value', (snapshot) => {
+    if(snapshot.exists()){
+        DEFAULT_ADMIN_PASSWORD = snapshot.val();
+    }
+});
+
+// ດຶງຂໍ້ມູນສິນຄ້າຈາກ Firebase
 productsRef.on('value', (snapshot) => {
     const data = snapshot.val();
     const productList = [];
@@ -914,7 +1176,6 @@ productsRef.on('value', (snapshot) => {
         for (let id in data) { productList.push({ id, ...data[id] }); }
     }
     
-    // ຈັດລຽງສິນຄ້າ: ສິນຄ້າທີ່ປັກໝຸດ (isPinned) ຈະຢູ່ທາງເທິງສຸດ
     productList.sort((a, b) => {
         const pinA = a.isPinned ? 1 : 0;
         const pinB = b.isPinned ? 1 : 0;
@@ -936,20 +1197,103 @@ function money(number){
     return "₭" + Number(number).toLocaleString();
 }
 
-function toggleAdmin(){
+/* 🌟 ຈຸດທີ 1: ຟັງຊັນ ກົດເບິ່ງ / ເຊື່ອງລະຫັດຜ່ານ */
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") {
+        input.type = "text";
+        btn.innerText = "🙈";
+    } else {
+        input.type = "password";
+        btn.innerText = "👁️";
+    }
+}
+
+/* 🌟 ຈັດການປັອບອັບ ADMIN & LOGOUT (ຈຸດທີ 2 & 3) */
+function openAdminModal(){
     if(!isAdminLoggedIn){
-        const pwd = prompt("ກະລຸນາກອກລະຫັດຜ່ານເຈົ້າຂອງຮ້ານ:");
-        if(pwd === ADMIN_PASSWORD){
-            isAdminLoggedIn = true;
-            document.getElementById("adminCard").classList.add("show");
-            alert("ເຂົ້າສູ່ລະບົບ Admin ສຳເລັດ!");
-            renderProducts();
-        }else if(pwd !== null) alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
-    }else{
+        showLoginForm();
+        document.getElementById("adminPasswordInput").value = "";
+        document.getElementById("adminLoginModal").classList.add("show");
+        setTimeout(() => document.getElementById("adminPasswordInput").focus(), 100);
+    } else {
         isAdminLoggedIn = false;
         document.getElementById("adminCard").classList.remove("show");
+        // 🌟 ຈຸດທີ 3: ສະແດງ UI ອອກຈາກລະບົບ Admin ແບບເທ້ໆ
+        showAdminLogoutModal();
         renderProducts();
     }
+}
+
+function closeAdminModal(){
+    document.getElementById("adminLoginModal").classList.remove("show");
+}
+
+function submitAdminLogin(){
+    const inputPwd = document.getElementById("adminPasswordInput").value;
+    if(inputPwd === DEFAULT_ADMIN_PASSWORD){
+        isAdminLoggedIn = true;
+        document.getElementById("adminCard").classList.add("show");
+        closeAdminModal();
+        showSuccessModal();
+        renderProducts();
+    } else {
+        alert("❌ ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
+    }
+}
+
+/* 🌟 ຈຸດທີ 2: ສະແດງ ແລະ ປະມວນຜົນຟອມລືມລະຫັດຜ່ານຜ່ານ PIN (555296) */
+function showResetPasswordForm() {
+    document.getElementById("loginFormSection").style.display = "none";
+    document.getElementById("resetFormSection").style.display = "block";
+    document.getElementById("pinInput").value = "";
+    document.getElementById("newAdminPasswordInput").value = "";
+}
+
+function showLoginForm() {
+    document.getElementById("resetFormSection").style.display = "none";
+    document.getElementById("loginFormSection").style.display = "block";
+}
+
+function submitResetPassword() {
+    const pin = document.getElementById("pinInput").value.trim();
+    const newPwd = document.getElementById("newAdminPasswordInput").value.trim();
+
+    if (pin !== RECOVERY_PIN) {
+        alert("❌ ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ!");
+        return;
+    }
+
+    if (!newPwd) {
+        alert("⚠️ ກະລຸນາກອກລະຫັດຜ່ານໃໝ່!");
+        return;
+    }
+
+    adminConfigRef.set({ password: newPwd }).then(() => {
+        alert("✅ ປ່ຽນລະຫັດຜ່ານ Admin ສຳເລັດແລ້ວ!");
+        showLoginForm();
+        document.getElementById("adminPasswordInput").value = newPwd;
+    }).catch(err => {
+        alert("❌ ເກີດຂໍ້ຜິດພາດ: " + err.message);
+    });
+}
+
+/* 🌟 ຈຸດທີ 3: Custom Modal ສຳລັບອອກຈາກລະບົບ Admin */
+function showAdminLogoutModal(){
+    document.getElementById("adminLogoutModal").classList.add("show");
+}
+
+function closeAdminLogoutModal(){
+    document.getElementById("adminLogoutModal").classList.remove("show");
+}
+
+/* Custom Alert ເພີ່ມໃສ່ກະຕ່າ */
+function showSuccessModal(){
+    document.getElementById("successCartModal").classList.add("show");
+}
+
+function closeSuccessModal(){
+    document.getElementById("successCartModal").classList.remove("show");
 }
 
 function viewFullMedia(url, type='image'){
@@ -1037,7 +1381,6 @@ function addNewProduct(){
     const isPinned = document.getElementById("newProdPin").checked;
     const desc = document.getElementById("newProdDesc").value.trim();
 
-    // ດຶງຂໍ້ມູນຄູປັອງ
     const couponCode = document.getElementById("newProdCouponCode").value.trim().toUpperCase();
     const couponDiscount = Number(document.getElementById("newProdCouponDiscount").value);
     const couponMinQty = Number(document.getElementById("newProdCouponMinQty").value);
@@ -1068,7 +1411,6 @@ function addNewProduct(){
         mediaList = [{ url: "https://via.placeholder.com/300?text=No+Media", type: 'image' }];
     }
 
-    // ໂຄງສ້າງຄູປັອງ
     let coupon = null;
     if(couponCode && !isNaN(couponDiscount) && couponDiscount > 0){
         coupon = {
@@ -1138,7 +1480,6 @@ function isCouponValid(coupon, qty){
     return true;
 }
 
-// 📌 ລະບົບຄິດໄລ່ລາຄາ ( Tier Promotion + Percentage Coupon )
 function calculatePriceForQty(product, qty, inputCode = ""){
     let totalPrice = 0;
     let isPromoApplied = false;
@@ -1146,7 +1487,6 @@ function calculatePriceForQty(product, qty, inputCode = ""){
 
     const activePromo = isPromoActive(product);
     
-    // 1. ຄິດໄລ່ລາຄາຕາມໂປໂມຊັນເກົ່າ (Tier/Quantity) ກ່ອນ
     if(activePromo && product.tierPrices && product.tierPrices.length > 0){
         const sortedTiers = [...product.tierPrices].sort((a, b) => b.q - a.q);
         let remainingQty = qty;
@@ -1166,7 +1506,6 @@ function calculatePriceForQty(product, qty, inputCode = ""){
         totalPrice = (product.normalPrice || 0) * qty;
     }
 
-    // 2. ຄິດໄລ່ສ່ວນລົດຈາກຄູປັອງ (%) ຖ້າປ້ອນໂຄດຖືກຕ້ອງ
     if(product.coupon && inputCode && inputCode.toUpperCase() === product.coupon.code.toUpperCase()){
         if(isCouponValid(product.coupon, qty)){
             const discountAmount = totalPrice * (product.coupon.discount / 100);
@@ -1223,7 +1562,6 @@ function renderProducts(){
 
         const currentMedia = mediaList[activeIdx] || mediaList[0];
 
-        // ເພີ່ມ loading="lazy" ເພື່ອໃຫ້ຮູບພາບໂຫຼດໄວຂຶ້ນ
         let mediaDisplay = currentMedia.type === 'video'
             ? `<video class="main-img" src="${currentMedia.url}" autoplay loop muted playsinline onclick="viewFullMedia('${currentMedia.url}', 'video')"></video>`
             : `<img class="main-img" src="${currentMedia.url}" alt="${p.name}" loading="lazy" onclick="viewFullMedia('${currentMedia.url}', 'image')">`;
@@ -1244,7 +1582,6 @@ function renderProducts(){
         let promoListHTML = (activePromo && p.tierPrices && p.tierPrices.length > 0)
             ? `<div class="promo-badge">🔥 ໂປ: ${p.tierPrices.map(t => `${t.q}ຊິ້ນ = ${money(t.price)}`).join(" | ")}</div>` : "";
 
-        // UI ໃບປະກາດຄູປັອງ
         let couponTagHTML = "";
         if(p.coupon && p.coupon.code){
             const expText = p.coupon.expiry ? ` (ໝົດ ${new Date(p.coupon.expiry).toLocaleDateString()})` : '';
@@ -1379,7 +1716,6 @@ function updateModalUI(){
 
     const mediaList = prod.mediaList || (prod.images ? prod.images.map(img => ({url: img, type:'image'})) : [{url: prod.image || "https://via.placeholder.com/300?text=No+Media", type:'image'}]);
     
-    // ຄິດໄລ່ລາຄາລວມຄູປັອງ
     const priceRes = calculatePriceForQty(prod, selectedModalQty, appliedCouponCode);
     const activeMedia = mediaList[selectedMediaIndex] || mediaList[0];
 
@@ -1405,7 +1741,6 @@ function updateModalUI(){
     if(selectedSize) selectedText.push(`ຂະໜາດ: ${selectedSize}`);
     document.getElementById("modalSelectedText").innerText = selectedText.length > 0 ? "ເລືອກ: " + selectedText.join(" | ") : "ເລືອກແລ້ວ";
 
-    // ສະແດງ/ຊ່ອນ ມ້ອງໃສ່ຄູປັອງ
     const couponInputBox = document.getElementById("couponInputBox");
     if(prod.coupon && prod.coupon.code){
         couponInputBox.style.display = "block";
@@ -1451,7 +1786,6 @@ function changeModalQty(delta){
     if(currentModalProduct && newQty > currentModalProduct.stock) newQty = currentModalProduct.stock;
     selectedModalQty = newQty;
 
-    // ກວດສອບເງື່ອນໄຂຄູປັອງຄືນໃໝ່ເມື່ອປ່ຽນຈຳນວນ
     if(appliedCouponCode && currentModalProduct && currentModalProduct.coupon){
         if(currentModalProduct.coupon.minQty && selectedModalQty < currentModalProduct.coupon.minQty){
             appliedCouponCode = "";
@@ -1496,7 +1830,9 @@ function confirmAddToCart(){
     saveCart();
     updateCartCount();
     closeOptionModal();
-    alert("ເພີ່ມໃສ່ກະຕ່າຮຽບຮ້ອຍ!");
+    
+    // ສະແດງ Alert ເພີ່ມສິນຄ້າ
+    showSuccessModal();
 }
 
 function setCategory(category, button){
@@ -1506,7 +1842,19 @@ function setCategory(category, button){
     renderProducts();
 }
 
-function updateCartCount(){ document.getElementById("cartCount").innerText = cart.reduce((sum,item)=>sum+item.qty,0); }
+/* 🌟 ຈຸດທີ 4: ອັບເດດຈຳນວນ ແລະ ສະແດງຈຸດແດງຢູ່ປຸ່ມກະຕ່າ */
+function updateCartCount(){ 
+    const totalQty = cart.reduce((sum,item)=>sum+item.qty,0);
+    document.getElementById("cartCount").innerText = totalQty; 
+    
+    const badge = document.getElementById("cartBadgeDot");
+    if(totalQty > 0) {
+        badge.classList.add("active");
+    } else {
+        badge.classList.remove("active");
+    }
+}
+
 function getTotal(){ return cart.reduce((total,item)=> total + (item.unitPrice * item.qty), 0); }
 
 function openCart(){ renderCart(); document.getElementById("cartOverlay").classList.add("show"); }
@@ -1637,7 +1985,6 @@ async function uploadSlipToImgBB(file) {
     }
 }
 
-// 📦 ຟັງຊັນຕັດ/ລົບຈຳນວນສະຕັອກສິນຄ້າໃນ Firebase
 async function deductStockFromFirebase() {
     for (const item of cart) {
         if (!item.id) continue;
@@ -1692,7 +2039,6 @@ async function sendToWhatsApp(type) {
             imageUrl = await uploadSlipToImgBB(activeFile);
         }
 
-        // 🔄 ເລີ່ມຕັດສະຕັອກໃນ Firebase
         btn.innerText = "⏳ ກຳລັງອັບເດດສະຕັອກສິນຄ້າ...";
         await deductStockFromFirebase();
 
@@ -1722,7 +2068,6 @@ async function sendToWhatsApp(type) {
             message += imageUrl ? `📸 *ສະລິບມັດຈຳ:* ${imageUrl}` : `📸 *ສະລິບມັດຈຳ:* ອັບໂຫຼດຮູບບໍ່ສຳເລັດ`;
         }
 
-        // 🧹 ເຄຼຍກະຕ່າສິນຄ້າ ແລະ ປິດໜ້າ Checkout
         cart = [];
         saveCart();
         updateCartCount();
