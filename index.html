@@ -683,7 +683,7 @@ textarea{ min-height:70px; }
     inset: 0;
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(5px);
-    z-index: 550;
+    z-index: 1000; /* 🌟 ປັບ z-index ໃຫ້ຢູ່ສູງສຸດສະເໝີ */
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -1200,7 +1200,7 @@ let selectedSize = "";
 let selectedModalQty = 1;
 let appliedCouponCode = ""; 
 let pendingDeleteCartIndex = null; 
-let editingProductId = null; // 🌟 ຕົວແປເກັບ ID ສິນຄ້າທີ່ກຳລັງແກ້ໄຂ
+let editingProductId = null;
 
 // ດຶງລະຫັດຜ່ານ Admin ຈາກ Firebase
 adminConfigRef.child('password').on('value', (snapshot) => {
@@ -1318,7 +1318,7 @@ function togglePasswordVisibility(inputId, btn) {
         btn.innerText = "🙈";
     } else {
         input.type = "password";
-        btn.innerText = "👁️";
+        btn.innerText = "👁️️";
     }
 }
 
@@ -1341,6 +1341,7 @@ function closeAdminModal(){
     document.getElementById("adminLoginModal").classList.remove("show");
 }
 
+// 🌟 ແກ້ໄຂຈຸດທີ 1: ເມື່ອໃສ່ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ ໃຫ້ Alert ສະແດງເທິງ Modal
 function submitAdminLogin(){
     const inputPwd = document.getElementById("adminPasswordInput").value;
     if(inputPwd === DEFAULT_ADMIN_PASSWORD){
@@ -1350,6 +1351,7 @@ function submitAdminLogin(){
         showAlert("ເຂົ້າສູ່ລະບົບສຳເລັດ", "ຍິນດີຕ້ອນຮັບເຈົ້າຂອງຮ້ານ!", "success");
         renderProducts();
     } else {
+        closeAdminModal(); // 🌟 ປິດ Modal ເຂົ້າສູ່ລະບົບອອກກ່ອນ ເພື່ອໃຫ້ Alert ເທິງສຸດສະແດງຊັດເຈນ
         showAlert("ຂໍ້ຜິດພາດ", "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!", "danger");
     }
 }
@@ -1366,25 +1368,30 @@ function showLoginForm() {
     document.getElementById("loginFormSection").style.display = "block";
 }
 
+// 🌟 ແກ້ໄຂຈຸດທີ 2 & 3: ເມື່ອໃສ່ລະຫັດ PIN ບໍ່ຖືກ ຫຼື ປ່ຽນລະຫັດສຳເລັດ ໃຫ້ Alert ສະແດງຢ່າງຖືກຕ້ອງ
 function submitResetPassword() {
     const pin = document.getElementById("pinInput").value.trim();
     const newPwd = document.getElementById("newAdminPasswordInput").value.trim();
 
     if (pin !== RECOVERY_PIN) {
+        closeAdminModal(); // 🌟 ປິດ Modal ລືມລະຫັດຜ່ານອອກກ່ອນ ເພື່ອໃຫ້ Alert ເທິງສຸດສະແດງຊັດເຈນ
         showAlert("ຂໍ້ຜິດພາດ", "ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ!", "danger");
         return;
     }
 
     if (!newPwd) {
+        closeAdminModal();
         showAlert("ແຈ້ງເຕືອນ", "ກະລຸນາກອກລະຫັດຜ່ານໃໝ່!", "warning");
         return;
     }
 
     adminConfigRef.set({ password: newPwd }).then(() => {
+        closeAdminModal(); // 🌟 ປິດ Modal ລືມລະຫັດຜ່ານອອກ
         showAlert("ສຳເລັດ", "ປ່ຽນລະຫັດຜ່ານ Admin ສຳເລັດແລ້ວ!", "success");
         showLoginForm();
         document.getElementById("adminPasswordInput").value = newPwd;
     }).catch(err => {
+        closeAdminModal();
         showAlert("ຂໍ້ຜິດພາດ", "ເກີດຂໍ້ຜິດພາດ: " + err.message, "danger");
     });
 }
@@ -1470,7 +1477,6 @@ function renderPreviewGallery(){
     });
 }
 
-// 🌟 ຟັງຊັນລ້າງຟອມ Admin
 function resetAdminForm(){
     editingProductId = null;
     document.getElementById("adminFormTitle").innerText = "👑 ຈັດການສິນຄ້າ (ສະເພາະເຈົ້າຂອງຮ້ານ)";
@@ -1498,7 +1504,6 @@ function resetAdminForm(){
     document.getElementById("cancelEditBtn").style.display = "none";
 }
 
-// 🌟 ຟັງຊັນດຶງຂໍ້ມູນສິນຄ້າມາແກ້ໄຂ (ຈຸດທີ 1)
 function editProduct(id){
     const prod = products.find(p => p.id === id);
     if(!prod) return;
@@ -1622,7 +1627,6 @@ function addNewProduct(){
     saveBtn.innerText = "⏳ ກຳລັງບັນທຶກ...";
 
     if(editingProductId){
-        // ອັບເດດສິນຄ້າເກົ່າ
         productsRef.child(editingProductId).update(prodData).then(() => {
             resetAdminForm();
             showAlert("ສຳເລັດ", "ອັບເດດຂໍ້ມູນສິນຄ້າສຳເລັດ!", "success");
@@ -1630,7 +1634,6 @@ function addNewProduct(){
             saveBtn.disabled = false;
         });
     } else {
-        // ເພີ່ມສິນຄ້າໃໝ່
         productsRef.push(prodData).then(() => {
             resetAdminForm();
             showAlert("ສຳເລັດ", "ເພີ່ມສິນຄ້າສຳເລັດ!", "success");
@@ -1650,13 +1653,11 @@ function deleteProduct(id){
     }
 }
 
-// 🌟 ເຊັກໂປໂມຊັ້ນວ່າໝົດເວລາຫຼືຍັງ (ຈຸດທີ 2)
 function isPromoActive(product){
     if(!product.timerEnd) return true;
     return (new Date(product.timerEnd).getTime()) > (new Date().getTime());
 }
 
-// 🌟 ເຊັກຄູປັອງວ່າໝົດເວລາຫຼືຍັງ (ຈຸດທີ 2)
 function isCouponValid(coupon, qty = 1){
     if(!coupon || !coupon.code) return false;
     if(coupon.expiry && new Date(coupon.expiry).getTime() < new Date().getTime()) return false;
@@ -1764,11 +1765,9 @@ function renderProducts(){
             `;
         }
 
-        // 🌟 ຈຸດທີ 2: ເຊື່ອງໂປໂມຊັ້ນອັດໂຕໂນມັດເມື່ອໝົດເວລາ
         let promoListHTML = (activePromo && p.tierPrices && p.tierPrices.length > 0)
             ? `<div class="promo-badge">🔥 ໂປ: ${p.tierPrices.map(t => `${t.q}ຊິ້ນ = ${money(t.price)}`).join(" | ")}</div>` : "";
 
-        // 🌟 ຈຸດທີ 2: ເຊື່ອງຄູປັອງອັດໂຕໂນມັດເມື່ອໝົດເວລາ
         let couponTagHTML = "";
         if(p.coupon && p.coupon.code && validCoupon){
             const expText = p.coupon.expiry ? ` (ໝົດ ${new Date(p.coupon.expiry).toLocaleDateString()})` : '';
@@ -1791,10 +1790,8 @@ function renderProducts(){
         const hasStock = p.stock > 0;
         const stockHTML = hasStock ? `<div class="stock-tag">📦 ເຫຼືອ ${p.stock} ຊິ້ນ</div>` : `<div class="stock-tag stock-out">❌ ສິນຄ້າໝົດ</div>`;
         
-        // 🌟 ຈຸດທີ 2: ເຊື່ອງກ່ອງເວລານັບຖອຍຫຼັງເມື່ອໝົດເວລາ
         const timerHTML = (p.timerEnd && activePromo) ? `<div class="timer-box" id="timer-${p.id}">⏳ ກຳລັງໂຫຼດ...</div>` : "";
 
-        // 🌟 ຈຸດທີ 1: ເມື່ອເປັນ Admin ປ່ຽນປຸ່ມໃຫ້ເປັນ "✏️ ແກ້ໄຂສິນຄ້າ"
         const actionBtnHTML = isAdminLoggedIn ? `
             <button class="add-btn edit-btn-style" onclick="editProduct('${p.id}')">
                 ✏️ ແກ້ໄຂສິນຄ້າ
@@ -1844,7 +1841,6 @@ function updateCountdowns(){
 
         const diff = new Date(p.timerEnd).getTime() - new Date().getTime();
         if(diff <= 0){
-            // 🌟 ຈຸດທີ 2: ເມື່ອໝົດເວລາໃຫ້ Render ໜ້າໃໝ່ເພື່ອໃຫ້ໂປໂມຊັ້ນຫາຍໄປຖາວອນ
             renderProducts();
         }else{
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
