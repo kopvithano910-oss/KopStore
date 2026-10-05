@@ -1140,14 +1140,25 @@ textarea{ min-height:70px; }
     </div>
 </div>
 
+<!-- FORM ORIGIN -->
 <div id="originBox" class="card box-section">
     <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
     <label>ຊື່ລູກຄ້າ:</label>
     <input type="text" id="originName" placeholder="ພິມຊື່ລູກຄ້າ...">
-    <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
-    <textarea id="originAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
+    
+    <label>🚚 ເລືອກບໍລິສັດຂົນສົ່ງ:</label>
+    <select id="originExpress">
+        <option value="Anousith Express (ອານຸສິດ)">🚚 Anousith Express (ອານຸສິດ)</option>
+        <option value="HAL Logistics (ຮົງອາລຸນ)">🚚 HAL Logistics (ຮົງອາລຸນ)</option>
+        <option value="Mixay Express (ມີໄຊ)">🚚 Mixay Express (ມີໄຊ)</option>
+    </select>
+
+    <label>ທີ່ຢູ່ສາຂາ/ຈຸດຮັບ (ລູກຄ້າ):</label>
+    <textarea id="originAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ, ສາຂາຂົນສົ່ງ..."></textarea>
+    
     <label>ເບີໂທຕິດຕໍ່:</label>
     <input type="tel" id="originPhone" placeholder="020 XXXXXXXX">
+    
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
     <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
     <div class="qr"><img src="qr.png" alt="QR ບັນຊີ" id="qrOriginImg" loading="lazy" onclick="viewFullMedia('qr.png', 'image')"></div>
@@ -1155,6 +1166,7 @@ textarea{ min-height:70px; }
         <button class="download-qr-btn" onclick="downloadQRCode('qr.png', 'KOPSTORE-QR-Origin.png')">📥 ບັນທຶກຮູບ QR Code ເຂົ້າແກລໍຣີ້</button>
     </div>
     <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
+    
     <label>📎 ສະລິບໂອນເງິນ</label>
     <label class="upload" for="slip">
         <div style="font-size:24px">📸</div>
@@ -1165,14 +1177,29 @@ textarea{ min-height:70px; }
     <button id="btnOrigin" class="confirm-btn" onclick="sendToWhatsApp('origin')">📱 ຢືນຢັນການສັ່ງຊື້ (ຕົ້ນທາງ)</button>
 </div>
 
+<!-- FORM DESTINATION -->
 <div id="destinationBox" class="card box-section">
     <h2>📦 ຂໍ້ມູນທີ່ຢູ່ສາຂາປາຍທາງ</h2>
     <label>ຊື່ລູກຄ້າ:</label>
     <input type="text" id="destName" placeholder="ພິມຊື່ລູກຄ້າ...">
-    <label>ທີ່ຢູ່ສາຂາ(ລູກຄ້າ):</label>
+    
+    <label>🚚 ເລືອກບໍລິສັດຂົນສົ່ງ:</label>
+    <select id="destExpress">
+        <option value="Anousith Express (ອານຸສິດ)">🚚 Anousith Express (ອານຸສິດ)</option>
+        <option value="HAL Logistics (ຮົງອາລຸນ)">🚚 HAL Logistics (ຮົງອາລຸນ)</option>
+        <option value="Mixay Express (ມີໄຊ)">🚚 Mixay Express (ມີໄຊ)</option>
+        <option value="Xokxay Express (ໂຊກໄຊ)">🚚 Xokxay Express (ໂຊກໄຊ)</option>
+        <option value="Flash Express">🚚 Flash Express</option>
+        <option value="ຝາກລົດເມ / ສາຍໃຕ້ / ສາຍເໜືອ">🚌 ຝາກລົດເມ (ສາຍໃຕ້/ສາຍເໜືອ)</option>
+        <option value="ອື່ນໆ (ລະບຸໃນທີ່ຢູ່)">📦 ອື່ນໆ</option>
+    </select>
+
+    <label>ທີ່ຢູ່ສາຂາ/ຈຸດຮັບ (ລູກຄ້າ):</label>
     <textarea id="destAddress" rows="2" placeholder="ບ້ານ, ເມືອງ, ແຂວງ, ສາຂາຂົນສົ່ງ..."></textarea>
+    
     <label>ເບີໂທຕິດຕໍ່ຜູ້ຮັບ:</label>
     <input type="tel" id="destPhone" placeholder="020 XXXXXXXX">
+    
     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
     
     <div class="deposit-box-style">
@@ -1514,7 +1541,7 @@ function viewFullMedia(url, type='image'){
 
 function closeFullImage(){ document.getElementById("fullImageModal").classList.remove("show"); }
 
-// ຟັງຊັນບັນທຶກຮູບ QR Code ເຂົ້າ Gallery ມືຖື (ແກ້ໄຂບັນຫາບໍ່ໂຫຼດ)
+// ຟັງຊັນບັນທຶກຮູບ QR Code ເຂົ້າ Gallery ມືຖື
 function downloadQRCode(imgSrc, fileName) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -1547,10 +1574,10 @@ function downloadQRCode(imgSrc, fileName) {
     img.src = imgSrc;
 }
 
-// ຟັງຊັນແຊສິນຄ້າ (ແກ້ໄຂບັນຫາລິ້ງບໍ່ຂຶ້ນ/ບໍ່ມີໂດເມນ)
+// ຟັງຊັນແຊສິນຄ້າ
 function shareProduct(id, name) {
     if (window.location.protocol === 'file:' || window.location.hostname === '' || window.location.hostname === 'localhost') {
-        currentShareUrl = "https://kopstore.web.app/?prod=" + id; // ໂດເມນຕົວຢ່າງ
+        currentShareUrl = "https://kopstore.web.app/?prod=" + id;
     } else {
         currentShareUrl = window.location.origin + window.location.pathname + "?prod=" + id;
     }
@@ -2213,13 +2240,12 @@ function updateCartCount(){
 
 function getTotal(){ return cart.reduce((total,item)=> total + (item.unitPrice * item.qty), 0); }
 
-// ຟັງຊັນຄິດໄລ່ຄ່າມັດຈຳປາຍທາງ (15%)
 function getRequiredDepositAmount() {
     const total = getTotal();
     if (total >= 1000000) {
-        return Math.round(total * 0.15); // 15% ຖ້າ >= 1 ລ້ານ
+        return Math.round(total * 0.15);
     } else {
-        return 20000; // 20,000 ກີບ ຖ້າ < 1 ລ້ານ
+        return 20000;
     }
 }
 
@@ -2388,17 +2414,19 @@ async function deductStockFromFirebase() {
 }
 
 async function sendToWhatsApp(type) {
-    let name = "", address = "", phone = "", typeText = "";
+    let name = "", address = "", phone = "", express = "", typeText = "";
     const requiredDeposit = getRequiredDepositAmount();
     
     if (type === 'origin') {
         typeText = "📦 ຕົ້ນທາງ (ຜູ້ສົ່ງ)";
         name = document.getElementById("originName").value.trim();
+        express = document.getElementById("originExpress").value;
         address = document.getElementById("originAddress").value.trim();
         phone = document.getElementById("originPhone").value.trim();
     } else {
         typeText = "📍 ປາຍທາງ (ຜູ້ຮັບ)";
         name = document.getElementById("destName").value.trim();
+        express = document.getElementById("destExpress").value;
         address = document.getElementById("destAddress").value.trim();
         phone = document.getElementById("destPhone").value.trim();
 
@@ -2434,6 +2462,7 @@ async function sendToWhatsApp(type) {
                       `--------------------\n` +
                       `📌 *ປະເພດ:* ${typeText}\n` +
                       `👤 *ຊື່:* ${name}\n` +
+                      `🚚 *ຂົນສົ່ງ:* ${express}\n` +
                       `🏠 *ທີ່ຢູ່:* ${address}\n` +
                       `📞 *ເບີໂທ:* ${phone}\n` +
                       `--------------------\n` +
@@ -2474,3 +2503,4 @@ async function sendToWhatsApp(type) {
 
 </body>
 </html>
+gl
