@@ -1590,11 +1590,9 @@ function downloadQRCode(imgSrc, fileName) {
 async function shareProduct(id, name) {
     const prod = products.find(p => p.id === id);
     
-    if (window.location.protocol === 'file:' || window.location.hostname === '' || window.location.hostname === 'localhost') {
-        currentShareUrl = "https://kopstore.web.app/?prod=" + id;
-    } else {
-        currentShareUrl = window.location.origin + window.location.pathname + "?prod=" + id;
-    }
+    // 💡 ລິ້ງແຊຣ໌ຜ່ານ Dynamic Worker (ປ່ຽນໄປຫາ share.kopstore-sk.com)
+    currentShareUrl = "https://share.kopstore-sk.com/?prod=" + id;
+
 
     const priceText = prod ? money(prod.normalPrice) : '';
     
