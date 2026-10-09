@@ -419,7 +419,6 @@ header{
 
 .qty-control span{ font-weight:bold; font-size:14px; }
 
-/* ຈັດກຸ່ມປຸ່ມເພີ່ມໃສ່ກະຕ່າ + ປຸ່ມແຊ */
 .action-btn-row {
     display: flex;
     gap: 6px;
@@ -446,7 +445,6 @@ header{
     background: #ff9500 !important;
 }
 
-/* Style ປຸ່ມແຊ ໃໝ່ (ແບບຮູບທີ 2) */
 .share-btn {
     width: auto;
     padding: 10px 12px;
@@ -714,7 +712,6 @@ textarea{ min-height:70px; }
 .qr img{ width: 100%; max-width: 220px; display: block; margin: 10px auto; border-radius: 10px; }
 .account{ font-size: 15px; font-weight: bold; color: #333; text-align: center; margin: 10px 0; line-height: 1.5; }
 
-/* Style ປຸ່ມດາວໂຫຼດ QR */
 .download-qr-btn {
     background: #007bff;
     color: white;
@@ -956,7 +953,6 @@ textarea{ min-height:70px; }
         <input id="newProdTierPrices" type="text" placeholder="🎁 ໂປໂມຊັນເກົ່າ (ເຊັ່ນ: 1:99000, 3:290000)">
     </div>
 
-    <!-- ໂຊນຕັ້ງຄ່າຄູປັອງ/ໂຄດສ່ວນລົດເປີເຊັນ -->
     <div class="coupon-section-box">
         <label style="font-size:13px; color:#d35400; margin-top:0;">🎟️ ຕັ້ງຄ່າຄູປັອງ/ໂຄດສ່ວນລົດ (%):</label>
         <div class="form-grid">
@@ -985,7 +981,6 @@ textarea{ min-height:70px; }
         </div>
     </div>
 
-    <!-- UI ເລືອກຮູບ/ວີດີໂອ -->
     <label style="font-size:14px; font-weight:bold; margin-bottom:5px; display:block; margin-top:10px;">📷/🎥 ຮູບ ຫຼື ວີດີໂອສິນຄ້າ (ກົດ + ເພື່ອເພີ່ມ):</label>
     <input id="newProdFile" type="file" accept="image/*,video/*" multiple style="display:none;" onchange="handleProductMediaUpload(event)">
     
@@ -1075,7 +1070,7 @@ textarea{ min-height:70px; }
     </div>
 </div>
 
-<!-- SHARE MODAL (ປັບປຸງຈຸດທີ 2: ເອົາ Line ອອກ ແລ້ວເອົາຄັດລອກລິ້ງມາໃສ່ແທນ) -->
+<!-- SHARE MODAL -->
 <div id="shareModal" class="custom-modal-overlay">
     <div class="custom-alert-box" style="max-width: 380px;">
         <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 4px; color:#111;">📢 ແຊສິນຄ້ານີ້</h3>
@@ -1546,7 +1541,6 @@ function viewFullMedia(url, type='image'){
 
 function closeFullImage(){ document.getElementById("fullImageModal").classList.remove("show"); }
 
-// ຟັງຊັນບັນທຶກຮູບ QR Code ເຂົ້າ Gallery ມືຖື
 function downloadQRCode(imgSrc, fileName) {
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -1579,19 +1573,43 @@ function downloadQRCode(imgSrc, fileName) {
     img.src = imgSrc;
 }
 
-// ຟັງຊັນແຊສິນຄ້າ
-function shareProduct(id, name) {
+// -----------------------------------------------------------------
+// ຟັງຊັນແຊສິນຄ້າ ໃໝ່ (ໃຊ້ Web Share API ຕາມວິທີທີ 1)
+// -----------------------------------------------------------------
+async function shareProduct(id, name) {
+    const prod = products.find(p => p.id === id);
+    
     if (window.location.protocol === 'file:' || window.location.hostname === '' || window.location.hostname === 'localhost') {
         currentShareUrl = "https://kopstore.web.app/?prod=" + id;
     } else {
         currentShareUrl = window.location.origin + window.location.pathname + "?prod=" + id;
     }
 
-    const encodedUrl = encodeURIComponent(currentShareUrl);
-    const encodedText = encodeURIComponent("ເລືອກເບິ່ງສິນຄ້າ: " + name + " ຢູ່ SK-KOP STORE");
+    const priceText = prod ? money(prod.normalPrice) : '';
+    
+    const shareData = {
+        title: name + " | SK-KOP STORE",
+        text: `🛍️ ເລືອກເບິ່ງສິນຄ້າ: ${name}\n💰 ລາຄາ: ${priceText}\n👉 ກົດເບິ່ງຢູ່ຮ້ານ SK-KOP STORE:`,
+        url: currentShareUrl
+    };
 
+    // 1. ຖ້າມືຖືຮອງຮັບ Web Share API (ເປີດ Popup ແຊຣ໌ມືຖືໂດຍກົງ)
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            return;
+        } catch (err) {
+            console.log("ກົດຍົກເລີກການແຊຣ໌", err);
+            return;
+        }
+    }
+
+    // 2. ຖ້າເປັນຄອມພິວເຕີ ຫຼື ບຣາວເຊີທີ່ບໍ່ຮອງຮັບ ໃຫ້ເປີດ Modal ແຊຣ໌ແບບເກົ່າ
     document.getElementById("shareProductName").innerText = name;
     
+    const encodedUrl = encodeURIComponent(currentShareUrl);
+    const encodedText = encodeURIComponent(shareData.text);
+
     document.getElementById("shareFb").href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
     document.getElementById("shareMsg").href = `fb-messenger://share/?link=${encodedUrl}`;
     document.getElementById("shareWa").href = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
