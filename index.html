@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SK-KOP STORE.E-Commerce</title>
 
+<!-- ========================================== -->
+<!-- 🔥 ເພີ່ມ OPEN GRAPH META TAGS ສຳລັບ SOCIAL MEDIA -->
+<!-- ========================================== -->
+<meta property="og:type" content="website">
+<meta id="ogTitle" property="og:title" content="SK-KOP STORE - ຮ້ານຄ້າອອນໄລນ໌">
+<meta id="ogDesc" property="og:description" content="ເລືອກເບິ່ງສິນຄ້າ, ສັ່ງຊື້ ແລະ ຊຳລະເງິນໄດ້ງ່າຍໆ ຢູ່ SK-KOP STORE">
+<meta id="ogImage" property="og:image" content="https://kopstore-sk.com/qr.png">
+<meta id="ogUrl" property="og:url" content="https://kopstore-sk.com/">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta id="twTitle" name="twitter:title" content="SK-KOP STORE - ຮ້ານຄ້າອອນໄລນ໌">
+<meta id="twDesc" name="twitter:description" content="ເລືອກເບິ່ງສິນຄ້າ, ສັ່ງຊື້ ແລະ ຊຳລະເງິນໄດ້ງ່າຍໆ ຢູ່ SK-KOP STORE">
+<meta id="twImage" name="twitter:image" content="https://kopstore-sk.com/qr.png">
+
 <style>
 *{
     box-sizing:border-box;
@@ -1350,12 +1364,48 @@ productsRef.on('value', (snapshot) => {
     });
 
     products = productList;
+    
+    // ----------------------------------------------------
+    // 🔥 ອັບເດດ META TAGS ອັດໂຕໂນມັດ ຖ້າມີການເປີດລິ້ງສິນຄ້າ
+    // ----------------------------------------------------
+    checkAndApplyProductMeta();
+    
     renderProducts();
     updateCartCount();
 }, (error) => {
     console.error("Firebase Error:", error);
     document.getElementById("products").innerHTML = `<div class="empty" style="color:red;">❌ ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດຂໍ້ມູນສິນຄ້າ</div>`;
 });
+
+// ຟັງຊັນອັບເດດ Meta Tags ເມື່ອເປີດລິ້ງສິນຄ້າ
+function checkAndApplyProductMeta() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const prodId = urlParams.get('prod');
+    if (prodId && products.length > 0) {
+        const prod = products.find(p => p.id === prodId);
+        if (prod) {
+            let imgUrl = "https://kopstore-sk.com/qr.png";
+            if (prod.mediaList && prod.mediaList.length > 0) {
+                imgUrl = prod.mediaList[0].url;
+            } else if (prod.image) {
+                imgUrl = prod.image;
+            }
+            
+            const title = `${prod.name} | SK-KOP STORE`;
+            const desc = `ເລືອກເບິ່ງສິນຄ້າ: ${prod.name} ລາຄາ: ${money(prod.normalPrice)}`;
+
+            document.title = title;
+            document.getElementById("ogTitle").setAttribute("content", title);
+            document.getElementById("ogDesc").setAttribute("content", desc);
+            document.getElementById("ogImage").setAttribute("content", imgUrl);
+            document.getElementById("ogUrl").setAttribute("content", window.location.href);
+
+            document.getElementById("twTitle").setAttribute("content", title);
+            document.getElementById("twDesc").setAttribute("content", desc);
+            document.getElementById("twImage").setAttribute("content", imgUrl);
+        }
+    }
+}
 
 function saveCart(){ localStorage.setItem("kop_cart", JSON.stringify(cart)); }
 
@@ -1574,7 +1624,7 @@ function downloadQRCode(imgSrc, fileName) {
 }
 
 // -----------------------------------------------------------------
-// ຟັງຊັນແຊສິນຄ້າ ໃໝ່ (ໃຊ້ Web Share API ຕາມວິທີທີ 1)
+// ຟັງຊັນແຊສິນຄ້າ ໃໝ່ (ໃຊ້ Web Share API + Dynamic Link)
 // -----------------------------------------------------------------
 async function shareProduct(id, name) {
     const prod = products.find(p => p.id === id);
@@ -1593,7 +1643,6 @@ async function shareProduct(id, name) {
         url: currentShareUrl
     };
 
-    // 1. ຖ້າມືຖືຮອງຮັບ Web Share API (ເປີດ Popup ແຊຣ໌ມືຖືໂດຍກົງ)
     if (navigator.share) {
         try {
             await navigator.share(shareData);
@@ -1604,7 +1653,6 @@ async function shareProduct(id, name) {
         }
     }
 
-    // 2. ຖ້າເປັນຄອມພິວເຕີ ຫຼື ບຣາວເຊີທີ່ບໍ່ຮອງຮັບ ໃຫ້ເປີດ Modal ແຊຣ໌ແບບເກົ່າ
     document.getElementById("shareProductName").innerText = name;
     
     const encodedUrl = encodeURIComponent(currentShareUrl);
@@ -2461,7 +2509,7 @@ async function sendToWhatsApp(type) {
     }
 
     if (!name || !address || !phone) {
-        showAlert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!", "ກະລຸນາປ້ອນຊື່, ທີ່ຢູ່ ແລະ ເບີໂທຕິດຕໍ່ໃຫ້ຄົບຖ້ວນກ່ອນດຳເນີນການ.", "warning");
+        showAlert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນ!", "ກະລຸນາປ້ອນຊື່, ທີ່ຢູ່ ແລະ ເບີໂ图ຕິດຕໍ່ໃຫ້ຄົບຖ້ວນກ່ອນດຳເນີນການ.", "warning");
         return;
     }
 
