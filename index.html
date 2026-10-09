@@ -419,40 +419,51 @@ header{
 
 .qty-control span{ font-weight:bold; font-size:14px; }
 
+/* ຈັດກຸ່ມປຸ່ມເພີ່ມໃສ່ກະຕ່າ + ປຸ່ມແຊ */
+.action-btn-row {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+}
+
 .add-btn{
-    width:100%;
-    padding:10px;
+    flex: 1;
+    padding:10px 6px;
     border:0;
     background:#111;
     color:white;
     border-radius:8px;
-    font-size:14px;
+    font-size:13px;
     font-weight:bold;
     cursor:pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
 }
 
 .add-btn.edit-btn-style {
     background: #ff9500 !important;
 }
 
-/* Style ປຸ່ມແຊ */
+/* Style ປຸ່ມແຊ ໃໝ່ (ແບບຮູບທີ 2) */
 .share-btn {
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #007bff;
-    background: #eef6ff;
-    color: #007bff;
+    width: auto;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    color: #444;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
+    white-space: nowrap;
 }
-.share-btn:hover { background: #d0e4ff; }
+.share-btn:hover { background: #eef2f5; color: #111; }
 
 .share-grid {
     display: grid;
@@ -463,14 +474,15 @@ header{
 .share-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 8px;
     border-radius: 12px;
     background: #f8f9fa;
     border: 1px solid #eee;
     cursor: pointer;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
     color: #333;
     text-decoration: none;
 }
@@ -1063,7 +1075,7 @@ textarea{ min-height:70px; }
     </div>
 </div>
 
-<!-- SHARE MODAL -->
+<!-- SHARE MODAL (ປັບປຸງຈຸດທີ 2: ເອົາ Line ອອກ ແລ້ວເອົາຄັດລອກລິ້ງມາໃສ່ແທນ) -->
 <div id="shareModal" class="custom-modal-overlay">
     <div class="custom-alert-box" style="max-width: 380px;">
         <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 4px; color:#111;">📢 ແຊສິນຄ້ານີ້</h3>
@@ -1071,23 +1083,20 @@ textarea{ min-height:70px; }
         
         <div class="share-grid">
             <a id="shareFb" href="#" target="_blank" class="share-item">
-                <span style="font-size:22px; color:#1877F2;">📘</span> Facebook
+                <span style="font-size:20px; color:#1877F2;">📘</span> Facebook
             </a>
             <a id="shareMsg" href="#" target="_blank" class="share-item">
-                <span style="font-size:22px; color:#0084FF;">💬</span> Messenger
+                <span style="font-size:20px; color:#0084FF;">💬</span> Messenger
             </a>
             <a id="shareWa" href="#" target="_blank" class="share-item">
-                <span style="font-size:22px; color:#25D366;">🟢</span> WhatsApp
+                <span style="font-size:20px; color:#25D366;">🟢</span> WhatsApp
             </a>
-            <a id="shareLine" href="#" target="_blank" class="share-item">
-                <span style="font-size:22px; color:#00B900;">💚</span> Line
-            </a>
+            <div class="share-item" onclick="copyProductLink()">
+                <span style="font-size:20px; color:#007bff;">📋</span> ຄັດລອກລິ້ງ
+            </div>
         </div>
 
-        <button class="confirm-btn" style="background:#007bff; margin-top:12px; padding:10px; font-size:14px;" onclick="copyProductLink()">
-            📋 ຄັດລອກລິ້ງສິນຄ້າ
-        </button>
-        <button class="btn-cancel" style="width:100%; margin-top:8px; padding:10px; font-size:14px;" onclick="closeShareModal()">
+        <button class="btn-cancel" style="width:100%; margin-top:15px; padding:10px; font-size:14px;" onclick="closeShareModal()">
             ປິດ
         </button>
     </div>
@@ -1163,7 +1172,7 @@ textarea{ min-height:70px; }
     <h2>💳 ຂໍ້ມູນການຊຳລະເງິນ</h2>
     <div class="qr"><img src="qr.png" alt="QR ບັນຊີ" id="qrOriginImg" loading="lazy" onclick="viewFullMedia('qr.png', 'image')"></div>
     <div style="text-align:center;">
-        <button class="download-qr-btn" onclick="downloadQRCode('qr.png', 'KOPSTORE-QR-Origin.png')">📥 ບັນທຶກຮູບ QR Code ເຂົ້າແກລໍຣີ້</button>
+        <button class="download-qr-btn" onclick="downloadQRCode('qr.png', 'KOPSTORE-QR-Origin.png')">📥 ບັນທຶກຮູບ QR code</button>
     </div>
     <div class="account">ຊື່ບັນຊີ: SOUKKANYA VITHAN<br>ເລກບັນຊີ: 1671241460578</div>
     
@@ -1188,10 +1197,6 @@ textarea{ min-height:70px; }
         <option value="Anousith Express (ອານຸສິດ)">🚚 Anousith Express (ອານຸສິດ)</option>
         <option value="HAL Logistics (ຮົງອາລຸນ)">🚚 HAL Logistics (ຮົງອາລຸນ)</option>
         <option value="Mixay Express (ມີໄຊ)">🚚 Mixay Express (ມີໄຊ)</option>
-        <option value="Xokxay Express (ໂຊກໄຊ)">🚚 Xokxay Express (ໂຊກໄຊ)</option>
-        <option value="Flash Express">🚚 Flash Express</option>
-        <option value="ຝາກລົດເມ / ສາຍໃຕ້ / ສາຍເໜືອ">🚌 ຝາກລົດເມ (ສາຍໃຕ້/ສາຍເໜືອ)</option>
-        <option value="ອື່ນໆ (ລະບຸໃນທີ່ຢູ່)">📦 ອື່ນໆ</option>
     </select>
 
     <label>ທີ່ຢູ່ສາຂາ/ຈຸດຮັບ (ລູກຄ້າ):</label>
@@ -1590,7 +1595,6 @@ function shareProduct(id, name) {
     document.getElementById("shareFb").href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
     document.getElementById("shareMsg").href = `fb-messenger://share/?link=${encodedUrl}`;
     document.getElementById("shareWa").href = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
-    document.getElementById("shareLine").href = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
 
     document.getElementById("shareModal").classList.add("show");
 }
@@ -1990,12 +1994,15 @@ function renderProducts(){
                 ✏️ ແກ້ໄຂສິນຄ້າ
             </button>
         ` : `
-            <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="openOptionModal('${p.id}')">
-                ${hasStock ? "🛒 ເພີ່ມໃສ່ກະຕ່າ" : "ສິນຄ້າໝົດ"}
-            </button>
+            <div class="action-btn-row">
+                <button class="add-btn" ${!hasStock ? "disabled" : ""} onclick="openOptionModal('${p.id}')">
+                    ${hasStock ? "🛒 ເພີ່ມໃສ່ກະຕ່າ" : "ສິນຄ້າໝົດ"}
+                </button>
+                <button class="share-btn" onclick="shareProduct('${p.id}', '${p.name.replace(/'/g, "\\'")}')">
+                    ➥ ແຊຣ໌
+                </button>
+            </div>
         `;
-
-        const shareBtnHTML = `<button class="share-btn" onclick="shareProduct('${p.id}', '${p.name.replace(/'/g, "\\'")}')">🔗 ແຊ/ຄັດລອກລິ້ງ</button>`;
 
         return `
         <div class="product">
@@ -2019,7 +2026,6 @@ function renderProducts(){
                 </div>
 
                 ${actionBtnHTML}
-                ${shareBtnHTML}
                 ${adminActionsHTML}
             </div>
         </div>
@@ -2503,4 +2509,3 @@ async function sendToWhatsApp(type) {
 
 </body>
 </html>
-gl
