@@ -1,25 +1,20 @@
-# SK-KOP STORE — rebuild starter
+# SK-KOP STORE — revised storefront draft
 
-## ໄຟລ໌
-- `index.html`, `style.css`, `app.js`: ໜ້າຮ້ານ, search, cart, dark mode, checkout form.
-- `firebase-config.js`: Firebase web config ແລະ API URL.
-- `tracking.html`: ຕິດຕາມອໍເດີ.
-- `admin.html`: ໜ້າ Admin ເບື້ອງຕົ້ນ.
-- `backend/`: Express API ສ້າງອໍເດີ/ຄົ້ນຫາດ້ວຍເບີໂທ.
-- `database.rules.json`: rules ເລີ່ມຕົ້ນ.
+## Included in this version
+- Product cards show image, name, price, stock and optional `bestSeller` label; no add-to-cart button on cards.
+- Product details modal supports image thumbnails, optional `colors` and `sizes`, quantity, reviews summary, Buy Now and Add to Cart.
+- Favorites page, persistent cart, dark/light toggle, search and price sorting.
+- Customer fields: phone, name, province, district, village. No detailed-address field.
+- Firebase Phone Auth OTP UI and reCAPTCHA flow.
+- Payment choices shown as QR transfer or COD with 30% deposit wording.
+- Province/district dropdown data included in `app.js` for the currently listed provinces. Verify spelling and completeness before launch.
 
-## ຕິດຕັ້ງ
-1. ສຳຮອງ GitHub Repository ເກົ່າກ່ອນ.
-2. ອັບໂຫຼດ frontend ໃສ່ root ຂອງ GitHub Pages.
-3. Deploy `backend` ໃສ່ Node.js hosting; ຕັ້ງ `ALLOWED_ORIGIN=https://kopstore-sk.com` ແລະ Firebase Admin credentials ໃນ secret manager ຂອງ host.
-4. ຢ່າອັບໂຫຼດ service-account JSON/password ໃສ່ GitHub.
-5. ເມື່ອ API ໃຊ້ໄດ້ ໃຫ້ໃສ່ URL ໃນ `API_BASE_URL` ຂອງ `firebase-config.js`.
-6. ເພີ່ມ Firebase Auth user ສຳລັບ Admin ແລະຕັ້ງ custom claim `admin: true` ຈາກ trusted environment.
-7. ທົບທວນແລະ publish `database.rules.json` ໃນ Firebase RTDB Rules.
+## Important — not production ready yet
+This is a working UI draft, not a finished payment/order system. Firebase Phone Authentication must be enabled, authorized domains added, SMS region settings checked, and billing/quotas configured as Firebase requires. SMS delivery to Lao phone numbers must be tested. Do not promise OTP works until tested on a real Lao number.
 
-## ຍັງບໍ່ພ້ອມສຳລັບຮັບອໍເດີຈິງ
-- SMS OTP, private slip upload/review ແລະ OnePay confirmation ຍັງບໍ່ມີ.
-- Admin product/order workflow, ປ່ຽນ status, Anousith tracking/label ຍັງຕ້ອງພັດທະນາເພີ່ມ.
-- ການຈອງ/ຫັກ stock ແບບ atomic, rate limiting ແລະ tests ຍັງບໍ່ມີ.
-- ຢ່າໃຊ້ ImgBB ສຳລັບສະລິບທີ່ມີຂໍ້ມູນສ່ວນຕົວ; ໃຊ້ private storage ຜ່ານ backend.
-- COD ຄິດມັດຈຳ 30% ຂອງລາຄາສິນຄ້າ, ບໍ່ລວມຄ່າສົ່ງ. ຄ່າສົ່ງສະແດງ 0 ₭.
+`firebase-config.js` contains public web-app config only. `API_BASE_URL` is blank. Set it only after deploying and securing the backend. The backend starter is not yet hardened to verify Firebase ID tokens, enforce OTP verification server-side, handle slip uploads, create payment QR, verify payment, manage admin claims, or integrate Anousith. Do not use it for real orders until those protections are implemented and tested. A front-end `verifiedPhone` field is not proof of verification; backend must verify the Firebase ID token.
+
+Product data is expected at Firebase Realtime Database path `/products`. Suggested fields: `name`, `description`, `price`, `originalPrice`, `salePrice`, `stock`, `image`, `images` (array), `colors` (array), `sizes` (array), `bestSeller`, `active`, `reviewsSummary`.
+
+## Open locally
+Because this uses JavaScript modules, serve it over localhost or deploy it on HTTPS; opening `index.html` directly as a file may fail. Configure Firebase authorized domains before testing OTP.
