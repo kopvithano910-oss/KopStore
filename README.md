@@ -1,20 +1,23 @@
-# SK-KOP STORE — revised storefront draft
+# SK-KOP STORE — storefront + API + admin
 
-## Included in this version
-- Product cards show image, name, price, stock and optional `bestSeller` label; no add-to-cart button on cards.
-- Product details modal supports image thumbnails, optional `colors` and `sizes`, quantity, reviews summary, Buy Now and Add to Cart.
-- Favorites page, persistent cart, dark/light toggle, search and price sorting.
-- Customer fields: phone, name, province, district, village. No detailed-address field.
-- Firebase Phone Auth OTP UI and reCAPTCHA flow.
-- Payment choices shown as QR transfer or COD with 30% deposit wording.
-- Province/district dropdown data included in `app.js` for the currently listed provinces. Verify spelling and completeness before launch.
+Includes responsive storefront, product detail/cart/favorites, province→district checkout, Firebase Phone Auth OTP UI, backend order creation, private slip submission endpoint, order tracking, and an Admin panel for order status/tracking and product updates.
 
-## Important — not production ready yet
-This is a working UI draft, not a finished payment/order system. Firebase Phone Authentication must be enabled, authorized domains added, SMS region settings checked, and billing/quotas configured as Firebase requires. SMS delivery to Lao phone numbers must be tested. Do not promise OTP works until tested on a real Lao number.
+## Required setup before real orders
+1. Deploy `backend/` to a Node.js host that supports HTTPS. Run `npm install`, set `ALLOWED_ORIGIN` to your exact storefront origins, set `FIREBASE_DATABASE_URL`, and provide Google Application Default Credentials/service account securely in the host environment. Never commit service-account JSON.
+2. Set `API_BASE_URL` in `firebase-config.js` to the deployed API base URL.
+3. In Firebase Authentication, enable Email/Password and Phone providers; add the storefront domain to Authorized domains; review SMS region policy and billing/quotas. Test OTP on a real Lao number.
+4. Assign `admin: true` custom claims to the intended admin UID only using trusted Firebase Admin SDK on a private server. Do not put a service-account key or admin password in frontend code. Example (run only in a trusted admin environment): `await admin.auth().setCustomUserClaims('FIREBASE_UID_HERE', {admin:true})`. Then sign out/in again.
+5. Import `database.rules.json` after reviewing it. Backend service account has privileged access, so keep it private.
+6. Set products under `/products` with fields such as `name`, `description`, `price`, `salePrice`, `stock`, `image`, `images`, `colors`, `sizes`, `bestSeller`, `active`. Product IDs must match IDs used in the storefront.
+7. Add your actual OnePay QR details to the checkout flow before launch. This package does not automatically verify bank transfers; an admin must review slips and confirm payment. Uploading a slip is not proof of payment.
+8. Anousith Express integration/official label generation is not automated here. Enter only real tracking numbers and upload carrier-generated labels in a future extension.
 
-`firebase-config.js` contains public web-app config only. `API_BASE_URL` is blank. Set it only after deploying and securing the backend. The backend starter is not yet hardened to verify Firebase ID tokens, enforce OTP verification server-side, handle slip uploads, create payment QR, verify payment, manage admin claims, or integrate Anousith. Do not use it for real orders until those protections are implemented and tested. A front-end `verifiedPhone` field is not proof of verification; backend must verify the Firebase ID token.
+## Current API endpoints
+- `GET /api/health`
+- `POST /api/orders` (requires valid Firebase ID token with verified phone number matching the order phone)
+- `POST /api/orders/:id/slip` (private slip submission; JPEG/PNG/WebP, max ~4.5 MB decoded)
+- `GET /api/orders/:id?phone=...`
+- Admin: `GET /api/admin/orders`, `GET /api/admin/orders/:id/slip`, `PATCH /api/admin/orders/:id`, `GET /api/admin/products`, `PUT /api/admin/products/:id`, `DELETE /api/admin/products/:id`
 
-Product data is expected at Firebase Realtime Database path `/products`. Suggested fields: `name`, `description`, `price`, `originalPrice`, `salePrice`, `stock`, `image`, `images` (array), `colors` (array), `sizes` (array), `bestSeller`, `active`, `reviewsSummary`.
-
-## Open locally
-Because this uses JavaScript modules, serve it over localhost or deploy it on HTTPS; opening `index.html` directly as a file may fail. Configure Firebase authorized domains before testing OTP.
+## Important limitation
+The frontend checkout currently needs a final integration pass for the slip upload screen and real OnePay QR presentation; the backend endpoint and admin review route are included but are not a complete payment gateway. Do not advertise the site as production-ready until OTP, orders, uploads, rules, CORS, admin claim, and real payments are tested end-to-end.
