@@ -83,7 +83,7 @@ window.sendOTP = async () => {
     let phoneInput = document.getElementById('phone');
     let rawPhone = phoneInput ? phoneInput.value.trim() : '';
     if (!rawPhone) throw Error('ກະລຸນາໃສ່ເບີໂທ');
-    let phoneNumber = rawPhone.startsWith('+') ? rawPhone : '020 xxxxxxxx' + rawPhone.replace(/^0+/, '');
+    let phoneNumber = rawPhone.startsWith('+') ? rawPhone : '+856' + rawPhone.replace(/^0+/, '');
     
     if (!recaptcha) {
       recaptcha = new RecaptchaVerifier('recaptcha-container', { size: 'invisible' }, auth);
