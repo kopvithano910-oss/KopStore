@@ -1,27 +1,110 @@
-import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {getDatabase,ref,get} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import {getAuth,RecaptchaVerifier,signInWithPhoneNumber} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {firebaseConfig,API_BASE_URL} from './firebase-config.js';
-const app=initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app),$=id=>document.getElementById(id);
-let products=[],cart=JSON.parse(localStorage.skCart||'[]'),favs=JSON.parse(localStorage.skFavs||'[]'),current=null,confirmation=null,recaptcha=null;
-const districts={
-'ນະຄອນຫຼວງວຽງຈັນ':['ຈັນທະບູລີ','ສີໂຄດຕະບອງ','ໄຊເສດຖາ','ສີສັດຕະນາກ','ນາຊາຍທອງ','ໄຊທານີ','ຫາດຊາຍຟອງ','ສັງທອງ','ປາກງື່ມ'],
-'ຜົ້ງສາລີ':['ຜົ້ງສາລີ','ໃໝ່','ຂວາ','ສຳພັນ','ບຸນເໜືອ','ຍອດອູ','ບຸນໃຕ້'],'ຫຼວງນ້ຳທາ':['ຫຼວງນ້ຳທາ','ສິງ','ລອງ','ວຽງພູຄາ','ນາແລ'],'ອຸດົມໄຊ':['ໄຊ','ລາ','ນາໝໍ້','ງາ','ແບ່ງ','ຮຸນ','ປາກແບ່ງ'],'ບໍ່ແກ້ວ':['ຫ້ວຍຊາຍ','ຕົ້ນເຜິ້ງ','ເມິງ','ຜາອຸດົມ','ປາກທາ'],
-'ຫຼວງພະບາງ':['ຫຼວງພະບາງ','ຊຽງເງິນ','ນານ','ປາກອູ','ນ້ຳບາກ','ງອຍ','ປາກແຊງ','ໂພນໄຊ','ຈອມເພັດ','ວຽງຄຳ','ພູຄູນ','ໂພນທອງ'],'ຫົວພັນ':['ຊຳເໜືອ','ຊຽງຄໍ້','ຮ້ຽມ','ວຽງໄຊ','ຫົວເມືອງ','ຊຳໃຕ້','ສົບເບົາ','ແອດ','ກວັນ','ຊ່ອນ'],
-'ໄຊຍະບູລີ':['ໄຊຍະບູລີ','ຄອບ','ຊຽງຮ່ອນ','ເງິນ','ຫົງສາ','ພຽງ','ປາກລາຍ','ແກ່ນທ້າວ','ບໍ່ແຕນ','ທົ່ງມີໄຊ','ໄຊສະຖານ'],'ຊຽງຂວາງ':['ແປກ','ຄຳ','ໜອງແຮດ','ຄູນ','ໝອກໃໝ່','ພູກູດ','ຜາໄຊ'],
-'ແຂວງວຽງຈັນ':['ໂພນໂຮງ','ທຸລະຄົມ','ແກ້ວອຸດົມ','ກາສີ','ວັງວຽງ','ເຟືອງ','ສັງຄອມ','ໝື່ນ','ວຽງຄຳ','ຫິນເຫີບ','ແມດ'],'ບໍລິຄຳໄຊ':['ປາກຊັນ','ທ່າພະບາດ','ປາກກະດິງ','ບໍລິຄັນ','ຄຳເກີດ','ວຽງທອງ','ໄຊຈຳພອນ'],
-'ຄຳມ່ວນ':['ທ່າແຂກ','ມະຫາໄຊ','ໜອງບົກ','ຫີນບູນ','ຍົມມະລາດ','ບົວລະພາ','ນາກາຍ','ເຊບັ້ງໄຟ','ໄຊບົວທອງ','ຄູນຄຳ'],'ສະຫວັນນະເຂດ':['ໄກສອນ ພົມວິຫານ','ອຸທຸມພອນ','ອາດສະພັງທອງ','ພິນ','ເຊໂປນ','ນອງ','ທ່າປາງທອງ','ຈຳພອນ','ຊົນນະບູລີ','ໄຊບູລີ','ວິລະບູລີ','ອາດສະພອນ','ໄຊພູທອງ','ພະລານໄຊ','ສອງຄອນ'],'ໄຊສົມບູນ':['ອະນຸວົງ','ລ້ອງແຈ້ງ','ທ່າໂທມ','ຮົ່ມ','ລ້ອງຊານ'],
-'ສາລະວັນ':['ສາລະວັນ','ຕະໂອ້ຍ','ຕຸ້ມລານ','ລະຄອນເພັງ','ວາປີ','ຄົງເຊໂດນ','ເລົ່າງາມ','ສະມ້ວຍ'],'ເຊກອງ':['ລະມາມ','ກະລຶມ','ດາກຈຶງ','ທ່າແຕງ'],'ຈຳປາສັກ':['ປາກເຊ','ສະນະສົມບູນ','ບາຈຽງຈະເລີນສຸກ','ປາກຊ່ອງ','ປະທຸມພອນ','ໂພນທອງ','ຈຳປາສັກ','ສຸຂຸມາ','ມູນລະປະໂມກ','ໂຂງ'],'ອັດຕະປື':['ສາມັກຄີໄຊ','ໄຊເສດຖາ','ສະໜາມໄຊ','ສານໄຊ','ພູວົງ']};
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),img=p=>p.image||p.imageUrl||p.images?.[0]||'https://placehold.co/600x600/171717/ffffff?text=SK-KOP',price=p=>Number(p.salePrice||p.discountPrice||p.price)||0,money=n=>new Intl.NumberFormat('lo-LA').format(n)+' ₭';
-function save(){localStorage.skCart=JSON.stringify(cart);localStorage.skFavs=JSON.stringify(favs);$('cartCount').textContent=cart.reduce((s,x)=>s+x.qty,0);$('favCount').textContent=favs.length}
-window.showHome=()=>{$('pageTitle').textContent='ສິນຄ້າທັງໝົດ';render()};window.showFavorites=()=>{$('pageTitle').textContent='ສິນຄ້າທີ່ມັກ ♡';render(favs)};
-function render(only=null){let q=$('search').value.toLowerCase(),a=products.filter(p=>(!only||only.includes(p.id))&&(p.name||p.title||'').toLowerCase().includes(q));if($('sort').value==='low')a.sort((x,y)=>price(x)-price(y));if($('sort').value==='high')a.sort((x,y)=>price(y)-price(x));$('products').innerHTML=a.length?a.map(p=>`<article class="product" onclick="detail('${p.id}')"><div class="photo"><img src="${esc(img(p))}" alt="${esc(p.name||p.title)}">${p.bestSeller?'<span class="badge">ຂາຍດີ</span>':''}<button class="heart ${favs.includes(p.id)?'on':''}" onclick="event.stopPropagation();toggleFav('${p.id}')">♡</button></div><div class="pinfo"><h3>${esc(p.name||p.title||'ສິນຄ້າ')}</h3><div class="prices"><b>${money(price(p))}</b>${price(p)<Number(p.originalPrice||p.price)?`<del>${money(p.originalPrice||p.price)}</del>`:''}</div><small>${p.stock!==undefined?'ສະຕັອກ: '+esc(p.stock):''}</small></div></article>`).join(''):'<div class="empty">ບໍ່ພົບສິນຄ້າ</div>'}
-window.toggleFav=id=>{favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];save();render($('pageTitle').textContent.includes('ມັກ')?favs:null)};
-window.detail=id=>{current=products.find(p=>p.id===id);if(!current)return;let p=current,imgs=p.images||[img(p)];$('modal').innerHTML=`<button class="close" onclick="closeModal()">×</button><div class="detailgrid"><div><img id="mainpic" class="mainpic" src="${esc(img(p))}"><div class="thumbs">${imgs.map(u=>`<img src="${esc(u)}" onclick="document.getElementById('mainpic').src='${esc(u)}'">`).join('')}</div></div><div><h2>${esc(p.name||p.title)}</h2><div class="prices"><b>${money(price(p))}</b>${price(p)<Number(p.originalPrice||p.price)?`<del>${money(p.originalPrice||p.price)}</del>`:''}</div><p>${esc(p.description||'ບໍ່ມີລາຍລະອຽດ')}</p><p>ສະຕັອກ: ${esc(p.stock??'ກະລຸນາສອບຖາມ')}</p>${p.colors?.length?`<label>ສີ<select id="color">${p.colors.map(x=>`<option>${esc(x)}</option>`)}</select></label>`:''}${p.sizes?.length?`<label>ຂະໜາດ<select id="size">${p.sizes.map(x=>`<option>${esc(x)}</option>`)}</select></label>`:''}<label>ຈຳນວນ<input id="qty" type="number" min="1" max="${Number(p.stock)||99}" value="1"></label><div class="buyrow"><button class="primary" onclick="buyNow()">ຊື້ເລີຍ</button><button class="secondary" onclick="addCart()">ເພີ່ມໃສ່ກະຕ່າ</button></div><hr><h3>ຣີວິວລູກຄ້າ</h3><p>${esc(p.reviewsSummary||'ຍັງບໍ່ມີຣີວິວ')}</p></div></div>`;$('overlay').classList.remove('hidden')};window.closeModal=()=>$('overlay').classList.add('hidden');
-function add(){let q=Math.max(1,Number($('qty')?.value)||1),x=cart.find(x=>x.id===current.id);if(x)x.qty+=q;else cart.push({id:current.id,qty:q,color:$('color')?.value||'',size:$('size')?.value||''});save()}window.addCart=()=>{add();closeModal();showCart()};window.buyNow=()=>{add();checkout()};
-window.showCart=()=>{$('pageTitle').textContent='ກະຕ່າສິນຄ້າ';let rows=cart.map(c=>({...c,p:products.find(p=>p.id===c.id)})).filter(x=>x.p),total=rows.reduce((s,x)=>s+price(x.p)*x.qty,0);$('products').innerHTML=rows.length?rows.map(x=>`<article class="cartrow"><img src="${esc(img(x.p))}"><div><b>${esc(x.p.name||x.p.title)}</b><p>${money(price(x.p))} × ${x.qty}</p><button onclick="changeQty('${x.id}',-1)">−</button> ${x.qty} <button onclick="changeQty('${x.id}',1)">+</button> <button onclick="removeItem('${x.id}')">ລຶບ</button></div></article>`).join('')+`<div class="carttotal">ລວມ: <b>${money(total)}</b><button class="primary" onclick="checkout()">ສັ່ງຊື້</button></div>`:'<div class="empty">ກະຕ່າຍັງວ່າງ</div>'};window.changeQty=(id,n)=>{let x=cart.find(x=>x.id===id);if(x)x.qty=Math.max(1,x.qty+n);save();showCart()};window.removeItem=id=>{cart=cart.filter(x=>x.id!==id);save();showCart()};
-window.checkout=()=>{let total=cart.reduce((s,c)=>s+price(products.find(p=>p.id===c.id)||{})*c.qty,0);$('modal').innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>ຂໍ້ມູນລູກຄ້າ</h2><p>ລວມສິນຄ້າ: <b>${money(total)}</b></p><form id="orderForm"><label>ຊື່ລູກຄ້າ<input name="name" required></label><label>ເບີໂທລະສັບ<input id="phone" name="phone" type="tel" placeholder="+85620xxxxxxxx" required></label><div class="formrow"><label>ແຂວງ<select id="province" required><option value="">ເລືອກແຂວງ</option>${Object.keys(districts).map(x=>`<option>${x}</option>`).join('')}</select></label><label>ເມືອງ<select id="district" required><option value="">ເລືອກເມືອງ</option></select></label></div><label>ບ້ານ<input name="village" required></label><h3>ວິທີຊຳລະ</h3><label class="radio"><input type="radio" name="payment" value="qr" checked> ໂອນຜ່ານ QR</label><label class="radio"><input type="radio" name="payment" value="cod"> ປາຍທາງ (ມັດຈຳ 30% ກ່ອນ)</label><div id="recaptcha-container"></div><button type="button" class="secondary full" onclick="sendOTP()">ສົ່ງ OTP ເຂົ້າເບີໂທ</button><label>ລະຫັດ OTP<input id="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="ລະຫັດ 6 ຕົວ"></label><button type="button" class="primary full" onclick="verifyOrder()">ຢືນຢັນ OTP ແລະ ດຳເນີນຕໍ່</button><p class="hint">ຕ້ອງຕັ້ງຄ່າ Firebase Phone Authentication ແລະ API ກ່ອນໃຊ້ງານຈິງ.</p></form>`;$('overlay').classList.remove('hidden');$('province').onchange=()=>{$('district').innerHTML='<option value="">ເລືອກເມືອງ</option>'+(districts[$('province').value]||[]).map(x=>`<option>${x}</option>`).join('')}};
-window.sendOTP=async()=>{try{if(!$('phone').value.trim())throw Error('ກະລຸນາປ້ອນເບີໂທ');if(!recaptcha){recaptcha=new RecaptchaVerifier(auth,'recaptcha-container',{});await recaptcha.render()}confirmation=await signInWithPhoneNumber(auth,$('phone').value.trim(),recaptcha);alert('ສົ່ງ OTP ແລ້ວ ກວດ SMS ຂອງທ່ານ')}catch(e){alert('ສົ່ງ OTP ບໍ່ສຳເລັດ: '+e.message)}};
-window.verifyOrder=async()=>{try{if(!confirmation)throw Error('ກົດສົ່ງ OTP ກ່ອນ');await confirmation.confirm($('otp').value.trim());if(!API_BASE_URL)throw Error('OTP ຢືນຢັນສຳເລັດແລ້ວ. ຕ້ອງຕັ້ງ API backend ກ່ອນຈະບັນທຶກອໍເດີ ແລະ ໄປໜ້າ QR ໄດ້.');let f=new FormData($('orderForm')),order={name:f.get('name'),phone:$('phone').value,province:$('province').value,district:$('district').value,village:f.get('village'),payment:f.get('payment'),items:cart,total:cart.reduce((s,c)=>s+price(products.find(p=>p.id===c.id)||{})*c.qty,0),verifiedPhone:true};if(!order.province||!order.district)throw Error('ກະລຸນາເລືອກແຂວງ ແລະ ເມືອງ');let token=await auth.currentUser.getIdToken(),r=await fetch(API_BASE_URL+'/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(order)});if(!r.ok)throw Error('ບັນທຶກອໍເດີບໍ່ສຳເລັດ');let d=await r.json();$('modal').innerHTML=`<h2>ສັ່ງຊື້ແລ້ວ</h2><p>ເລກອໍເດີ: ${esc(d.orderId||d.id||'')}</p><p>ການສະແດງ QR ແລະ ອັບໂຫຼດສະລິບຈະເພີ່ມໃນຂັ້ນຕໍ່ໄປ.</p><button class="primary" onclick="closeModal()">ປິດ</button>`;cart=[];save()}catch(e){alert(e.message)}};
-$('search').addEventListener('input',()=>render());$('sort').addEventListener('change',()=>render());$('themeBtn').onclick=()=>{document.body.classList.toggle('light');localStorage.skTheme=document.body.classList.contains('light')?'light':'dark'};if(localStorage.skTheme==='light')document.body.classList.add('light');$('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()};$('year').textContent=new Date().getFullYear();save();
-async function init(){try{let s=await get(ref(db,'products'));if(s.exists())products=Object.entries(s.val()).map(([id,p])=>({id,...p})).filter(p=>p.active!==false)}catch(e){console.warn(e)}if(!products.length)products=[{id:'demo',name:'ຕົວຢ່າງສິນຄ້າ',description:'ເພີ່ມສິນຄ້າຜ່ານ Firebase Admin',price:50000,stock:10,bestSeller:true}];render()}init();
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { firebaseConfig, API_BASE_URL } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig), db = getDatabase(app), auth = getAuth(app);
+let products = [], cart = JSON.parse(localStorage.skCart || '[]'), favs = JSON.parse(localStorage.skFavs || '[]'), current = null, conf, recaptcha = null, confirmation = null;
+
+const districts = {
+  'ນະຄອນຫຼວງວຽງຈັນ': ['ຈັນທະບູລີ', 'ສີໂຄດຕະບອງ', 'ໄຊເຊດຖາ', 'ສີສັດຕະນາກ', 'ນາຊາຍທອງ', 'ໄຊທານີ', 'ຫາດຊາຍຟອງ', 'ສັງທອງ', 'ປາກງື່ມ'],
+  'ຜົ້ງສາລີ': ['ຜົ້ງສາລີ', 'ບຸນໃຕ້', 'ຍອດອູ', 'ຜາໄຊ'],
+  'ຫຼວງນ້ຳທາ': ['ຫຼວງນ້ຳທາ', 'ສິງ', 'ລອງ', 'ວຽງພູຄາ', 'ນາແລ'],
+  'ອຸດົມໄຊ': ['ໄຊ', 'ຫຼວງາ', 'ຮຸນ', 'ປາກແບງ', 'ນາໝໍ້', 'ງາ'],
+  'ບໍ່ແກ້ວ': ['ຫ້າຍຊາຍ', 'ຕົ້ນເຜິ້ງ', 'ເມືອງເມງ', 'ເມືອງຜາອຸດົມ', 'ເມືອງປາກທາ'],
+  'ຫຼວງພະບາງ': ['ຫຼວງພະບາງ', 'ຊຽງເງິນ', 'ນານ', 'ປາກອູ', 'ຊາງ', 'ພູຄູນ', 'ງòi', 'ຈອມເພັດ', 'ວຽງຄຳ'],
+  'ຫົວພັນ': ['ຊຳເໜືອ', 'ຊຽງຄໍໍ', 'ວຽງທອງ', 'ວຽງໄຊ', 'ຫົວເມືອງ', 'ຊຳໃຕ້', 'ສົບເບົາ', 'ແອດ'],
+  'ຊຽງຂວາງ': ['ແປກ', 'ຄຳ', 'ໜອງແຮດ', 'ຄູນ', 'ໝອກໃໝ່', 'ພູກູດ'],
+  'ວຽງຈັນ': ['ໂພນໂຮງ', 'ທຸາຄົມ', 'ແກ້ວອຸດົມ', 'ກາສີ', 'ວັງວຽງ', 'ເມືອງເຟືອງ', 'ໝື່ນ', 'ຫີນເຫີບ'],
+  'ບໍລິຄຳໄຊ': ['ປາກຊັນ', 'ທ່າພຣະບາດ', 'ປາກກະດິງ', 'ບໍລິຄັນ', 'ຄຳເກີດ', 'ວຽງທອງ', 'ໄຊຈຳພອນ'],
+  'ຄຳມ່ວນ': ['ແກ້ວ', 'ມະຫາໄຊ', 'ໜອງບົກ', 'ຫີນບູນ', 'ຍົມມະລາດ', 'ບົວລາພາ', 'ນາກາຍ'],
+  'ສະຫວັນນະເຂດ': ['ໄກສອນ ພົມວິຫານ', 'ອຸທຸມພອນ', 'ພະລານສາຍ', 'ສອງຄອນ', 'ຈຳພອນ', 'ຊົນນະບູລີ', 'ພິນ', 'ນອງ'],
+  'ສາລະວັນ': ['ສາລະວັນ', 'ຕາໂອຍ', 'ປາກວມ', 'ຄົງເຊໂດນ', 'ວາປີ', 'ເລົ່າງາມ'],
+  'ເຊກອງ': ['ລະມາມ', 'ກະລຶມ', 'ຕຸ້ມລານ', 'ຊານໄຊ'],
+  'ຈຳປາສັກ': ['ປາກເຊ', 'ຊະນະສະສົມ', 'ປະທຸມພອນ', 'ໂພນທອງ', 'ມູນລະປະໂມກ', 'ໂຂງ', 'ປາກຊ່ອງ'],
+  'ອັດຕະປື': ['ສາມັກຄີໄຊ', 'ໄຊເສດຖາ', 'ສະໜາມໄຊ', 'ຊານໄຊ', 'ພູວົງ']
+};
+
+const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+function save() {
+  localStorage.skCart = JSON.stringify(cart);
+  localStorage.skFavs = JSON.stringify(favs);
+  let el = document.getElementById('cartCount');
+  if (el) el.textContent = cart.reduce((s, c) => s + c.qty, 0);
+}
+
+function showHome() {
+  let title = document.getElementById('pageTitle');
+  if (title) title.textContent = 'ສິນຄ້າທັງໝົດ';
+  render();
+}
+
+function showFavorites() {
+  let title = document.getElementById('pageTitle');
+  if (title) title.textContent = 'ລາຍການທີ່ມັກ';
+  render(favs);
+}
+
+window.toggleFav = id => {
+  favs.includes(id) ? favs = favs.filter(x => x !== id) : favs.push(id);
+  save();
+  render();
+};
+
+window.detail = id => {
+  current = products.find(p => p.id === id);
+  if (!current) return;
+  let p = current, imgs = p.images || [p.img];
+  let modal = document.getElementById('modal');
+  if (modal) {
+    modal.innerHTML = `<div class="modal-content"><span onclick="document.getElementById('modal').style.display='none'" class="close">&times;</span><h2>${esc(p.name)}</h2><div class="slider">${imgs.map((src, i) => `<img src="${src}" class="slide" style="display:${i === 0 ? 'block' : 'none'}">`).join('')}</div><p>${esc(p.desc)}</p><h3>ລາຄາ: ${p.price} ₭</h3><input type="number" id="qty" value="1" min="1"><button onclick="add()">ເພີ່ມລົງກະຕ່າ</button></div>`;
+    modal.style.display = 'block';
+  }
+};
+
+window.add = () => {
+  let q = Math.max(1, Number(document.getElementById('qty')?.value) || 1);
+  let x = cart.find(x => x.id === current.id);
+  if (x) x.qty += q; else cart.push({ ...current, qty: q });
+  save();
+  let modal = document.getElementById('modal');
+  if (modal) modal.style.display = 'none';
+  alert('ເພີ່ມລົງກະຕ່າແລ້ວ');
+};
+
+window.showCheckout = () => {
+  let title = document.getElementById('pageTitle');
+  if (title) title.textContent = 'ກະລຸນາຊຳລະເງິນ';
+};
+
+window.sendOTP = async () => {
+  try {
+    let phoneInput = document.getElementById('phone');
+    let rawPhone = phoneInput ? phoneInput.value.trim() : '';
+    if (!rawPhone) throw Error('ກະລຸນາໃສ່ເບີໂທ');
+    let phoneNumber = rawPhone.startsWith('+') ? rawPhone : '+856' + rawPhone.replace(/^0+/, '');
+    
+    if (!recaptcha) {
+      recaptcha = new RecaptchaVerifier('recaptcha-container', { size: 'invisible' }, auth);
+    }
+    let conf = await signInWithPhoneNumber(auth, phoneNumber, recaptcha);
+    confirmation = conf;
+    alert('ສົ່ງ OTP ສຳເລັດ');
+  } catch (e) {
+    alert('ສົ່ງ OTP ບໍ່ສຳເລັດ: ' + e.message);
+  }
+};
+
+window.verifyOTP = async () => {
+  try {
+    let otpInput = document.getElementById('otp');
+    let otpCode = otpInput ? otpInput.value.trim() : '';
+    if (!confirmation) throw Error('ກະລຸນາສົ່ງ OTP ກ่อน');
+    if (!otpCode) throw Error('ກະລຸນາໃສ່ລະຫັດ OTP');
+    let res = await confirmation.confirm(otpCode);
+    alert('ຢືນຢັນ OTP ສຳເລັດ');
+  } catch (e) {
+    alert('ຢືນຢັນ OTP ບໍ່ສຳເລັດ: ' + e.message);
+  }
+};
