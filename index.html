@@ -17,7 +17,6 @@
     <div class="logo">🛍 SK-KOP STORE</div>
     <div class="header-actions">
       <button class="btn-icon" onclick="toggleTheme()">🌓</button>
-      <button class="btn-icon" onclick="openAdminModal()">🔒 Admin</button>
       <button class="cart-btn" onclick="openCartModal()">
         🛒 <span id="cartCount">0</span>
       </button>
@@ -95,26 +94,6 @@
   <div class="modal-panel">
     <button class="close-btn" onclick="closeProductModal()">×</button>
     <div id="productDetailContent"></div>
-  </div>
-</div>
-
-<!-- ADMIN LOGIN / DASHBOARD MODAL -->
-<div id="adminOverlay" class="overlay">
-  <div class="modal-panel">
-    <button class="close-btn" onclick="closeAdminModal()">×</button>
-    <h2>🔒 ລະບົບຜູ້ດູແລ (Admin)</h2>
-    <div id="adminLoginBox" style="margin-top: 20px;">
-      <div class="form-group"><label>ລະຫັດຜ່ານ Admin</label><input type="password" id="adminPass" class="form-control" placeholder="ປ້ອນລະຫັດຜ່ານ"></div>
-      <button class="btn-primary" onclick="checkAdminLogin()">ເຂົ້າສູ່ລະບົບ</button>
-    </div>
-    <div id="adminDashboardBox" style="display:none; margin-top:15px;">
-      <p style="color:var(--accent-color); font-weight:bold; margin-bottom:15px;">✅ ເຂົ້າສູ່ລະບົບ Admin สำເລັດ</p>
-      <h3>ເພີ່ມສິນຄ້າໃໝ່</h3>
-      <div class="form-group"><label>ຊື່ສິນຄ້າ</label><input type="text" id="admName" class="form-control"></div>
-      <div class="form-group"><label>ລາຄາ (KIP)</label><input type="number" id="admPrice" class="form-control"></div>
-      <div class="form-group"><label>ລິ້ງຮູບພາບ</label><input type="text" id="admImg" class="form-control"></div>
-      <button class="btn-primary" onclick="addNewProduct()">ບັນທຶກສິນຄ້າລົງ Firebase</button>
-    </div>
   </div>
 </div>
 
@@ -346,28 +325,6 @@ function togglePaymentDetails() {
 function toggleTheme() {
   const html = document.documentElement;
   html.dataset.theme = html.dataset.theme === "light" ? "dark" : "light";
-}
-
-// Admin Functions (ປິດໄວ້ເປັນຄ່າເລີ່ມຕົ້ນ)
-function openAdminModal() { document.getElementById("adminOverlay").classList.add("show"); }
-function closeAdminModal() { document.getElementById("adminOverlay").classList.remove("show"); }
-function checkAdminLogin() {
-  const pass = document.getElementById("adminPass").value;
-  if (pass === "admin123") {
-    document.getElementById("adminLoginBox").style.display = "none";
-    document.getElementById("adminDashboardBox").style.display = "block";
-  } else {
-    alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
-  }
-}
-function addNewProduct() {
-  const name = document.getElementById("admName").value.trim();
-  const price = Number(document.getElementById("admPrice").value);
-  const image = document.getElementById("admImg").value.trim();
-  if (!name || !price) { alert("ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບ"); return; }
-  db.ref('products').push({ name, normalPrice: price, image }, (err) => {
-    if (!err) { alert("ເພີ່ມສິນຄ້າສຳເລັດ!"); location.reload(); }
-  });
 }
 </script>
 
