@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="lo" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SK-KOP STORE - Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="logo">🔒 SK-KOP STORE ADMIN</div>
+    <div class="header-actions">
+      <a href="index.html" class="btn-icon" style="text-decoration:none;">🏠 กลับໜ້າຮ້ານ</a>
+    </div>
+  </div>
+</header>
+
+<div class="container" style="max-width: 600px; margin-top: 20px;">
+  
+  <!-- ລະບົບລັອກອິນ -->
+  <div id="adminLoginBox" style="background: var(--card-bg); padding: 20px; border-radius: 14px; border: 1px solid var(--border-color);">
+    <h2 style="margin-bottom: 15px;">🔐 ເຂົ້າສູ່ລະບົບ Admin</h2>
+    <div class="form-group">
+      <label>ລະຫັດຜ່ານ Admin</label>
+      <input type="password" id="adminPass" class="form-control" placeholder="ປ້ອນລະຫັດຜ່ານ">
+    </div>
+    <button class="btn-primary" onclick="checkAdminLogin()">ເຂົ້າສູ່ລະບົບ</button>
+  </div>
+
+  <!-- ດາບອດຈັດການ -->
+  <div id="adminDashboardBox" style="display: none; background: var(--card-bg); padding: 20px; border-radius: 14px; border: 1px solid var(--border-color);">
+    <h2 style="color: var(--accent-color); margin-bottom: 15px;">✅ ຍິນດີຕ້ອນຮັບ Admin</h2>
+    
+    <h3 style="font-size: 16px; margin-bottom: 10px;">➕ ເພີ່ມສິນຄ້າໃໝ່</h3>
+    <div class="form-group">
+      <label>ຊື່ສິນຄ້າ</label>
+      <input type="text" id="admName" class="form-control" placeholder="ປ້ອນຊື່ສິນຄ້າ">
+    </div>
+    <div class="form-group">
+      <label>ລາຄາ (KIP)</label>
+      <input type="number" id="admPrice" class="form-control" placeholder="ປ້ອນລາຄາ">
+    </div>
+    <div class="form-group">
+      <label>ລິ້ງຮູບພາບສິນຄ້າ (Image URL)</label>
+      <input type="text" id="admImg" class="form-control" placeholder="https://...">
+    </div>
+    <button class="btn-primary" onclick="addNewProduct()">ບັນທຶກສິນຄ້າລົງ Firebase</button>
+  </div>
+
+</div>
+
+<script>
+const firebaseConfig = { 
+  databaseURL: "https://sk-kop-store-default-rtdb.asia-southeast1.firebasedatabase.app" 
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+function checkAdminLogin() {
+  const pass = document.getElementById("adminPass").value;
+  if (pass === "admin123") { // ປ່ຽນລະຫັດຜ່ານໄດ້ຕາມຕ້ອງການ
+    document.getElementById("adminLoginBox").style.display = "none";
+    document.getElementById("adminDashboardBox").style.display = "block";
+  } else {
+    alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!");
+  }
+}
+
+function addNewProduct() {
+  const name = document.getElementById("admName").value.trim();
+  const price = Number(document.getElementById("admPrice").value);
+  const image = document.getElementById("admImg").value.trim();
+
+  if (!name || !price) {
+    alert("ກະລຸນາປ້ອນຊື່ ແລະ ລາຄາສິນຄ້າໃຫ້ຄົບຖ້ວນ!");
+    return;
+  }
+
+  db.ref('products').push({ name, normalPrice: price, image: image || 'https://via.placeholder.com/300' }, (err) => {
+    if (err) {
+      alert("ເກີດຂໍ້ຜິດພາດ: " + err.message);
+    } else {
+      alert("ເພີ່ມສິນຄ້າສຳເລັດຮຽບຮ້ອຍ!");
+      document.getElementById("admName").value = "";
+      document.getElementById("admPrice").value = "";
+      document.getElementById("admImg").value = "";
+    }
+  });
+}
+</script>
+
+</body>
+</html>
+
