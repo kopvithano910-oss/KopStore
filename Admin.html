@@ -16,7 +16,7 @@
   <div class="header-container">
     <div class="logo">🔒 SK-KOP STORE ADMIN</div>
     <div class="header-actions">
-      <a href="index.html" class="btn-icon" style="text-decoration:none;">🏠 กลับໜ້າຮ້ານ</a>
+      <a href="index.html" class="btn-icon" style="text-decoration:none;">🏠 ກັບໜ້າຮ້ານ</a>
     </div>
   </div>
 </header>
@@ -28,7 +28,7 @@
     <h2 style="margin-bottom: 15px;">🔐 ເຂົ້າສູ່ລະບົບ Admin</h2>
     <div class="form-group">
       <label>ລະຫັດຜ່ານ Admin</label>
-      <input type="password" id="adminPass" class="form-control" placeholder="ປ້ອນລະຫັດຜ່ານ">
+      <input type="password" id="adminPass" class="form-control" placeholder="ປ້ອນລະຫັດຜ່ານ (admin123)">
     </div>
     <button class="btn-primary" onclick="checkAdminLogin()">ເຂົ້າສູ່ລະບົບ</button>
   </div>
@@ -64,7 +64,7 @@ const db = firebase.database();
 
 function checkAdminLogin() {
   const pass = document.getElementById("adminPass").value;
-  if (pass === "admin123") { // ປ່ຽນລະຫັດຜ່ານໄດ້ຕາມຕ້ອງການ
+  if (pass === "admin123") { // ລະຫັດຜ່ານ Admin (ສາມາດປ່ຽນໄດ້ຕາມຕ້ອງການ)
     document.getElementById("adminLoginBox").style.display = "none";
     document.getElementById("adminDashboardBox").style.display = "block";
   } else {
@@ -97,4 +97,3 @@ function addNewProduct() {
 
 </body>
 </html>
-
