@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="lo" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SK-KOP STORE - ຮ້ານຄ້າອອນລາຍ</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="logo">🛍 SK-KOP STORE</div>
+    <div class="header-actions">
+      <a href="admin.html" class="btn-icon" style="text-decoration:none; font-size:12px;">🔒 ລະບົບແອັດມິນ</a>
+      <button class="btn-icon" onclick="toggleTheme()">🌓</button>
+      <button class="cart-btn" onclick="openCartModal()">🛒 <span id="cartCount">0</span></button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- ປ້າຍໂຄສະນາ (Banner) -->
+  <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 16px; text-align: center;">
+    <h2 style="font-size: 16px; color: var(--accent-color); margin-bottom: 5px;">🔥 ยินດີຕ້ອນຮັບສູ່ SK-KOP STORE</h2>
+    <p style="font-size: 12px; color: var(--text-secondary);">ສິນຄ້ານຳເຂົ້າຄຸນນະພາບ, ລາຄາເປັນັນເອງ, จัดສົ່ງທົ່ວ 18 ແຂວງ!</p>
+  </div>
+
+  <!-- ຊ່ອງຄ้นຫາ -->
+  <div class="search-filter-box">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔎 ค้นຫາຊື່ສິນຄ້າ..." oninput="renderProducts()">
+  </div>
+
+  <!-- ລາຍການສິນຄ້າທັງໝົດ -->
+  <h3 style="font-size: 16px; margin-bottom: 12px;">📦 ລາຍການສິນຄ້າ</h3>
+  <div id="productsGrid" class="products-grid">
+    <div class="empty-state">⏳ ກຳລັງໂຫຼດຂໍ້ມູນສິນຄ້າຈາກ Firebase...</div>
+  </div>
+</div>
+
+<!-- 🛒 CART MODAL -->
+<div id="cartOverlay" class="overlay">
+  <div class="modal-panel">
+    <button class="close-btn" onclick="closeCartModal()">×</button>
+    <h2>🛒 ຕະຕ່າສິນຄ້າ</h2>
+    <div id="cartItemsList" style="flex:1; overflow-y:auto; margin: 15px 0;"></div>
+    
+    <div id="checkoutFormSection" style="display:none; border-top: 1px solid var(--border-color); padding-top: 15px;">
+      <h3 style="font-size: 15px; margin-bottom: 10px;">📦 ຂໍ້ມູນການຈັດສົ່ງ (Anousith Express)</h3>
+      <div class="form-group"><label>ຊື່ ແລະ ນາມສະກຸນ</label><input type="text" id="orderName" class="form-control" placeholder="ປ້ອນຊື່ຜູ້ຮັບ"></div>
+      <div class="form-group"><label>ເບີໂທລະສັບ</label><input type="tel" id="orderPhone" class="form-control" placeholder="20xxxxxxxx"></div>
+      
+      <div class="form-group">
+        <label>ແຂວງ</label>
+        <select id="provinceSelect" class="form-control" onchange="updateDistricts()">
+          <option value="">-- ເລືອກແຂວງ --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ເມືອງ</label>
+        <select id="districtSelect" class="form-control">
+          <option value="">-- ເລືອກເມືອງ --</option>
+        </select>
+      </div>
+      <div class="form-group"><label>ຊື່ບ້ານ / ຈຸດສັງເກດ</label><input type="text" id="orderVillage" class="form-control" placeholder="ປ້ອນຊື່ບ້ານ"></div>
+
+      <div class="form-group">
+        <label>ຮູບແບບການຊຳລະເງິນ</label>
+        <select id="paymentMethod" class="form-control" onchange="togglePaymentDetails()">
+          <option value="full">ຈ່າຍເຕັມຈຳນວນ (OnePay QR)</option>
+          <option value="cod">ມັດຈຳ 30% + ຈ່າຍປາຍທາງ 70% (COD)</option>
+        </select>
+      </div>
+
+      <div id="qrPaymentBox" style="background:var(--bg-color); padding:12px; border-radius:10px; text-align:center; margin-bottom:12px;">
+        <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">ສະແກນ QR ເພື່ອຊຳລະເງິນ OnePay</p>
+        <img src="qr.png" alt="OnePay QR" style="max-width:150px; height:auto; border-radius:8px;" onerror="this.src='https://via.placeholder.com/150?text=QR+Code'">
+        <p id="payAmountText" style="font-size:13px; font-weight:bold; color:var(--danger-color); margin-top:8px;"></p>
+        <div style="margin-top:8px; text-align:left;">
+          <label style="font-size:11px;">ອັບໂຫຼດຮູບສະລິບໂອນເງິນ</label>
+          <input type="file" id="slipFile" class="form-control" accept="image/*" style="padding:4px;">
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+      <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:bold; margin-bottom:12px;">
+        <span>ລວມທັງໝົດ:</span>
+        <span id="cartTotalPrice" style="color:var(--danger-color);">₭0</span>
+      </div>
+      <button id="mainActionBtn" class="btn-primary" onclick="proceedToCheckout()">ດຳເນີນການສັ່ງຊື້</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div id="productDetailOverlay" class="overlay">
+  <div class="modal-panel">
+    <button class="close-btn" onclick="closeProductModal()">×</button>
+    <div id="productDetailContent"></div>
+  </div>
+</div>
+
+<script>
+const firebaseConfig = { 
+  databaseURL: "https://sk-kop-store-default-rtdb.asia-southeast1.firebasedatabase.app" 
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const laoLocations = {
+  "ນະຄອນຫຼວງວຽງຈັນ": ["ເມືອງຈັນທະບູລີ", "ເມືອງສີໂຄດຕະບອງ", "ເມືອງໄຊເສດຖາ", "ເມືອງສີສັດຕະນາກ", "ເມືອງນາຊາຍທອງ", "ເມືອງໄຊທານີ", "ເມືອງຫາດຊາຍຟອງ", "ເມືອງສັງທອງ", "ເມືອງປາກງື່ມ"],
+  "ແຂວງວຽງຈັນ": ["ເມືອງໂພນໂຮງ", "ເມືອງທຸະລາກົມ", "ເມືອງແກ້ວອຸດົມ", "ເມືອງກາສີ", "ເມືອງວັງວຽງ", "ເມືອງເຟືອງ", "ເມືອງຊະນະຄາມ", "ເມືອງແມດ", "ເມືອງຫີນເຫີບ"],
+  "ແຂວງຫຼວງພະບາງ": ["ເມືອງຫຼວງພະບາງ", "ເມືອງຊຽງເງິນ", "ເມືອງນານ", "ເມືອງປາກອູ", "ເມືອງຊານ", "ເມືອງວຽງຄຳ", "ເມືອງພູຄູນ", "ເມືອງໂພນໄຊ", "ເມືອງຈອມເພັດ"],
+  "ແຂວງຈຳປາສັກ": ["ເມືອງປາກເຊ", "ເມືອງຊະນະສົມບູນ", "ເມືອງມະລະປະ", "ເມືອງປາກຊ່ອງ", "ເມືອງປະທຸມພອນ", "ເມືອງໂພນທອງ", "ເມືອງມູນລະປາໂມກ", "ເມືອງໂຂງ", "ເມືອງຈຳປາສັກ"],
+  "ແຂວງສະຫວັນນະເຂດ": ["ເມືອງໄກສອນ ພົມວິຫານ", "ເມືອງອຸທຸມພອນ", "ເມືອງອາດສະພັງທອງ", "ເມືອງພິນ", "ເມືອງເຊໂປນ", "ເມືອງນອງ", "ເມືອງສອງຄອນ", "ເມືອງຊົນນະບູລີ"],
+  "ແຂວງຄຳມ່ວນ": ["ເມືອງແຂກ", "ເມືອງມະຫາໄຊ", "ເມືອງຍົມມະລາດ", "ເມືອງຕຣອງ", "ເມືອງບົວລະພາ", "ເມືອງນາກາຍ", "ເມືອງຫິນບູນ"],
+  "ແຂວງບໍລິຄຳໄຊ": ["ເມືອງປາກຊັນ", "ເມືອງທ່າພະບາດ", "ເມືອງປາກກະດິງ", "ເມືອງບໍລິຄັນ", "ເມືອງຄຳເກີດ", "ເມືອງວຽງທອງ"],
+  "ແຂວງຊຽງຂວາງ": ["ເມືອງແປກ", "ເມືອງຄຳ", "ເມືອງໜອງເຮັດ", "ເມືອງຄູນ", "ເມືອງໝອກປ່າ", "ເມືອງຜາໄຊ", "ເມືອງກຸດ"],
+  "ແຂວງຫົວພັນ": ["ເມືອງຊຳເໜືອ", "ເມືອງຊຽງຄໍ້", "ເມືອງວຽງທອງ", "ເມືອງວຽງໄຊ", "ເມືອງຫົວເມືອງ", "ເມືອງຊຳໃຕ້", "ເມືອງສົບເບົາ"],
+  "ແຂວງອຸດົມໄຊ": ["ເມືອງໄຊ", "ເມືອງຫຼາ", "ເມືອງນາໝໍ້", "ເມືອງງາ", "ເມືອງຮຸນ", "ເມືອງປາກແບງ"],
+  "ແຂວງຫຼວງນ້ຳທາ": ["ເມືອງນ້ຳທາ", "ເມືອງສິງ", "ເມືອງລອງ", "ເມືອງວຽງພູຄາ", "ເມືອງນາລຳ"],
+  "ແຂວງຜົ້ງສາລີ": ["ເມືອງຜົ້ງສາລີ", "ເມືອງມຸງ", "ເມືອງນໍ່", "ເມືອງຂວາ", "ເມືອງສຳພັນ", "ເມືອງບຸນໃຕ້"],
+  "ແຂວງບ້ຽວແກ້ວ": ["ເມືອງຫ້ວຍຊາຍ", "ເມືອງຕົ້ນເຜິ້ງ", "ເມືອງເມິງ", "ເມືອງຜາອຸດົມ", "ເມືອງປາຄາ"],
+  "ແຂວງໄຊຍະບູລີ": ["ເມືອງໄຊຍະບູລີ", "ເມືອງຄອບ", "ເມືອງຊຽງຮ່ອນ", "ເມືອງເງິນ", "ເມືອງພຽງ", "ເມືອງປາກລາຍ", "ເມືອງແກ່ນທ້າວ"],
+  "ແຂວງສາລະວັນ": ["ເມືອງສາລະວັນ", "ເມືອງຕຸ້ມລານ", "ເມືອງລະຄອນເພັງ", "ເມືອງວາປີ", "ເມືອງຄົງເຊໂດນ", "ເມືອງເລົ່າງາມ"],
+  "ແຂວງເຊກອງ": ["ເມືອງລະມາມ", "ເມືອງກະລື່ມ", "ເມືອງຕຸມລານ", "ເມືອງດາກຈຶງ"],
+  "ແຂວງອັດຕະປື": ["ເມືອງສາມັກຄີໄຊ", "ເມືອງຊານໄຊ", "ເມືອງສະໜາມໄຊ", "ເມືອງສານຳໄຊ", "ເມືອງພູວົງ"],
+  "ແຂວງໄຊສົມບູນ": ["ເມືອງອານຸວົງ", "ເມືອງລ້ອງຊານ", "ເມືອງຮົ່ມ", "ເມືອງທ່າໂທມ"]
+};
+
+let products = [];
+let cart = JSON.parse(localStorage.getItem("kop_cart")) || [];
+
+window.addEventListener('DOMContentLoaded', () => {
+  const provSelect = document.getElementById("provinceSelect");
+  for (let prov in laoLocations) {
+    let opt = document.createElement("option");
+    opt.value = prov;
+    opt.textContent = prov;
+    provSelect.appendChild(opt);
+  }
+  loadProducts();
+});
+
+function updateDistricts() {
+  const prov = document.getElementById("provinceSelect").value;
+  const distSelect = document.getElementById("districtSelect");
+  distSelect.innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';
+  if (laoLocations[prov]) {
+    laoLocations[prov].forEach(d => {
+      let opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = d;
+      distSelect.appendChild(opt);
+    });
+  }
+}
+
+function loadProducts() {
+  db.ref('products').on('value', (snapshot) => {
+    const data = snapshot.val();
+    products = [];
+    if (data) {
+      for (let id in data) { products.push({ id, ...data[id] }); }
+    }
+    renderProducts();
+  });
+}
+
+function money(num) {
+  return "₭" + Number(num || 0).toLocaleString();
+}
+
+function renderProducts() {
+  const grid = document.getElementById("productsGrid");
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state">ບໍ່ພົບສິນຄ້າໃນລະບົບ</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" onclick="openProductDetail('${p.id}')">
+      <div class="product-img-wrap">
+        <img src="${p.image || 'https://via.placeholder.com/300'}" alt="${p.name}">
+      </div>
+      <div class="product-info">
+        <div class="product-title">${p.name}</div>
+        <div class="product-price">${money(p.normalPrice || p.price)}</div>
+        <div style="font-size:11px; color:var(--text-secondary);">ເຫຼືອໃນສາງ: ${p.stock || 0} ຊິ້ນ</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function openProductDetail(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const content = document.getElementById("productDetailContent");
+  content.innerHTML = `
+    <img src="${p.image}" style="width:100%; height:220px; object-fit:cover; border-radius:10px; margin-bottom:12px;">
+    <h2>${p.name}</h2>
+    <div style="font-size:18px; font-weight:bold; color:var(--danger-color); margin:8px 0;">${money(p.normalPrice || p.price)}</div>
+    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:15px;">ສະຕ໊ອກພ້ອມສົ່ງ: ${p.stock || 0} ຊິ້ນ</p>
+    <button class="btn-primary" onclick="addToCart('${p.id}')">🛒 ເພີ່ມໃສ່ກະຕ່າ</button>
+  `;
+  document.getElementById("productDetailOverlay").classList.add("show");
+}
+function closeProductModal() { document.getElementById("productDetailOverlay").classList.remove("show"); }
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const item = cart.find(x => x.id === id);
+  if (item) { item.qty += 1; } 
+  else { cart.push({ id: p.id, name: p.name, price: p.normalPrice || p.price, image: p.image, qty: 1 }); }
+  saveCart();
+  alert("ເພີ່ມສິນຄ້າລົງກະຕ່າແລ້ວ!");
+  closeProductModal();
+}
+
+function saveCart() {
+  localStorage.setItem("kop_cart", JSON.stringify(cart));
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const count = cart.reduce((sum, i) => sum + i.qty, 0);
+  document.getElementById("cartCount").innerText = count;
+
+  const list = document.getElementById("cartItemsList");
+  if (cart.length === 0) {
+    list.innerHTML = `<div class="empty-state">ກະຕ່າຍັງວ່າງ</div>`;
+    document.getElementById("cartTotalPrice").innerText = "₭0";
+    return;
+  }
+
+  let total = 0;
+  list.innerHTML = cart.map((i, idx) => {
+    total += i.price * i.qty;
+    return `
+      <div class="cart-item">
+        <img src="${i.image}">
+        <div class="cart-item-info">
+          <div class="cart-item-title">${i.name}</div>
+          <div class="cart-item-price">${money(i.price)}</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+            <span>${i.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("cartTotalPrice").innerText = money(total);
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  saveCart();
+}
+
+function openCartModal() {
+  updateCartUI();
+  document.getElementById("cartOverlay").classList.add("show");
+}
+function closeCartModal() { document.getElementById("cartOverlay").classList.remove("show"); }
+
+function proceedToCheckout() {
+  if (cart.length === 0) { alert("ກະຕ່າຫວ່າງເປົ່າ"); return; }
+  const formSec = document.getElementById("checkoutFormSection");
+  if (formSec.style.display === "none") {
+    formSec.style.display = "block";
+    document.getElementById("mainActionBtn").innerText = "ຢືນຢັນການສັ່ງຊື້";
+    togglePaymentDetails();
+  } else {
+    const name = document.getElementById("orderName").value.trim();
+    const phone = document.getElementById("orderPhone").value.trim();
+    const province = document.getElementById("provinceSelect").value;
+    const district = document.getElementById("districtSelect").value;
+    const village = document.getElementById("orderVillage").value.trim();
+
+    if (!name || !phone || !province || !district || !village) {
+      alert("ກະລຸນາປ້ອນຂໍ້ມູນການຈັດສົ່ງໃຫ້ຄົບຖ້ວນ!");
+      return;
+    }
+
+    const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    const orderData = {
+      name, phone, province, district, village,
+      items: cart,
+      totalAmount: total,
+      paymentMethod: document.getElementById("paymentMethod").value,
+      status: "ລໍຖ້າກວດສອບ",
+      trackingNo: "",
+      timestamp: Date.now()
+    };
+
+    db.ref('orders').push(orderData, (err) => {
+      if (err) {
+        alert("ເກີດຂໍ້ຜິດພາດ: " + err.message);
+      } else {
+        alert("ສັ່ງຊື້ສຳເລັດຮຽບຮ້ອຍ!");
+        cart = [];
+        saveCart();
+        closeCartModal();
+        location.reload();
+      }
+    });
+  }
+}
+
+function togglePaymentDetails() {
+  const method = document.getElementById("paymentMethod").value;
+  const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+  const payText = document.getElementById("payAmountText");
+  if (method === 'full') {
+    payText.innerText = `ຍອດຈ່າຍເຕັມ: ${money(total)}`;
+  } else {
+    const deposit = total * 0.3;
+    payText.innerText = `ມັດຈຳ 30%: ${money(deposit)} (ສ່ວນທີ່ເຫຼືອ 70% ຈ່າຍປາຍທາງ)`;
+  }
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === "light" ? "dark" : "light";
+}
+</script>
+
+</body>
+</html>
