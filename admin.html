@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="lo" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SK-KOP STORE - Admin Management</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="logo">🔒 SK-KOP STORE ADMIN</div>
+    <div class="header-actions">
+      <a href="index.html" class="btn-icon" style="text-decoration:none; font-size:11px;">🏠 ກັບໜ້າຮ້ານ</a>
+    </div>
+  </div>
+</header>
+
+<div class="container" style="max-width: 850px; margin-top: 20px;">
+  
+  <!-- 1. ຫນ້າລະຫັດ PIN ຫຼັກ (ລັອກອິນ) -->
+  <div id="pinLoginBox" style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+    <h2>🔐 ປ້ອນລະຫັດ PIN ເຈົ້າຂອງຮ້ານ</h2>
+    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:15px;">ລະຫັດເລີ່ມຕົ້ນແມ່ນ: 1234</p>
+    <div class="form-group">
+      <input type="password" id="pinInput" class="form-control" placeholder="ປ້ອນລະຫັດ PIN 4 ຫຼັກ" maxlength="4" style="text-align:center; font-size:20px; letter-spacing:5px;">
+    </div>
+    <button class="btn-primary" onclick="verifyPin()">ເຂົ້າສູ່ລະບົບ</button>
+    <button class="btn-icon" style="width:100%; margin-top:10px;" onclick="showForgotPinModal()">ລືມລະຫັດ PIN?</button>
+  </div>
+
+  <!-- ມ໋ອດກູ້ຄືນ PIN (ຄຳຖາມລັບ) -->
+  <div id="forgotPinModal" style="display:none; background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-top:15px;">
+    <h3>❓ ກູ້ຄືນລະຫັດ PIN (ຄຳຖາມລັບ)</h3>
+    <p style="font-size:12px; color:var(--text-secondary); margin: 10px 0;">ຄຳຖາມ: ສັດລ້ຽງຕົວທຳອິດ ຫຼື ຊື່ຫຼິ້ນແຟນຂອງທ່ານແມ່ນຫຍັງ?</p>
+    <div class="form-group">
+      <input type="text" id="secretAnswerInput" class="form-control" placeholder="ປ້ອນຄຳຕອບ (ຄ່າເລີ່ມຕົ້ນ: monar)">
+    </div>
+    <div class="form-group">
+      <input type="password" id="newPinInput" class="form-control" placeholder="ປ້ອນລະຫັດ PIN ໃໝ່" maxlength="4">
+    </div>
+    <button class="btn-primary" onclick="resetPinCode()">ຕັ້ງລະຫັດ PIN ໃໝ່</button>
+  </div>
+
+  <!-- 2, 3, 4, 5, 6. ດາບອດຈັດການຫຼັງບ້ານ -->
+  <div id="adminDashboard" style="display:none;">
+    
+    <!-- ຖັບເມນູເລືອກໜ້າຈັດການ -->
+    <div style="display:flex; gap:6px; margin-bottom:15px; overflow-x:auto; padding-bottom:4px;">
+      <button class="btn-primary" style="flex:1; font-size:11px; white-space:nowrap;" onclick="switchTab('tabAddProd')">➕ ເພີ່ມສິນຄ້າ</button>
+      <button class="btn-primary" style="flex:1; font-size:11px; white-space:nowrap; background:#0dcaf0; color:#000;" onclick="switchTab('tabEditProd')">✏️ ແກ້ໄຂສິນຄ້າ</button>
+      <button class="btn-primary" style="flex:1; font-size:11px; white-space:nowrap; background:#6c757d;" onclick="switchTab('tabOrders')">📦 ອໍເດີ້ & ສະຖານະ</button>
+      <button class="btn-primary" style="flex:1; font-size:11px; white-space:nowrap; background:#198754;" onclick="switchTab('tabSlips')">💰 ກວດສອບສະລິບ</button>
+    </div>
+
+    <!-- 2 & 3. ຟອມເພີ່ມສິນຄ້າ ແລະ ຕັ້ງຄ່າສ່ວນລົດ -->
+    <div id="tabAddProd" class="admin-tab-content" style="background:var(--card-bg); padding:20px; border-radius:12px; border:1px solid var(--border-color);">
+      <h3 style="margin-bottom:15px;">➕ ເພີ່ມສິນຄ້າໃໝ່</h3>
+      <div class="form-group"><label>ຊື່ສິນຄ້າ</label><input type="text" id="pName" class="form-control" placeholder="ປ້ອນຊື່ສິນຄ້າ"></div>
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;"><label>ລາຄາ (KIP)</label><input type="number" id="pPrice" class="form-control" placeholder="ລາຄາ"></div>
+        <div class="form-group" style="flex:1;"><label>ສະຕ໊ອກ (Stock)</label><input type="number" id="pStock" class="form-control" placeholder="ຈຳນວນ"></div>
+      </div>
+      <div class="form-group"><label>ລາຍລະອຽດສິນຄ້າ</label><textarea id="pDesc" class="form-control" rows="3" placeholder="ປ້ອນລາຍລະອຽດ..."></textarea></div>
+      <div class="form-group"><label>ລິ້ງຮູບພາບສິນຄ້າ (ໃສ່ໄດ້ຫຼາຍຮູບ ໃຊ້ເຄື່ອງໝາຍຈຸດ , ຄັ້ນ)</label><input type="text" id="pImages" class="form-control" placeholder="https://img1.jpg, https://img2.jpg"></div>
+
+      <h4 style="font-size:13px; margin:15px 0 8px;">🏷 ຕັ້ງຄ່າສ່ວນລົດ & ໂຄສະນາ</h4>
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;"><label>ສ່ວນລົດ (%)</label><input type="number" id="pDiscPercent" class="form-control" placeholder="ເຊັ່ນ: 10"></div>
+        <div class="form-group" style="flex:1;"><label>ສ່ວນລົດຕາມຈຳນວນ (KIP)</label><input type="number" id="pDiscAmount" class="form-control" placeholder="ເຊັ່ນ: 5000"></div>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;"><label>ວັນທີເລີ່ມສ່ວນລົດ</label><input type="date" id="pStartDate" class="form-control"></div>
+        <div class="form-group" style="flex:1;"><label>ວັນທີໝົດເຂດ</label><input type="date" id="pEndDate" class="form-control"></div>
+      </div>
+
+      <div style="display:flex; gap:20px; margin:10px 0;">
+        <label style="font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+          <input type="checkbox" id="pPinTop" style="width:16px; height:16px;"> 📌 ປັກໝຸດສິນຄ້າ
+        </label>
+        <label style="font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+          <input type="checkbox" id="pHot" style="width:16px; height:16px;"> 🔥 ສິນຄ້າຍອດຮິດ (Hot Item)
+        </label>
+      </div>
+
+      <button class="btn-primary" onclick="addNewProduct()" style="margin-top:10px;">ບັນທຶກສິນຄ້າລົງ Firebase</button>
+    </div>
+
+    <!-- 6. ຂໍ້ທີ 6: ໜ້າແກ້ໄຂສິນຄ້າຕ່າງໆ -->
+    <div id="tabEditProd" class="admin-tab-content" style="display:none; background:var(--card-bg); padding:20px; border-radius:12px; border:1px solid var(--border-color);">
+      <h3 style="margin-bottom:15px;">✏️ ແກ້ໄຂສິນຄ້າ ແລະ ເພີ່ມອັນອື່ນ</h3>
+      
+      <div class="form-group">
+        <label>ເລືອກສິນຄ້າທີ່ຕ້ອງການແກ້ໄຂ</label>
+        <select id="editProductSelect" class="form-control" onchange="loadProductToEdit()">
+          <option value="">-- ເລືອກສິນຄ້າ --</option>
+        </select>
+      </div>
+
+      <div id="editFormArea" style="display:none; margin-top:15px; border-top:1px solid var(--border-color); padding-top:15px;">
+        <input type="hidden" id="editProdId">
+        <div class="form-group"><label>ຊື່ສິນຄ້າ</label><input type="text" id="editPName" class="form-control"></div>
+        <div style="display:flex; gap:10px;">
+          <div class="form-group" style="flex:1;"><label>ລາຄາ (KIP)</label><input type="number" id="editPPrice" class="form-control"></div>
+          <div class="form-group" style="flex:1;"><label>ສະຕ໊ອກ (Stock)</label><input type="number" id="editPStock" class="form-control"></div>
+        </div>
+        <div class="form-group"><label>ລາຍລະອຽດສິນຄ້າ</label><textarea id="editPDesc" class="form-control" rows="3"></textarea></div>
+        <div class="form-group"><label>ລິ້ງຮູບພາບສິນຄ້າ (ໃສ່ໄດ້ຫຼາຍຮູບ ໃຊ້ເຄື່ອງໝາຍຈຸດ , ຄັ້ນ)</label><input type="text" id="editPImages" class="form-control"></div>
+
+        <h4 style="font-size:13px; margin:15px 0 8px;">🏷 ແກ້ໄຂສ່ວນລົດ & ໂຄສະນາ</h4>
+        <div style="display:flex; gap:10px;">
+          <div class="form-group" style="flex:1;"><label>ສ່ວນລົດ (%)</label><input type="number" id="editPDiscPercent" class="form-control"></div>
+          <div class="form-group" style="flex:1;"><label>ສ່ວນລົດຕາມຈຳນວນ (KIP)</label><input type="number" id="editPDiscAmount" class="form-control"></div>
+        </div>
+
+        <div style="display:flex; gap:20px; margin:10px 0;">
+          <label style="font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" id="editPPinTop" style="width:16px; height:16px;"> 📌 ປັກໝຸດສິນຄ້າ
+          </label>
+          <label style="font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" id="editPHot" style="width:16px; height:16px;"> 🔥 ສິນຄ້າຍອດຮິດ
+          </label>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+          <button class="btn-primary" style="flex:2;" onclick="saveProductEdit()">💾 ບັນທຶກການແກ້ໄຂ</button>
+          <button class="btn-primary" style="flex:1; background:var(--danger-color);" onclick="deleteProduct()">🗑 ລຶບສິນຄ້ານີ້</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ໜ້າອັບເດດສະຖານະພັດສະດຸ & ເລກບິນ -->
+    <div id="tabOrders" class="admin-tab-content" style="display:none; background:var(--card-bg); padding:20px; border-radius:12px; border:1px solid var(--border-color);">
+      <h3 style="margin-bottom:15px;">📦 ຈັດການອໍເດີ້ ແລະ ອັບເດດສະຖານະ</h3>
+      <div id="adminOrdersList"><p style="color:var(--text-secondary);">ກຳລັງໂຫຼດຂໍ້ມູນອໍເດີ້...</p></div>
+    </div>
+
+    <!-- 5. ໜ້າກວດສອບສະລິບໂອນເງິນ -->
+    <div id="tabSlips" class="admin-tab-content" style="display:none; background:var(--card-bg); padding:20px; border-radius:12px; border:1px solid var(--border-color);">
+      <h3 style="margin-bottom:15px;">💰 ກວດສອບສະລິບໂອນເງິນຈາກລູກຄ້າ</h3>
+      <div id="adminSlipsList"><p style="color:var(--text-secondary);">ກຳລັງໂຫຼດສະລິບ...</p></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const firebaseConfig = { 
+  databaseURL: "https://sk-kop-store-default-rtdb.asia-southeast1.firebasedatabase.app" 
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let currentPin = localStorage.getItem("admin_pin") || "1234";
+let secretAns = localStorage.getItem("admin_secret") || "monar";
+let allProductsList = [];
+
+function verifyPin() {
+  const entered = document.getElementById("pinInput").value.trim();
+  if (entered === currentPin) {
+    document.getElementById("pinLoginBox").style.display = "none";
+    document.getElementById("adminDashboard").style.display = "block";
+    loadAdminData();
+  } else {
+    alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ!");
+  }
+}
+
+function showForgotPinModal() {
+  document.getElementById("forgotPinModal").style.display = "block";
+}
+
+function resetPinCode() {
+  const ans = document.getElementById("secretAnswerInput").value.trim();
+  const newPin = document.getElementById("newPinInput").value.trim();
+  if (ans.toLowerCase() === secretAns.toLowerCase() && newPin.length === 4) {
+    currentPin = newPin;
+    localStorage.setItem("admin_pin", newPin);
+    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດຮຽບຮ້ອຍ!");
+    document.getElementById("forgotPinModal").style.display = "none";
+  } else {
+    alert("ຄຳຕອບລັບບໍ່ຖືກຕ້ອງ ຫຼື PIN ໃໝ່ບໍ່ຄົບ 4 ຫຼັກ!");
+  }
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.admin-tab-content').forEach(el => el.style.display = 'none');
+  document.getElementById(tabId).style.display = 'block';
+}
+
+function addNewProduct() {
+  const name = document.getElementById("pName").value.trim();
+  const price = Number(document.getElementById("pPrice").value);
+  const stock = Number(document.getElementById("pStock").value) || 0;
+  const description = document.getElementById("pDesc").value.trim();
+  const images = document.getElementById("pImages").value.trim();
+  const discPercent = Number(document.getElementById("pDiscPercent").value) || 0;
+  const discAmount = Number(document.getElementById("pDiscAmount").value) || 0;
+  const startDate = document.getElementById("pStartDate").value;
+  const endDate = document.getElementById("pEndDate").value;
+  const pinTop = document.getElementById("pPinTop").checked;
+  const hot = document.getElementById("pHot").checked;
+
+  if (!name || !price) {
+    alert("ກະລຸນາປ້ອນຊື່ ແລະ ລາຄາສິນຄ້າໃຫ້ຄົບຖ້ວນ!");
+    return;
+  }
+
+  const productData = {
+    name, normalPrice: price, stock, description, images: images || 'https://via.placeholder.com/300',
+    discPercent, discAmount, startDate, endDate, pinTop, hot, timestamp: Date.now()
+  };
+
+  db.ref('products').push(productData, (err) => {
+    if (err) {
+      alert("ເກີດຂໍ້ຜິດພາດ: " + err.message);
+    } else {
+      alert("ເພີ່ມສິນຄ້າສຳເລັດຮຽບຮ້ອຍ!");
+      document.getElementById("pName").value = "";
+      document.getElementById("pPrice").value = "";
+      document.getElementById("pStock").value = "";
+      document.getElementById("pDesc").value = "";
+      document.getElementById("pImages").value = "";
+    }
+  });
+}
+
+function loadAdminData() {
+  // ໂຫຼດລາຍການສິນຄ້າສຳລັບແກ້ໄຂ
+  db.ref('products').on('value', (snapshot) => {
+    const data = snapshot.val();
+    allProductsList = [];
+    const select = document.getElementById("editProductSelect");
+    select.innerHTML = '<option value="">-- ເລືອກສິນຄ້າ --</option>';
+
+    if (data) {
+      for (let id in data) {
+        allProductsList.push({ id, ...data[id] });
+        let opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = `${data[id].name} (₭${Number(data[id].normalPrice || 0).toLocaleString()})`;
+        select.appendChild(opt);
+      }
+    }
+  });
+
+  // ໂຫຼດຂໍ້ມູນອໍເດີ້ ແລະ ສະລິບ
+  db.ref('orders').on('value', (snapshot) => {
+    const data = snapshot.val();
+    const ordersDiv = document.getElementById("adminOrdersList");
+    const slipsDiv = document.getElementById("adminSlipsList");
+
+    if (!data) {
+      ordersDiv.innerHTML = `<p style="color:var(--text-secondary);">ຍັງບໍ່ມີອໍເດີ້ເຂົ້າມາ</p>`;
+      slipsDiv.innerHTML = `<p style="color:var(--text-secondary);">ຍັງບໍ່ມີສະລິບໂອນເງິນ</p>`;
+      return;
+    }
+
+    let ordersHtml = "";
+    let slipsHtml = "";
+
+    for (let id in data) {
+      let o = data[id];
+      let itemsList = (o.items || []).map(i => `${i.name} (${i.qty} ຊິ້ນ)`).join(", ");
+
+      ordersHtml += `
+        <div style="background:var(--bg-color); padding:12px; border-radius:10px; margin-bottom:12px; border:1px solid var(--border-color);">
+          <p><b>ລູກຄ້າ:</b> ${o.name} (${o.phone})</p>
+          <p><b>ສິນຄ້າ:</b> ${itemsList}</p>
+          <p><b>ຍອດເງິນ:</b> ₭${Number(o.totalAmount || 0).toLocaleString()} (${o.paymentMethod})</p>
+          <p><b>ສະຖານະປັດຈຸບັນ:</b> <span style="color:var(--accent-color); font-weight:bold;">${o.status || 'ລໍຖ້າກວດສອບ'}</span></p>
+          
+          <div class="form-group" style="margin-top:10px;">
+            <label>ອັບເດດສະຖານະພັດສະດຸ</label>
+            <select id="status_${id}" class="form-control">
+              <option value="ກຳລັງແພັກ" ${o.status==='ກຳລັງແພັກ'?'selected':''}>📦 ກຳລັງແພັກ</option>
+              <option value="ກຳລັງສົ່ງ" ${o.status==='ກຳລັງສົ່ງ'?'selected':''}>🚚 ກຳລັງສົ່ງ</option>
+              <option value="ສິນຄ້າຮອດແລ້ວ" ${o.status==='ສິນຄ້າຮອດແລ້ວ'?'selected':''}>📍 ສິນຄ້າຮອດແລ້ວ</option>
+              <option value="ສົ່ງສຳເລັດ" ${o.status==='ສົ່ງສຳເລັດ'?'selected':''}>✅ ສົ່ງສຳເລັດ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="text" id="track_${id}" class="form-control" placeholder="ປ້ອນເລກບິນ / ລິ້ງຮູບບິນ" value="${o.trackingNo || ''}">
+          </div>
+          <button class="btn-primary" style="padding:8px; font-size:12px;" onclick="updateOrderStatus('${id}')">ບັນທຶກການອັບເດດ</button>
+        </div>
+      `;
+
+      slipsHtml += `
+        <div style="background:var(--bg-color); padding:12px; border-radius:10px; margin-bottom:12px; border:1px solid var(--border-color);">
+          <p><b>ລູກຄ້າ:</b> ${o.name} (${o.phone})</p>
+          <p><b>ລາຍການສິນຄ້າ:</b> ${itemsList}</p>
+          <p><b>ລາຄາລວມ:</b> ₭${Number(o.totalAmount || 0).toLocaleString()}</p>
+          <p style="margin:8px 0;"><b>ຮູບສະລິບໂອນເງິນ:</b></p>
+          <img src="${o.slipImage || 'https://via.placeholder.com/200?text=No+Slip'}" style="max-width:200px; border-radius:8px; border:1px solid var(--border-color);" alt="Slip">
+          <div style="margin-top:10px;">
+            <button class="btn-primary" style="background:#198754; padding:8px; font-size:12px;" onclick="approveSlip('${id}')">✅ ອະນຸມັດຍອດເງິນ</button>
+          </div>
+        </div>
+      `;
+    }
+
+    ordersDiv.innerHTML = ordersHtml;
+    slipsDiv.innerHTML = slipsHtml;
+  });
+}
+
+function loadProductToEdit() {
+  const id = document.getElementById("editProductSelect").value;
+  const area = document.getElementById("editFormArea");
+  if (!id) { area.style.display = "none"; return; }
+
+  const p = allProductsList.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById("editProdId").value = p.id;
+  document.getElementById("editPName").value = p.name || "";
+  document.getElementById("editPPrice").value = p.normalPrice || p.price || 0;
+  document.getElementById("editPStock").value = p.stock || 0;
+  document.getElementById("editPDesc").value = p.description || "";
+  document.getElementById("editPImages").value = p.images || p.image || "";
+  document.getElementById("editPDiscPercent").value = p.discPercent || 0;
+  document.getElementById("editPDiscAmount").value = p.discAmount || 0;
+  document.getElementById("editPPinTop").checked = !!p.pinTop;
+  document.getElementById("editPHot").checked = !!p.hot;
+
+  area.style.display = "block";
+}
+
+function saveProductEdit() {
+  const id = document.getElementById("editProdId").value;
+  if (!id) return;
+
+  const updatedData = {
+    name: document.getElementById("editPName").value.trim(),
+    normalPrice: Number(document.getElementById("editPPrice").value),
+    stock: Number(document.getElementById("editPStock").value) || 0,
+    description: document.getElementById("editPDesc").value.trim(),
+    images: document.getElementById("editPImages").value.trim(),
+    discPercent: Number(document.getElementById("editPDiscPercent").value) || 0,
+    discAmount: Number(document.getElementById("editPDiscAmount").value) || 0,
+    pinTop: document.getElementById("editPPinTop").checked,
+    hot: document.getElementById("editPHot").checked
+  };
+
+  db.ref(`products/${id}`).update(updatedData, (err) => {
+    if (!err) alert("ອັບເດດຂໍ້ມູນສິນຄ້າສຳເລັດ!");
+  });
+}
+
+function deleteProduct() {
+  const id = document.getElementById("editProdId").value;
+  if (!id) return;
+  if (confirm("ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບສິນຄ້ານີ້?")) {
+    db.ref(`products/${id}`).remove((err) => {
+      if (!err) {
+        alert("ລຶບສິນຄ້າສຳເລັດ!");
+        document.getElementById("editFormArea").style.display = "none";
+      }
+    });
+  }
+}
+
+function updateOrderStatus(id) {
+  const status = document.getElementById(`status_${id}`).value;
+  const trackingNo = document.getElementById(`track_${id}`).value.trim();
+  db.ref(`orders/${id}`).update({ status, trackingNo }, (err) => {
+    if (!err) alert("ອັບເດດສະຖານະສຳເລັດຮຽບຮ້ອຍ!");
+  });
+}
+
+function approveSlip(id) {
+  db.ref(`orders/${id}`).update({ status: "ຊຳລະເງິນສຳເລັດ / ກຳລັງແພັກ" }, (err) => {
+    if (!err) alert("ອະນຸມັດສະລິບສຳເລັດ!");
+  });
+}
+</script>
+
+</body>
+</html>
