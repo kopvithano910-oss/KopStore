@@ -16,7 +16,7 @@
   <div class="header-container">
     <div class="logo">🛍 SK-KOP STORE</div>
     <div class="header-actions">
-      <a href="admin.html" class="btn-icon" style="text-decoration:none; font-size:12px;">🔒 ລະບົບແອັດມິນ</a>
+      <a href="admin.html" class="btn-icon" style="text-decoration:none; font-size:11px;">🔒 ແອັດມິນ</a>
       <button class="btn-icon" onclick="toggleTheme()">🌓</button>
       <button class="cart-btn" onclick="openCartModal()">🛒 <span id="cartCount">0</span></button>
     </div>
@@ -24,36 +24,63 @@
 </header>
 
 <div class="container">
-  <!-- ປ້າຍໂຄສະນາ (Banner) -->
-  <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 16px; text-align: center;">
-    <h2 style="font-size: 16px; color: var(--accent-color); margin-bottom: 5px;">🔥 ยินດີຕ້ອນຮັບສູ່ SK-KOP STORE</h2>
-    <p style="font-size: 12px; color: var(--text-secondary);">ສິນຄ້ານຳເຂົ້າຄຸນນະພາບ, ລາຄາເປັນັນເອງ, จัดສົ່ງທົ່ວ 18 ແຂວງ!</p>
+  <!-- BANNER & CATEGORY TABS -->
+  <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; text-align: center;">
+    <h2 style="font-size: 15px; color: var(--accent-color); margin-bottom: 4px;">🔥 ສິນຄ້ານຳເຂົ້າຄຸນນະພາບ ຈັດສົ່ງທົ່ວ 18 ແຂວງ</h2>
   </div>
 
-  <!-- ຊ່ອງຄ้นຫາ -->
+  <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;">
+    <button class="btn-icon" style="white-space: nowrap; background: var(--accent-color); color: #fff; border: none;">ທັງໝົດ</button>
+    <button class="btn-icon" style="white-space: nowrap;">อะໄຫຼ່แต่งຈັກຍານຍົນ</button>
+    <button class="btn-icon" style="white-space: nowrap;">ທໍ່ລົດ</button>
+    <button class="btn-icon" style="white-space: nowrap;">ວັດສະດຸເຄືອບສີ</button>
+  </div>
+
+  <!-- SEARCH -->
   <div class="search-filter-box">
     <input type="text" id="searchInput" class="search-input" placeholder="🔎 ค้นຫາຊື່ສິນຄ້າ..." oninput="renderProducts()">
   </div>
 
-  <!-- ລາຍການສິນຄ້າທັງໝົດ -->
-  <h3 style="font-size: 16px; margin-bottom: 12px;">📦 ລາຍການສິນຄ້າ</h3>
+  <!-- PRODUCTS GRID -->
+  <h3 style="font-size: 15px; margin-bottom: 10px;">📦 ສິນຄ້າທັງໝົດ</h3>
   <div id="productsGrid" class="products-grid">
     <div class="empty-state">⏳ ກຳລັງໂຫຼດຂໍ້ມູນສິນຄ້າຈາກ Firebase...</div>
   </div>
 </div>
 
-<!-- 🛒 CART MODAL -->
+<!-- CART & CHECKOUT MODAL -->
 <div id="cartOverlay" class="overlay">
   <div class="modal-panel">
     <button class="close-btn" onclick="closeCartModal()">×</button>
-    <h2>🛒 ຕະຕ່າສິນຄ້າ</h2>
+    <h2>🛒 ກະຕ່າສິນຄ້າ</h2>
     <div id="cartItemsList" style="flex:1; overflow-y:auto; margin: 15px 0;"></div>
     
     <div id="checkoutFormSection" style="display:none; border-top: 1px solid var(--border-color); padding-top: 15px;">
-      <h3 style="font-size: 15px; margin-bottom: 10px;">📦 ຂໍ້ມູນການຈັດສົ່ງ (Anousith Express)</h3>
-      <div class="form-group"><label>ຊື່ ແລະ ນາມສະກຸນ</label><input type="text" id="orderName" class="form-control" placeholder="ປ້ອນຊື່ຜູ້ຮັບ"></div>
-      <div class="form-group"><label>ເບີໂທລະສັບ</label><input type="tel" id="orderPhone" class="form-control" placeholder="20xxxxxxxx"></div>
       
+      <!-- WHATSAPP OTP SECTION -->
+      <div style="background:var(--bg-color); padding:12px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:12px;">
+        <h3 style="font-size: 13px; margin-bottom: 8px;">📲 ຢືນຢັນເບີ WhatsApp ຮັບOTP</h3>
+        <div class="form-group" style="margin-bottom:8px;">
+          <input type="tel" id="whatsappPhone" class="form-control" placeholder="20xxxxxxxx">
+        </div>
+        <button class="btn-primary" style="padding:8px; font-size:12px;" onclick="sendWhatsappOtp()">ສົ່ງລະຫັດ OTP</button>
+        <div id="otpInputArea" style="display:none; margin-top:8px;">
+          <input type="text" id="whatsappOtpCode" class="form-control" placeholder="ປ້ອນລະຫັດ OTP 6 ຫຼັກ" style="margin-bottom:6px;">
+          <button class="btn-primary" style="padding:8px; font-size:12px; background:#198754;" onclick="verifyWhatsappOtp()">ຢືນຢັນ OTP ສຳເລັດ</button>
+        </div>
+      </div>
+
+      <h3 style="font-size: 14px; margin-bottom: 8px;">📦 ຂໍ້ມູນການຈັດສົ່ງ</h3>
+      <div class="form-group"><label>ຊື່ ແລະ ນາມສະກຸນ</label><input type="text" id="orderName" class="form-control" placeholder="ປ້ອນຊື່ຜູ້ຮັບ"></div>
+      
+      <div class="form-group">
+        <label>ເລືອກບໍລິສັດຂົນສົ່ງ</label>
+        <select id="shippingCompany" class="form-control">
+          <option value="Anousith Express">Anousith Express</option>
+          <option value="MiXay Express">MiXay Express</option>
+        </select>
+      </div>
+
       <div class="form-group">
         <label>ແຂວງ</label>
         <select id="provinceSelect" class="form-control" onchange="updateDistricts()">
@@ -68,6 +95,16 @@
       </div>
       <div class="form-group"><label>ຊື່ບ້ານ / ຈຸດສັງເກດ</label><input type="text" id="orderVillage" class="form-control" placeholder="ປ້ອນຊື່ບ້ານ"></div>
 
+      <!-- PROMO CODE -->
+      <div class="form-group">
+        <label>ລະຫັດສ່ວນລົດ (Promo Code)</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="promoCodeInput" class="form-control" placeholder="ປ້ອນລະຫັດส่วนລົດ">
+          <button class="btn-icon" style="width:90px;" onclick="applyPromoCode()">ໃຊ້ລະຫັດ</button>
+        </div>
+      </div>
+
+      <!-- PAYMENT METHOD -->
       <div class="form-group">
         <label>ຮູບແບບການຊຳລະເງິນ</label>
         <select id="paymentMethod" class="form-control" onchange="togglePaymentDetails()">
@@ -77,18 +114,18 @@
       </div>
 
       <div id="qrPaymentBox" style="background:var(--bg-color); padding:12px; border-radius:10px; text-align:center; margin-bottom:12px;">
-        <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">ສະແກນ QR ເພື່ອຊຳລະເງິນ OnePay</p>
-        <img src="qr.png" alt="OnePay QR" style="max-width:150px; height:auto; border-radius:8px;" onerror="this.src='https://via.placeholder.com/150?text=QR+Code'">
-        <p id="payAmountText" style="font-size:13px; font-weight:bold; color:var(--danger-color); margin-top:8px;"></p>
-        <div style="margin-top:8px; text-align:left;">
+        <p style="font-size:12px; font-weight:bold; margin-bottom:6px;">ສະແກນ QR ເພື່ອຊຳລະເງິນ OnePay</p>
+        <img src="qr.png" alt="OnePay QR" style="max-width:140px; height:auto; border-radius:8px;" onerror="this.src='https://via.placeholder.com/150?text=QR+Code'">
+        <p id="payAmountText" style="font-size:13px; font-weight:bold; color:var(--danger-color); margin-top:6px;"></p>
+        <div style="margin-top:6px; text-align:left;">
           <label style="font-size:11px;">ອັບໂຫຼດຮູບສະລິບໂອນເງິນ</label>
           <input type="file" id="slipFile" class="form-control" accept="image/*" style="padding:4px;">
         </div>
       </div>
     </div>
 
-    <div style="border-top: 1px solid var(--border-color); padding-top: 15px;">
-      <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:bold; margin-bottom:12px;">
+    <div style="border-top: 1px solid var(--border-color); padding-top: 12px;">
+      <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:bold; margin-bottom:10px;">
         <span>ລວມທັງໝົດ:</span>
         <span id="cartTotalPrice" style="color:var(--danger-color);">₭0</span>
       </div>
@@ -135,6 +172,8 @@ const laoLocations = {
 
 let products = [];
 let cart = JSON.parse(localStorage.getItem("kop_cart")) || [];
+let isOtpVerified = false;
+let discountMultiplier = 1;
 
 window.addEventListener('DOMContentLoaded', () => {
   const provSelect = document.getElementById("provinceSelect");
@@ -194,7 +233,7 @@ function renderProducts() {
       <div class="product-info">
         <div class="product-title">${p.name}</div>
         <div class="product-price">${money(p.normalPrice || p.price)}</div>
-        <div style="font-size:11px; color:var(--text-secondary);">ເຫຼືອໃນສາງ: ${p.stock || 0} ຊິ້ນ</div>
+        <div style="font-size:11px; color:var(--text-secondary);">ເຫຼືອ: ${p.stock || 0} ຊິ້ນ</div>
       </div>
     </div>
   `).join("");
@@ -205,26 +244,43 @@ function openProductDetail(id) {
   if (!p) return;
   const content = document.getElementById("productDetailContent");
   content.innerHTML = `
-    <img src="${p.image}" style="width:100%; height:220px; object-fit:cover; border-radius:10px; margin-bottom:12px;">
+    <img src="${p.image}" style="width:100%; height:220px; object-fit:cover; border-radius:10px; margin-bottom:10px;">
     <h2>${p.name}</h2>
-    <div style="font-size:18px; font-weight:bold; color:var(--danger-color); margin:8px 0;">${money(p.normalPrice || p.price)}</div>
-    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:15px;">ສະຕ໊ອກພ້ອມສົ່ງ: ${p.stock || 0} ຊິ້ນ</p>
-    <button class="btn-primary" onclick="addToCart('${p.id}')">🛒 ເພີ່ມໃສ່ກະຕ່າ</button>
+    <div style="font-size:18px; font-weight:bold; color:var(--danger-color); margin:6px 0;">${money(p.normalPrice || p.price)}</div>
+    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">ສະຕ໊ອກພ້ອມສົ່ງ: ${p.stock || 0} ຊິ້ນ</p>
+    
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
+      <span>ຈຳນວນ:</span>
+      <button class="qty-btn" onclick="adjustDetailQty(-1)">-</button>
+      <span id="detailQty" style="font-weight:bold;">1</span>
+      <button class="qty-btn" onclick="adjustDetailQty(1)">+</button>
+    </div>
+
+    <button class="btn-primary" onclick="addDetailToCart('${p.id}')">🛒 ເພີ່ມໃສ່ກະຕ່າ / ซື້ດຽວນີ້</button>
   `;
+  window.currentDetailId = id;
+  window.currentDetailQty = 1;
   document.getElementById("productDetailOverlay").classList.add("show");
 }
-function closeProductModal() { document.getElementById("productDetailOverlay").classList.remove("show"); }
 
-function addToCart(id) {
+function adjustDetailQty(delta) {
+  window.currentDetailQty = Math.max(1, (window.currentDetailQty || 1) + delta);
+  document.getElementById("detailQty").innerText = window.currentDetailQty;
+}
+
+function addDetailToCart(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
+  const qty = window.currentDetailQty || 1;
   const item = cart.find(x => x.id === id);
-  if (item) { item.qty += 1; } 
-  else { cart.push({ id: p.id, name: p.name, price: p.normalPrice || p.price, image: p.image, qty: 1 }); }
+  if (item) { item.qty += qty; } 
+  else { cart.push({ id: p.id, name: p.name, price: p.normalPrice || p.price, image: p.image, qty: qty }); }
   saveCart();
   alert("ເພີ່ມສິນຄ້າລົງກະຕ່າແລ້ວ!");
   closeProductModal();
 }
+
+function closeProductModal() { document.getElementById("productDetailOverlay").classList.remove("show"); }
 
 function saveCart() {
   localStorage.setItem("kop_cart", JSON.stringify(cart));
@@ -261,7 +317,8 @@ function updateCartUI() {
     `;
   }).join("");
 
-  document.getElementById("cartTotalPrice").innerText = money(total);
+  const finalTotal = total * discountMultiplier;
+  document.getElementById("cartTotalPrice").innerText = money(finalTotal);
 }
 
 function changeQty(idx, delta) {
@@ -276,6 +333,35 @@ function openCartModal() {
 }
 function closeCartModal() { document.getElementById("cartOverlay").classList.remove("show"); }
 
+function sendWhatsappOtp() {
+  const phone = document.getElementById("whatsappPhone").value.trim();
+  if (!phone) { alert("ກະລຸນາປ້ອນເບີ WhatsApp!"); return; }
+  alert("ສົ່ງລະຫັດ OTP ໄປທີ່ WhatsApp: " + phone + " ແລ້ວ! (ລະຫັດຈຳລອງ: 123456)");
+  document.getElementById("otpInputArea").style.display = "block";
+}
+
+function verifyWhatsappOtp() {
+  const code = document.getElementById("whatsappOtpCode").value.trim();
+  if (code === "123456") {
+    isOtpVerified = true;
+    alert("ຢືນຢັນເບີ WhatsApp สำເລັດ!");
+    document.getElementById("otpInputArea").style.display = "none";
+  } else {
+    alert("ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ! (ລອງໃຊ້ 123456)");
+  }
+}
+
+function applyPromoCode() {
+  const code = document.getElementById("promoCodeInput").value.trim();
+  if (code === "KOP10") {
+    discountMultiplier = 0.9; // ลด 10%
+    alert("ໃຊ້ລະຫັດສ່ວນລົດ 10% ສสำเร็จ!");
+    updateCartUI();
+  } else {
+    alert("ລະຫັດສ່ວນລົດບໍ່ຖືກຕ້ອງ!");
+  }
+}
+
 function proceedToCheckout() {
   if (cart.length === 0) { alert("ກະຕ່າຫວ່າງເປົ່າ"); return; }
   const formSec = document.getElementById("checkoutFormSection");
@@ -284,20 +370,28 @@ function proceedToCheckout() {
     document.getElementById("mainActionBtn").innerText = "ຢືນຢັນການສັ່ງຊື້";
     togglePaymentDetails();
   } else {
+    if (!isOtpVerified) {
+      alert("ກະລຸນາຢືນຢັນເບີ WhatsApp ດ້ວຍ OTP ກ່ອນສັ່ງຊື້!");
+      return;
+    }
+
     const name = document.getElementById("orderName").value.trim();
-    const phone = document.getElementById("orderPhone").value.trim();
+    const phone = document.getElementById("whatsappPhone").value.trim();
+    const shipping = document.getElementById("shippingCompany").value;
     const province = document.getElementById("provinceSelect").value;
     const district = document.getElementById("districtSelect").value;
     const village = document.getElementById("orderVillage").value.trim();
 
-    if (!name || !phone || !province || !district || !village) {
+    if (!name || !province || !district || !village) {
       alert("ກະລຸນາປ້ອນຂໍ້ມູນການຈັດສົ່ງໃຫ້ຄົບຖ້ວນ!");
       return;
     }
 
-    const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    const subTotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    const total = subTotal * discountMultiplier;
+
     const orderData = {
-      name, phone, province, district, village,
+      name, phone, shipping, province, district, village,
       items: cart,
       totalAmount: total,
       paymentMethod: document.getElementById("paymentMethod").value,
@@ -322,13 +416,15 @@ function proceedToCheckout() {
 
 function togglePaymentDetails() {
   const method = document.getElementById("paymentMethod").value;
-  const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+  const subTotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+  const total = subTotal * discountMultiplier;
   const payText = document.getElementById("payAmountText");
   if (method === 'full') {
     payText.innerText = `ຍອດຈ່າຍເຕັມ: ${money(total)}`;
   } else {
     const deposit = total * 0.3;
-    payText.innerText = `ມັດຈຳ 30%: ${money(deposit)} (ສ່ວນທີ່ເຫຼືອ 70% ຈ່າຍປາຍທາງ)`;
+    const cod = total * 0.7;
+    payText.innerText = `ມັດຈຳ 30%: ${money(deposit)} (ສ່ວນທີ່ເຫຼືອ 70%: ${money(cod)} ຈ່າຍປາຍທາງ)`;
   }
 }
 
