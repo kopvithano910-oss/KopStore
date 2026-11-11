@@ -11,8 +11,23 @@
         h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #bbb; }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
-        input:focus, select:focus, textarea:focus { border-color: #00e676; outline: none; }
+        input[type="tel"], input[type="number"], textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
+        input:focus, textarea:focus { border-color: #00e676; outline: none; }
+        
+        .game-radio-group { background: #2a2a2a; border: 1px solid #333; border-radius: 8px; padding: 10px; }
+        .game-option { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-radius: 6px; margin-bottom: 4px; }
+        .game-option:hover { background: #333; }
+        .game-option input { margin-right: 10px; accent-color: #00e676; width: 18px; height: 18px; cursor: pointer; }
+        .game-option label { cursor: pointer; margin-bottom: 0; color: #fff; width: 100%; }
+
+        .upload-box { border: 2px dashed #00e676; background: rgba(0, 230, 118, 0.05); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; position: relative; }
+        .upload-box:hover { background: rgba(0, 230, 118, 0.1); }
+        .upload-box input { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+        .upload-icon { font-size: 28px; color: #00e676; margin-bottom: 5px; }
+        
+        .preview-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+        .preview-item { background: #2a2a2a; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #00e676; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+
         .fee-box { background: #282a36; padding: 12px; border-radius: 8px; border-left: 4px solid #00e676; margin-top: 10px; font-size: 13px; color: #ddd; }
         .btn-submit { width: 100%; padding: 14px; background: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; }
         .btn-submit:hover { background: #00c853; }
@@ -20,7 +35,6 @@
         .secret-title { color: #ff9800; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
     </style>
     
-    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
@@ -37,23 +51,32 @@
 
         <div class="form-group">
             <label>ເລືອກເກມ:</label>
-            <select id="gameType" required>
-                <option value="Free Fire">Free Fire</option>
-                <option value="RoV">Realm of Valor (RoV)</option>
-                <option value="Mobile Legends">Mobile Legends</option>
-                <option value="eFootball">eFootball</option>
-                <option value="Other">ເກມອື່ນໆ</option>
-            </select>
+            <div class="game-radio-group">
+                <div class="game-option">
+                    <input type="radio" id="g1" name="gameType" value="Free Fire" checked>
+                    <label for="g1">🔥 Free Fire</label>
+                </div>
+                <div class="game-option">
+                    <input type="radio" id="g2" name="gameType" value="Mobile Legends">
+                    <label for="g2">⚔️ Mobile Legends</label>
+                </div>
+                <div class="game-option">
+                    <input type="radio" id="g3" name="gameType" value="eFootball">
+                    <label for="g3">⚽ eFootball</label>
+                </div>
+            </div>
         </div>
 
+        <!-- ຊ່ອງອັບໂລດຮູບຫຼາຍຮູບ + ວີດີໂອຫຼາຍວີດີໂອ (ຈຳກັດວີດີໂອບໍ່ເກີນ 4 ນາທີ) -->
         <div class="form-group">
-            <label>ຫົວຂໍ້/ຊື່ໄອດີ:</label>
-            <input type="text" id="title" placeholder="ຕົວຢ່າງ: ໄອດີ VIP ຊຸດສີສົ້ມ ຄົບແຊມພ້ອນ" required>
-        </div>
-
-        <div class="form-group">
-            <label>ລິ້ງຮູບພາບໄອດີ (Image URL):</label>
-            <input type="url" id="imageUrl" placeholder="https://..." required>
+            <label>ເພີ່ມຮູບພາບ ແລະ ວີດີໂອ (ເລືອກໄດ້ຫຼາຍຮູບ/ຫຼາຍວີດີໂອ, ວີດີໂອບໍ່ເກີນ 4 ນາທີ):</label>
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">➕</div>
+                <div style="font-weight: bold; color: #fff;">ກົດເພື່ອເລືອກຮູບ ຫຼື ວີດີໂອ </div>
+                <div style="font-size: 11px; color: #aaa; margin-top: 3px;">ຮອງຮັບຫຼາຍຮູບ ແລະ ຫຼາຍວີດີໂອ (ແຕ່ລະວີດີໂອບໍ່ເກີນ 4 ນາທີ)</div>
+                <input type="file" id="mediaFiles" accept="image/*,video/*" multiple onchange="handleFilesSelect(event)">
+            </div>
+            <div id="filePreviewList" class="preview-list"></div>
         </div>
 
         <div class="form-group">
@@ -61,13 +84,11 @@
             <input type="number" id="price" placeholder="ຕົວຢ່າງ: 150000" oninput="calculateFee()" required>
         </div>
 
-        <!-- ສ່ວນສະແດງການຄິດໄລ່ຄ່າທຳນຽມ -->
         <div class="fee-box">
             <div>💰 ລາຍຮັບທີ່ຜູ້ຂາຍຈະໄດ້ຮັບ: <span id="sellerReceive" style="color:#00e676; font-weight:bold;">0</span> LAK</div>
             <div style="font-size: 11px; color: #aaa; margin-top: 4px;">* ຫັກຄ່າທຳນຽມ Escrow 5.89% (Max Fee Cap ສຳລັບ 2,000,000 LAK ຂຶ້ນໄປ)</div>
         </div>
 
-        <!-- ສ່ວນເກັບ ຂໍ້ມູນລັບ (ຂໍ້ມູນໄອດີເກມ) -->
         <div class="secret-section">
             <div class="secret-title">🔒 ຂໍ້ມູນລາຍລະອຽດໄອດີ (ຈະຖືກຊ່ອນໄວ້ ໃຫ້ສະເພາະຄົນຊື້):</div>
             <div class="form-group">
@@ -90,7 +111,6 @@
 </div>
 
 <script>
-    // 1. Firebase Configuration (ດຶງມາຈາກ Project KopStore-SK)
     const firebaseConfig = {
         apiKey: "AIzaSyAwO0JXBBPZdmDBRYKXVOpVKXQCqzFWNI",
         authDomain: "kopstore-sk.firebaseapp.com",
@@ -101,53 +121,131 @@
         appId: "1:403901320885:web:e55d17ef726ab5169b87e4"
     };
 
-    // 2. Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // 3. ຟັງຊັນຄິດໄລ່ຄ່າທຳນຽມ (ປ່ຽນເປັນ 5.89%)
+    let uploadedMediaUrls = [];
+
+    function handleFilesSelect(event) {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        uploadedMediaUrls = [];
+        const previewList = document.getElementById('filePreviewList');
+        previewList.innerHTML = '<div class="preview-item"><span>⏳ กำลังตรวจสอบและอัปโหลดไฟล์...</span></div>';
+
+        let filesArray = Array.from(files);
+        let checkPromises = filesArray.map(file => {
+            return new Promise((resolve) => {
+                if (file.type.startsWith('video/')) {
+                    const videoElement = document.createElement('video');
+                    videoElement.preload = 'metadata';
+                    videoElement.onloadedmetadata = function() {
+                        window.URL.revokeObjectURL(videoElement.src);
+                        if (videoElement.duration > 240) {
+                            alert(`❌ ວີດີໂອ "${file.name}" ມີຄວາມຍາວເກີນ 4 ນາທີ! ກະລຸນາເລືອກວີດີໂອທີ່ສັ້ນກວ່າ 4 ນາທີ.`);
+                            resolve(null);
+                        } else {
+                            uploadFileToCloud(file, resolve);
+                        }
+                    };
+                    videoElement.onerror = function() {
+                        uploadFileToCloud(file, resolve);
+                    };
+                    videoElement.src = URL.createObjectURL(file);
+                } else {
+                    uploadFileToCloud(file, resolve);
+                }
+            });
+        });
+
+        Promise.all(checkPromises).then(() => {
+            updatePreviewUI();
+        });
+    }
+
+    function uploadFileToCloud(file, resolve) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'ml_default');
+
+        fetch('https://api.cloudinary.com/v1_1/demo/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.secure_url) {
+                uploadedMediaUrls.push({ url: data.secure_url, type: file.type, name: file.name });
+            } else {
+                uploadedMediaUrls.push({ url: URL.createObjectURL(file), type: file.type, name: file.name });
+            }
+            resolve(true);
+        })
+        .catch(error => {
+            uploadedMediaUrls.push({ url: URL.createObjectURL(file), type: file.type, name: file.name });
+            resolve(true);
+        });
+    }
+
+    function updatePreviewUI() {
+        const previewList = document.getElementById('filePreviewList');
+        previewList.innerHTML = "";
+        if (uploadedMediaUrls.length === 0) {
+            previewList.innerHTML = '<div class="preview-item" style="color:#ff5252;"><span>❌ ບໍ່ມີໄຟລ໌ຖືກເລືອກ ຫຼື ວີດີໂາເກີນກຳນົດ</span></div>';
+            return;
+        }
+        uploadedMediaUrls.forEach((itemData, idx) => {
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+            let fileTypeLabel = itemData.type.startsWith('video/') ? '📹 ວີດີໂອ' : '🖼️ ຮູບພາບ';
+            item.innerHTML = `<span>${fileTypeLabel}: ${itemData.name || ('ໄຟລ໌ທີ ' + (idx + 1))}</span> <span style="color:#00e676;">✅ ພ້ອມແລ້ວ</span>`;
+            previewList.appendChild(item);
+        });
+    }
+
     function calculateFee() {
         const price = parseFloat(document.getElementById('price').value) || 0;
-        let fee = 0;
-        
-        if (price >= 2000000) {
-            // Max Fee Cap ທີ່ລາຄາ 2,000,000 LAK ຂຶ້ນໄປ
-            fee = 2000000 * 0.0589;
-        } else {
-            fee = price * 0.0589;
-        }
-        
+        let fee = price >= 2000000 ? (2000000 * 0.0589) : (price * 0.0589);
         const sellerReceive = price - fee;
         document.getElementById('sellerReceive').innerText = Math.max(0, Math.floor(sellerReceive)).toLocaleString();
     }
 
-    // 4. ຟັງຊັນບັນທຶກຂໍ້ມູນລົງ Firebase
     document.getElementById('sellForm').addEventListener('submit', function(e) {
         e.preventDefault();
+
+        if (uploadedMediaUrls.length === 0) {
+            alert('❌ ກະລຸນາເພີ່ມຮູບພາບ ຫຼື ວີດີໂອຢ່າງໜ້ອຍ 1 ໄຟລ໌!');
+            return;
+        }
 
         const price = parseFloat(document.getElementById('price').value);
         let fee = price >= 2000000 ? (2000000 * 0.0589) : (price * 0.0589);
         const sellerReceive = price - fee;
+        const selectedGame = document.querySelector('input[name="gameType"]:checked').value;
+
+        // ດึงສະເພາະ URL ມາເກັບລົງ Database
+        const urlsOnly = uploadedMediaUrls.map(item => item.url);
 
         const newAccountRef = database.ref('accounts').push();
         newAccountRef.set({
             sellerPhone: document.getElementById('sellerPhone').value,
-            gameType: document.getElementById('gameType').value,
-            title: document.getElementById('title').value,
-            imageUrl: document.getElementById('imageUrl').value,
+            gameType: selectedGame,
+            mediaUrls: urlsOnly,
             price: price,
             fee: fee,
             sellerReceive: sellerReceive,
-            // ຂໍ້ມູນລັບເກມ (Secret credentials)
             gameEmail: document.getElementById('gameEmail').value,
             gamePassword: document.getElementById('gamePassword').value,
             description: document.getElementById('description').value,
-            status: "available", // available, sold, pending
+            status: "available",
             createdAt: new Date().toISOString()
         }).then(() => {
             alert('🎉 ລົງຂາຍໄອດີສຳເລັດແລ້ວ!');
             document.getElementById('sellForm').reset();
+            document.getElementById('filePreviewList').innerHTML = '';
             document.getElementById('sellerReceive').innerText = '0';
+            uploadedMediaUrls = [];
         }).catch((error) => {
             alert('❌ ຕິດຂັດ: ' + error.message);
         });
