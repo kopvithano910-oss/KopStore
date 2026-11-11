@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KopStore - ตลาดຊື້ຂາຍໄອດີເກມປອດໄພ 100%</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Phetsarath OT', sans-serif, Arial; }
+        body { background-color: #121212; color: #fff; margin: 0; padding: 0; }
+        header { background: #1e1e1e; padding: 20px; text-align: center; border-bottom: 2px solid #00e676; }
+        h1 { color: #00e676; margin: 0; font-size: 24px; }
+        .container { max-width: 900px; margin: 20px auto; padding: 15px; }
+        .nav-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
+        .btn { background: #00e676; color: #000; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .btn:hover { background: #00c853; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
+        .card { background: #1e1e1e; border: 1px solid #333; border-radius: 10px; overflow: hidden; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .game-badge { background: #00e676; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; margin-bottom: 8px; }
+        .price { color: #00e676; font-size: 18px; font-weight: bold; margin: 8px 0; }
+        .media-preview { width: 100%; height: 140px; background: #2a2a2a; border-radius: 6px; object-fit: cover; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #777; font-size: 12px; }
+        .btn-buy { width: 100%; background: #ff9800; color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-buy:hover { background: #f57c00; }
+        .no-data { text-align: center; color: #888; grid-column: 1 / -1; padding: 40px; }
+    </style>
+
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<header>
+    <h1>🎮 KopStore - P2P Game Account Marketplace</h1>
+    <p style="color: #aaa; font-size: 13px; margin: 5px 0 0 0;">ລະບົບກາງ Escrow ປອດໄພ ຮັບປະກັນ 48 ຊົ່ວໂມງ</p>
+</header>
+
+<div class="container">
+    <div class="nav-buttons">
+        <a href="sell.html" class="btn">➕ ລົງຂາຍໄອດີຂອງທ່ານ</a>
+    </div>
+
+    <h3 style="border-left: 4px solid #00e676; padding-left: 10px;">🔥 ໄອດີເກມທີ່ກຳລັງຂາຍທັງໝົດ</h3>
+    
+    <div id="marketList" class="grid">
+        <div class="no-data">⏳ กำลังโหลดรายการໄອດີ...</div>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAwO0JXBBPZdmDBRYKXVOpVKXQCqzFWNI",
+        authDomain: "kopstore-sk.firebaseapp.com",
+        databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "kopstore-sk",
+        storageBucket: "kopstore-sk.firebasestorage.app",
+        messagingSenderId: "4B3901320885",
+        appId: "1:403901320885:web:e55d17ef726ab5169b87e4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // ດຶງຂໍ້ມູນໄອດີຈາກ Firebase ມາສະແດງໜ້າຮ้าน
+    database.ref('accounts').on('value', (snapshot) => {
+        const data = snapshot.val();
+        const marketList = document.getElementById('marketList');
+        marketList.innerHTML = '';
+
+        if (!data) {
+            marketList.innerHTML = '<div class="no-data">📭 ຍັງບໍ່ມີໄອດີວາງຂາຍໃນຂະນະນີ້</div>';
+            return;
+        }
+
+        Object.keys(data).forEach((key) => {
+            const acc = data[key];
+            
+            // ສະແດງສະເພາະໄອດີທີ່ມີສະຖານະ available (ຍັງບໍ່ທັນຂາຍ)
+            if (acc.status !== 'available') return;
+
+            let mediaDisplay = '<div class="media-preview">ບໍ່ມີຮູບພາບ</div>';
+            if (acc.mediaUrls && acc.mediaUrls.length > 0) {
+                // ສະແດງຮູບ/ວີດີໂອທຳອິດເປັນຕົວຢ່າງ
+                const firstMedia = acc.mediaUrls[0];
+                if (firstMedia.match(/\.(mp4|webm|ogg)$/i) || firstMedia.includes('video')) {
+                    mediaDisplay = `<video class="media-preview" src="${firstMedia}" controls style="width:100%; height:140px;"></video>`;
+                } else {
+                    mediaDisplay = `<img class="media-preview" src="${firstMedia}" style="width:100%; height:140px; object-fit:cover;">`;
+                }
+            }
+
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <span class="game-badge">${acc.gameType}</span>
+                ${mediaDisplay}
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${acc.description ? acc.description.substring(0, 50) + '...' : 'ໄອດີເກມ VIP'}</div>
+                <div class="price">${Number(acc.price).toLocaleString()} LAK</div>
+                <div style="font-size: 12px; color: #aaa; margin-bottom: 10px;">📞 ติดຕໍ່: ${acc.sellerPhone}</div>
+                <button class="btn-buy" onclick="buyAccount('${acc.sellerPhone}', '${acc.price}')">🛒 ສั่งຊື້ / ຕิດຕໍ່ Escrow</button>
+            `;
+            marketList.appendChild(card);
+        });
+    });
+
+    // ຟັງຊັນກົດຊື້ / ຕິດຕໍ່ Admin
+    function buyAccount(phone, price) {
+        alert(`🛒 ຕ້ອງການຊື້ໄອດີນີ້ແມ່ນບໍ?\n\nກະລຸນາແຄັບໜ້າຈໍນີ້ແລ້ວທັກຫາ Admin ຜ່ານ WhatsApp / Facebook ເພື່ອໂອນເງິນເຂົ້າລະບົບກາງ Escrow (ລາຄາ: ${Number(price).toLocaleString()} LAK)`);
+    }
+</script>
+
+</body>
+</html>
