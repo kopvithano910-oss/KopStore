@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ບັນຊີຂອງຂ້ອຍ & KYC - KopStore</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Phetsarath OT', sans-serif, Arial; }
+        body { background-color: #121212; color: #fff; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; }
+        h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
+        .wallet-box { background: #2a2a2a; padding: 20px; border-radius: 10px; border: 1px solid #444; text-align: center; margin-bottom: 20px; }
+        .balance { font-size: 28px; font-weight: bold; color: #00e676; margin: 10px 0; }
+        .section-box { background: #252525; padding: 15px; border-radius: 8px; border: 1px solid #333; margin-bottom: 15px; }
+        .section-title { font-weight: bold; color: #ffeb3b; margin-bottom: 10px; font-size: 15px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; color: #bbb; font-size: 13px; }
+        input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; }
+        .btn { width: 100%; padding: 12px; background: #00e676; color: #000; font-weight: bold; font-size: 15px; border: none; border-radius: 6px; cursor: pointer; margin-top: 5px; }
+        .btn:hover { background: #00c853; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .status-unverified { background: #ff5252; color: #fff; }
+        .status-approved { background: #00e676; color: #000; }
+        .nav-back { display: block; text-align: center; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 13px; }
+        .nav-back:hover { color: #00e676; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>👤 ຂໍ້ມູນສ່ວນຕົວ & ກະເປົາເງິນ</h2>
+
+    <!-- ກະເປົາເງິນ Wallet -->
+    <div class="wallet-box">
+        <div style="font-size: 14px; color: #aaa;">ຍອດເງິນຄົງເຫຼືອໃນກະເປົາ (Wallet)</div>
+        <div class="balance" id="userBalance">0 LAK</div>
+        <button class="btn" style="background: #ff9800; color: #000;" onclick="alert('ກະລຸນາໂອນເງິນຜ່ານ BCEL One ແລ້ວສົ່ງ Slip ໃຫ້ Admin ເພື່ອເຕີມເງິນເຂົ້າ Wallet')">➕ เติมเงินເຂົ້າ Wallet</button>
+    </div>
+
+    <!-- ຂໍ້ມູນສະຖານະ KYC -->
+    <div class="section-box">
+        <div class="section-title">🛡️ ສະຖານະການຢືນຢັນຕົວຕົນ (KYC)</div>
+        <div style="font-size: 14px; margin-bottom: 8px;">
+            ສະຖານະ: <span id="kycBadge" class="status-badge status-unverified">ຍັງບໍ່ທັນຢືນຢັນ</span>
+        </div>
+        <div style="font-size: 12px; color: #aaa; margin-bottom: 10px;">
+            * ຈຳເປັນຕ້ອງ KYC ໃຫ້ຜ່ານກ่อน ຈຶ່ງຈະສາມາດລົງຂາຍໄອດີເກມໄດ້.
+        </div>
+
+        <div id="kycFormSection">
+            <div class="form-group">
+                <label>ຊື່-นามสกุล:</label>
+                <input type="text" id="kycName" placeholder="ທ້າວ / นางสาว ...">
+            </div>
+            <div class="form-group">
+                <label>ອັບໂຫຼດຮູບ ບັດປະຈຳຕົວ ຫຼື ສຳມະໂນครัว:</label>
+                <input type="file" id="kycFile" accept="image/*">
+            </div>
+            <button class="btn" onclick="submitKYC()">📤 ส่งข้อมูล KYC ໃຫ້ Admin ກວດສອບ</button>
+        </div>
+    </div>
+
+    <a href="index.html" class="nav-back">🏠 กลับสู่หน้าหลักตลาด</a>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAwO0JXBBPZdmDBRYKXVOpVKXQCqzFWNI",
+        authDomain: "kopstore-sk.firebaseapp.com",
+        databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "kopstore-sk",
+        storageBucket: "kopstore-sk.firebasestorage.app",
+        messagingSenderId: "4B3901320885",
+        appId: "1:403901320885:web:e55d17ef726ab5169b87e4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const currentUserPhone = localStorage.getItem('kopstore_user');
+
+    if (!currentUserPhone) {
+        alert('❌ ກະລຸນາເຂົ້າສູ່ລະບົບກ່ອນ!');
+        window.location.href = 'login.html';
+    }
+
+    const userRef = database.ref('users/' + currentUserPhone);
+    userRef.on('value', (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            document.getElementById('userBalance').innerText = Number(data.balance || 0).toLocaleString() + ' LAK';
+            
+            const badge = document.getElementById('kycBadge');
+            if (data.kycStatus === 'approved') {
+                badge.className = 'status-badge status-approved';
+                badge.innerText = '✅ ຢືນຢັນແລ້ວ (Approved)';
+                document.getElementById('kycFormSection').style.display = 'none';
+            } else if (data.kycStatus === 'pending') {
+                badge.className = 'status-badge';
+                badge.style.background = '#ffeb3b';
+                badge.style.color = '#000';
+                badge.innerText = '⏳ ລໍຖ້າ Admin ตรวจสอบ';
+            }
+        }
+    });
+
+    function submitKYC() {
+        const name = document.getElementById('kycName').value.trim();
+        const fileInput = document.getElementById('kycFile');
+
+        if (!name) {
+            alert('❌ ກະລຸນາປ້ອນຊື່-นามสกุลให้ครบถ้วน!');
+            return;
+        }
+
+        if (fileInput.files.length === 0) {
+            alert('❌ ກະລຸນາອັບໂຫຼດຮູບພາບ ບັດປະຈຳຕົວ ຫຼື ສຳມະໂນครัว!');
+            return;
+        }
+
+        userRef.update({
+            kycName: name,
+            kycStatus: 'pending',
+            kycSubmittedAt: new Date().toISOString()
+        }).then(() => {
+            alert('🎉 ส่งข้อมูล KYC ສຳເລັດ! ກະລຸນາລໍຖ້າ Admin ອນຸມັດ.');
+        });
+    }
+</script>
+
+</body>
+</html>
