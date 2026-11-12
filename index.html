@@ -3,47 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KopStore - ตลาดຊື້ຂາຍໄອດີເກມປອດໄພ 100%</title>
+    <title>KopStore - P2P Game Account Marketplace</title>
     <style>
         * { box-sizing: border-box; font-family: 'Phetsarath OT', sans-serif, Arial; }
         body { background-color: #121212; color: #fff; margin: 0; padding: 0; }
-        header { background: #1e1e1e; padding: 20px; text-align: center; border-bottom: 2px solid #00e676; }
-        h1 { color: #00e676; margin: 0; font-size: 24px; }
-        .container { max-width: 900px; margin: 20px auto; padding: 15px; }
-        .nav-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
-        .btn { background: #00e676; color: #000; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .btn:hover { background: #00c853; }
+        header { background: #1e1e1e; padding: 15px 20px; border-bottom: 2px solid #00e676; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        h1 { color: #00e676; margin: 0; font-size: 20px; }
+        .top-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .wallet-pill { background: #2a2a2a; border: 1px solid #00e676; padding: 6px 12px; border-radius: 20px; font-size: 13px; color: #00e676; font-weight: bold; }
+        .btn { background: #00e676; color: #000; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; border: none; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid #00e676; color: #00e676; }
         
+        .container { max-width: 900px; margin: 20px auto; padding: 15px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-        .card { background: #1e1e1e; border: 1px solid #333; border-radius: 10px; overflow: hidden; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .card { background: #1e1e1e; border: 1px solid #333; border-radius: 10px; overflow: hidden; padding: 15px; }
         .game-badge { background: #00e676; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; margin-bottom: 8px; }
         .price { color: #00e676; font-size: 18px; font-weight: bold; margin: 8px 0; }
-        .media-preview { width: 100%; height: 140px; background: #2a2a2a; border-radius: 6px; object-fit: cover; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #777; font-size: 12px; }
-        .btn-buy { width: 100%; background: #ff9800; color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-buy:hover { background: #f57c00; }
-        .no-data { text-align: center; color: #888; grid-column: 1 / -1; padding: 40px; }
+        .media-preview { width: 100%; height: 140px; background: #2a2a2a; border-radius: 6px; object-fit: cover; margin-bottom: 10px; }
+        .btn-buy { width: 100%; background: #00e676; color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .no-data { text-align: center; color: #888; grid-column: 1 / -1; padding: 30px; }
+
+        /* ກ່ອງໃບບິນ Escrow ທີ່ກຳລັງລໍຖ້າຢືນຢັນ */
+        .order-card { background: #252525; border: 2px solid #ff9800; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
+        .warning-box { background: rgba(255, 82, 82, 0.15); border: 1px solid #ff5252; color: #ff8a80; padding: 10px; border-radius: 6px; font-size: 12px; margin: 10px 0; }
     </style>
 
-    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
 <header>
-    <h1>🎮 KopStore - P2P Game Account Marketplace</h1>
-    <p style="color: #aaa; font-size: 13px; margin: 5px 0 0 0;">ລະບົບກາງ Escrow ປອດໄພ ຮັບປະກັນ 48 ຊົ່ວໂມງ</p>
+    <div>
+        <h1>🎮 KopStore P2P</h1>
+        <span style="font-size: 11px; color: #aaa;">ຕະຫຼາດກາງຊື້-ຂາຍໄອດີເກມປອດໄພ</span>
+    </div>
+    <div class="top-bar" id="navArea"></div>
 </header>
 
 <div class="container">
-    <div class="nav-buttons">
-        <a href="sell.html" class="btn">➕ ລົງຂາຍໄອດີຂອງທ່ານ</a>
-    </div>
+    <!-- ພາກສ່ວນສະແດງໃບບິນທີ່ຜູ້ຊື້ກຳລັງດຳເນີນການ (Escrow Active Orders) -->
+    <div id="activeOrdersSection"></div>
 
-    <h3 style="border-left: 4px solid #00e676; padding-left: 10px;">🔥 ໄອດີເກມທີ່ກຳລັງຂາຍທັງໝົດ</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="border-left: 4px solid #00e676; padding-left: 10px; margin: 0;">🔥 ໄອດີເກມທີ່ວາງຂາຍ</h3>
+        <a href="sell.html" class="btn">➕ ລົງຂາຍໄອດີ</a>
+    </div>
     
     <div id="marketList" class="grid">
-        <div class="no-data">⏳ กำลังโหลดรายการໄອດີ...</div>
+        <div class="no-data">⏳ ກຳລັງໂຫຼດລາຍການໄອດີ...</div>
     </div>
 </div>
 
@@ -61,7 +69,35 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // ດຶງຂໍ້ມູນໄອດີຈາກ Firebase ມາສະແດງໜ້າຮ้าน
+    const currentUserPhone = localStorage.getItem('kopstore_user');
+    let currentUserData = null;
+
+    // ກວດສອບສະຖານະ Login ແລະ ດຶງຍອດເງິນ Wallet
+    if (!currentUserPhone) {
+        document.getElementById('navArea').innerHTML = `
+            <a href="login.html" class="btn btn-outline">ເຂົ້າສູ່ລະບົບ</a>
+            <a href="register.html" class="btn">ສະໝັກສະມາຊິກ</a>
+        `;
+    } else {
+        database.ref('users/' + currentUserPhone).on('value', (snap) => {
+            if (snap.exists()) {
+                currentUserData = snap.val();
+                document.getElementById('navArea').innerHTML = `
+                    <div class="wallet-pill">💰 ${Number(currentUserData.balance || 0).toLocaleString()} LAK</div>
+                    <a href="profile.html" class="btn btn-outline">👤 ບັນຊີ & KYC</a>
+                    <button onclick="logout()" class="btn" style="background:#ff5252; color:#fff;">ອອກ</button>
+                `;
+            }
+        });
+        loadMyActiveOrders();
+    }
+
+    function logout() {
+        localStorage.removeItem('kopstore_user');
+        window.location.href = 'login.html';
+    }
+
+    // ໂຫຼດລາຍການໄອດີທີ່ວາງຂາຍ
     database.ref('accounts').on('value', (snapshot) => {
         const data = snapshot.val();
         const marketList = document.getElementById('marketList');
@@ -72,20 +108,19 @@
             return;
         }
 
+        let hasAvailable = false;
         Object.keys(data).forEach((key) => {
             const acc = data[key];
-            
-            // ສະແດງສະເພາະໄອດີທີ່ມີສະຖານະ available (ຍັງບໍ່ທັນຂາຍ)
             if (acc.status !== 'available') return;
+            hasAvailable = true;
 
-            let mediaDisplay = '<div class="media-preview">ບໍ່ມີຮູບພາບ</div>';
+            let mediaDisplay = '<div class="media-preview" style="display:flex; align-items:center; justify-content:center; color:#777;">ບໍ່ມີຮູບພາບ</div>';
             if (acc.mediaUrls && acc.mediaUrls.length > 0) {
-                // ສະແດງຮູບ/ວີດີໂອທຳອິດເປັນຕົວຢ່າງ
                 const firstMedia = acc.mediaUrls[0];
                 if (firstMedia.match(/\.(mp4|webm|ogg)$/i) || firstMedia.includes('video')) {
-                    mediaDisplay = `<video class="media-preview" src="${firstMedia}" controls style="width:100%; height:140px;"></video>`;
+                    mediaDisplay = `<video class="media-preview" src="${firstMedia}" controls></video>`;
                 } else {
-                    mediaDisplay = `<img class="media-preview" src="${firstMedia}" style="width:100%; height:140px; object-fit:cover;">`;
+                    mediaDisplay = `<img class="media-preview" src="${firstMedia}">`;
                 }
             }
 
@@ -94,18 +129,130 @@
             card.innerHTML = `
                 <span class="game-badge">${acc.gameType}</span>
                 ${mediaDisplay}
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${acc.description ? acc.description.substring(0, 50) + '...' : 'ໄອດີເກມ VIP'}</div>
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${acc.description ? acc.description.substring(0, 60) : 'ໄອດີເກມຄຸນນະພາບ'}</div>
+                <div style="font-size: 11px; color: #aaa;">ຜູ້ຂາຍ: ${acc.sellerPhone.substring(0, 6)}****</div>
                 <div class="price">${Number(acc.price).toLocaleString()} LAK</div>
-                <div style="font-size: 12px; color: #aaa; margin-bottom: 10px;">📞 ติดຕໍ່: ${acc.sellerPhone}</div>
-                <button class="btn-buy" onclick="buyAccount('${acc.sellerPhone}', '${acc.price}')">🛒 ສั่งຊື້ / ຕิດຕໍ່ Escrow</button>
+                <button class="btn-buy" onclick="purchaseAccount('${key}', ${acc.price})">🛒 ຊື້ຜ່ານລະບົບກາງ Escrow</button>
             `;
             marketList.appendChild(card);
         });
+
+        if (!hasAvailable) {
+            marketList.innerHTML = '<div class="no-data">📭 ຍັງບໍ່ມີໄອດີວາງຂາຍໃນຂະນະນີ້</div>';
+        }
     });
 
-    // ຟັງຊັນກົດຊື້ / ຕິດຕໍ່ Admin
-    function buyAccount(phone, price) {
-        alert(`🛒 ຕ້ອງການຊື້ໄອດີນີ້ແມ່ນບໍ?\n\nກະລຸນາແຄັບໜ້າຈໍນີ້ແລ້ວທັກຫາ Admin ຜ່ານ WhatsApp / Facebook ເພື່ອໂອນເງິນເຂົ້າລະບົບກາງ Escrow (ລາຄາ: ${Number(price).toLocaleString()} LAK)`);
+    // ຟັງຊັນກົດສັ່ງຊື້ (ຫັກເງິນ Wallet ມາພັກໄວ້ທີ່ລະບົບກາງ ແລະ ອອກໃບບິນ)
+    function purchaseAccount(accountId, price) {
+        if (!currentUserPhone || !currentUserData) {
+            alert('❌ ກະລຸນາເຂົ້າສູ່ລະບົບກ່ອນສັ່ງຊື້!');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (currentUserData.kycStatus !== 'approved') {
+            alert('❌ ກະລຸນາຢືນຢັນຕົວຕົນ (KYC) ໃນໜ້າບັນຊີຂອງທ່ານກ່ອນສັ່ງຊື້!');
+            window.location.href = 'profile.html';
+            return;
+        }
+        if ((currentUserData.balance || 0) < price) {
+            alert(`❌ ຍອດເງິນໃນ Wallet ບໍ່ພໍ! (ຕ້ອງການ ${Number(price).toLocaleString()} LAK) ກະລຸນາເຕີມເງິນກ່ອນ.`);
+            window.location.href = 'profile.html';
+            return;
+        }
+
+        if (!confirm(`ຢືນຢັນການສັ່ງຊື້ໄອດີລາຄາ ${Number(price).toLocaleString()} LAK?\n(ລະບົບຈະຫັກເງິນຈາກ Wallet ມາພັກໄວ້ທີ່ລະບົບກາງ Escrow ຈົນກວ່າທ່ານຈະກວດສອບໄອດີສຳເລັດ)`)) {
+            return;
+        }
+
+        database.ref('accounts/' + accountId).once('value').then((snap) => {
+            const acc = snap.val();
+            if (!acc || acc.status !== 'available') {
+                alert('❌ ຂໍອະໄພ ໄອດີນີ້ຖືກຊື້ໄປແລ້ວ!');
+                return;
+            }
+
+            // 1. ຫັກເງິນຈາກ Wallet ຂອງຜູ້ຊື້
+            const newBuyerBalance = (currentUserData.balance || 0) - price;
+            database.ref('users/' + currentUserPhone).update({ balance: newBuyerBalance });
+
+            // 2. ປ່ຽນສະຖານະໄອດີເປັນ escrow (ກຳລັງກວດສອບ)
+            database.ref('accounts/' + accountId).update({ status: 'escrow' });
+
+            // 3. ສ້າງໃບບິນ Order ໃນລະບົບ Escrow
+            database.ref('orders').push().set({
+                accountId: accountId,
+                buyerPhone: currentUserPhone,
+                sellerPhone: acc.sellerPhone,
+                gameType: acc.gameType,
+                price: acc.price,
+                fee: acc.fee,
+                sellerReceive: acc.sellerReceive,
+                gameEmail: acc.gameEmail,
+                gamePassword: acc.gamePassword,
+                status: 'holding', // ກຳລັງຖືເງິນກາງ
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                alert('🎉 ສັ່ງຊື້ສຳເລັດ! ກະລຸນາກວດສອບໃບບິນ ແລະ ລະຫັດໄອດີເກມດ້ານເທິງ.');
+            });
+        });
+    }
+
+    // ສະແດງໃບບິນ (Receipt) ຂອງຜູ້ຊື້ທີ່ກຳລັງລໍຖ້າຢືນຢັນ
+    function loadMyActiveOrders() {
+        database.ref('orders').on('value', (snap) => {
+            const container = document.getElementById('activeOrdersSection');
+            container.innerHTML = '';
+            const orders = snap.val();
+            if (!orders) return;
+
+            Object.keys(orders).forEach((orderId) => {
+                const ord = orders[orderId];
+                if (ord.buyerPhone === currentUserPhone && ord.status === 'holding') {
+                    const div = document.createElement('div');
+                    div.className = 'order-card';
+                    div.innerHTML = `
+                        <h3 style="color:#ff9800; margin-top:0;">🧾 ໃບບິນການສັ່ງຊື້ (Escrow Protection)</h3>
+                        <div style="font-size:13px; margin-bottom:5px;">ເກມ: <b>${ord.gameType}</b> | ຍອດຊຳລະ: <b style="color:#00e676;">${Number(ord.price).toLocaleString()} LAK</b></div>
+                        <div style="background:#1e1e1e; padding:12px; border-radius:8px; border:1px dashed #00e676; margin:10px 0;">
+                            <div style="color:#00e676; font-weight:bold; font-size:13px; margin-bottom:5px;">🔑 ຂໍ້ມູນສຳລັບເຂົ້າເກມ (ກະລຸນາກວດສອບ ແລະ ປ່ຽນລະຫັດ):</div>
+                            <div style="font-size:14px;">ອີເມວ / ID: <b>${ord.gameEmail}</b></div>
+                            <div style="font-size:14px;">ລະຫັດຜ່ານ: <b>${ord.gamePassword}</b></div>
+                        </div>
+                        <div class="warning-box">
+                            ⚠️ <b>ຄຳເຕືອນສຳຄັນ:</b> ຫ້າມກົດປຸ່ມຢືນຢັນດ້ານລຸ່ມ ຖ້າທ່ານຍັງບໍ່ໄດ້ເຂົ້າກວດສອບໄອດີໃນເກມໃຫ້ຮຽບຮ້ອຍ! ເມື່ອກົດຢືນຢັນແລ້ວ ລະບົບຈະໂອນເງິນໃຫ້ຜູ້ຂາຍທັນທີ ແລະ ບໍ່ສາມາດຍົກເລີກໄດ້.
+                        </div>
+                        <button onclick="confirmOrderComplete('${orderId}')" style="width:100%; background:#00e676; color:#000; border:none; padding:12px; border-radius:6px; font-weight:bold; cursor:pointer;">✅ ຢືນຢັນໄດ້ຮັບໄອດີຖືກຕ້ອງແລ້ວ (ປ່ອຍເງິນໃຫ້ຜູ້ຂາຍ)</button>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+        });
+    }
+
+    // ຜູ້ຊື້ກົດຢືນຢັນ -> ໂອນເງິນເຂົ້າ Wallet ຂອງຜູ້ຂາຍທັນທີ
+    function confirmOrderComplete(orderId) {
+        if (!confirm('⚠️ ຢືນຢັນວ່າທ່ານໄດ້ຮັບໄອດີ ແລະ ປ່ຽນຂໍ້ມູນສຳເລັດແລ້ວແມ່ນບໍ?\nເມື່ອກົດ OK ລະບົບຈະໂອນເງິນໃຫ້ຜູ້ຂາຍທັນທີ!')) {
+            return;
+        }
+
+        database.ref('orders/' + orderId).once('value').then((snap) => {
+            const ord = snap.val();
+            if (!ord || ord.status !== 'holding') return;
+
+            // 1. ໂອນເງິນ (ຫຼັງຫັກຄ່າທຳນຽມ 5.89%) ເຂົ້າ Wallet ຜູ້ຂາຍ
+            const sellerRef = database.ref('users/' + ord.sellerPhone);
+            sellerRef.once('value').then((sSnap) => {
+                const sellerData = sSnap.val() || {};
+                const updatedSellerBalance = (sellerData.balance || 0) + ord.sellerReceive;
+                sellerRef.update({ balance: updatedSellerBalance });
+            });
+
+            // 2. ອັບເດດສະຖານະ Order ແລະ Account ເປັນສຳເລັດ
+            database.ref('orders/' + orderId).update({ status: 'completed', completedAt: new Date().toISOString() });
+            database.ref('accounts/' + ord.accountId).update({ status: 'sold' });
+
+            alert('🎉 ການຊື້-ຂາຍສຳເລັດສົມບູນ! ລະບົບໄດ້ໂອນເງິນໃຫ້ຜູ້ຂາຍຮຽບຮ້ອຍແລ້ວ.');
+        });
     }
 </script>
 
