@@ -10,12 +10,11 @@
     <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-md">
         <h2 class="text-2xl font-bold mb-6 text-center text-green-400">ສະໝັກສະມາຊິກ KOP STORE</h2>
         
-        <!-- ฟอร์มสมัครด้วยเบอร์โทร + OTP -->
         <div class="mb-4">
-            <label class="block text-sm mb-2">ເບີໂທລະສັບ</label>
-            <input type="text" id="phone" placeholder="+856 20 xxxxxxxx" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500">
+            <label class="block text-sm mb-2">ເບີໂທລະສັບ (ຕົວຢ່າງ: 20xxxxxxxx)</label>
+            <input type="text" id="phone" placeholder="20xxxxxxxx" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500">
         </div>
-        <button id="send-otp-btn" onclick="sendOTP()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded font-bold mb-4 transition">ສົ່ງລະຫັດ OTP</button>
+        <button onclick="sendOTP()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded font-bold mb-4 transition">ສົ່ງລະຫັດ OTP</button>
 
         <div id="otp-section" class="hidden mb-4">
             <label class="block text-sm mb-2">ໃສ່ລະຫັດ OTP 6 ຫຼັກ</label>
@@ -31,7 +30,6 @@
             <div class="flex-grow border-t border-gray-600"></div>
         </div>
 
-        <!-- ປຸ່ມລັອກອິນ/ສະໝັກຜ່ານ Google (Gmail) -->
         <button onclick="signInWithGoogle()" class="w-full bg-white text-gray-900 hover:bg-gray-100 p-3 rounded font-bold flex items-center justify-center gap-2 transition">
             <svg class="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -45,7 +43,6 @@
         <p class="text-center text-sm text-gray-400 mt-4">ມີບັນຊີແລ້ວ? <a href="login.html" class="text-green-400 hover:underline">ເຂົ້າສູ່ລະບົບທີ່ນີ້</a></p>
     </div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -64,23 +61,28 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // ฟังก์ชันสมัคร/ล็อกอินด้วย Google
         window.signInWithGoogle = function() {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    alert("ລັອກອິນຜ່ານ Google สำເລັດ!");
+                    alert("ລັອກອິນຜ່ານ Google ສຳເລັດ!");
                     window.location.href = "profile.html";
                 }).catch((error) => {
-                    alert("ເກີດข้อผิดพลาด: " + error.message);
+                    alert("ເກີດຂໍ້ຜິດพลาด: " + error.message);
                 });
         }
 
-        // ฟังก์ชันส่ง OTP (เบอร์โทร)
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 'size': 'invisible' });
 
         window.sendOTP = function() {
-            const phoneNumber = document.getElementById('phone').value;
+            let rawInput = document.getElementById('phone').value.trim();
+            let phoneNumber = rawInput;
+            if (rawInput.startsWith('20')) {
+                phoneNumber = '+856' + rawInput;
+            } else if (!rawInput.startsWith('+')) {
+                phoneNumber = '+856' + rawInput;
+            }
+
             signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResult = confirmationResult;
@@ -94,10 +96,10 @@
         window.verifyOTP = function() {
             const code = document.getElementById('otp').value;
             window.confirmationResult.confirm(code).then((result) => {
-                alert("ຢືນຢັນເບີໂທສຳເລັດ!");
+                alert("ຢືນຢັນສຳເລັດ!");
                 window.location.href = "profile.html";
             }).catch((error) => {
-                -alert("ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ!");
+                alert("ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ!");
             });
         }
     </script>
