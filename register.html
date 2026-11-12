@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ສະໝັກສະມາຊິກ - KopStore</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Phetsarath OT', sans-serif, Arial; }
+        body { background-color: #121212; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 420px; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; }
+        h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #bbb; font-size: 14px; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
+        input:focus { border-color: #00e676; outline: none; }
+        .phone-wrap { display: flex; gap: 8px; }
+        .prefix { background: #2a2a2a; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #00e676; font-weight: bold; }
+        .btn { width: 100%; padding: 14px; background: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #00c853; }
+        .link-text { text-align: center; margin-top: 15px; font-size: 13px; color: #aaa; }
+        .link-text a { color: #00e676; text-decoration: none; font-weight: bold; }
+        #otpSection { display: none; border-top: 1px dashed #444; padding-top: 15px; margin-top: 15px; }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>📝 ລົງທະບຽນ KopStore</h2>
+    
+    <!-- ຂັ້ນຕອນທີ 1: ປ້ອນເບີໂທ ແລະ ລະຫັດຜ່ານ -->
+    <div id="step1">
+        <div class="form-group">
+            <label>ເບີໂທລະສັບ (Laos):</label>
+            <div class="phone-wrap">
+                <div class="prefix">+856</div>
+                <input type="tel" id="phoneNumber" placeholder="20XXXXXXXX" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>ຕັ້ງລະຫັດຜ່ານ (Password):</label>
+            <input type="password" id="password" placeholder="ຕັ້ງລະຫັດຜ່ານ 6 ໂຕຂຶ້ນໄປ" required>
+        </div>
+        <div id="recaptcha-container"></div>
+        <button class="btn" id="sendOtpBtn" onclick="sendOTP()">📲 ສົ່ງລະຫັດ OTP ທາງ SMS</button>
+    </div>
+
+    <!-- ຂັ້ນຕອນທີ 2: ປ້ອນລະຫັດ OTP -->
+    <div id="otpSection">
+        <div class="form-group">
+            <label style="color: #00e676;">ປ້ອນລະຫັດ OTP 6 ຫຼັກທີ່ສົ່ງໄປທາງ SMS:</label>
+            <input type="number" id="otpCode" placeholder="XXXXXX">
+        </div>
+        <button class="btn" onclick="verifyOTP()">✅ ຢືນຢັນ OTP & ສຳເລັດການສະໝັກ</button>
+    </div>
+
+    <div class="link-text">
+        ມີບັນຊີຢູ່ແລ້ວ? <a href="login.html">ເຂົ້າສູ່ລະບົບທີ່ນີ້</a>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAwO0JXBBPZdmDBRYKXVOpVKXQCqzFWNI",
+        authDomain: "kopstore-sk.firebaseapp.com",
+        databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "kopstore-sk",
+        storageBucket: "kopstore-sk.firebasestorage.app",
+        messagingSenderId: "4B3901320885",
+        appId: "1:403901320885:web:e55d17ef726ab5169b87e4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'invisible'
+    });
+
+    let confirmationResultGlobal = null;
+
+    function sendOTP() {
+        let rawPhone = document.getElementById('phoneNumber').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!rawPhone || password.length < 6) {
+            alert('❌ ກະລຸນາປ້ອນເບີໂທໃຫ້ຖືກຕ້ອງ ແລະ ລະຫັດຜ່ານຢ່າງໜ້ອຍ 6 ໂຕ!');
+            return;
+        }
+
+        // ຕັດເລກ 0 ທາງໜ້າອອກຖ້າຜູ້ໃຊ້ພິມ 020...
+        if (rawPhone.startsWith('0')) {
+            rawPhone = rawPhone.substring(1);
+        }
+        const fullPhone = '+856' + rawPhone;
+
+        const btn = document.getElementById('sendOtpBtn');
+        btn.innerText = '⏳ ກຳລັງສົ່ງ SMS...';
+        btn.disabled = true;
+
+        auth.signInWithPhoneNumber(fullPhone, window.recaptchaVerifier)
+            .then((confirmationResult) => {
+                confirmationResultGlobal = confirmationResult;
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('otpSection').style.display = 'block';
+                alert('📲 ສົ່ງລະຫັດ OTP ໄປທີ່ເບີ ' + fullPhone + ' ແລ້ວ!');
+            }).catch((error) => {
+                alert('❌ ສົ່ງ OTP ບໍ່ສຳເລັດ: ' + error.message);
+                btn.innerText = '📲 ສົ່ງລະຫັດ OTP ທາງ SMS';
+                btn.disabled = false;
+            });
+    }
+
+    function verifyOTP() {
+        const code = document.getElementById('otpCode').value.trim();
+        let rawPhone = document.getElementById('phoneNumber').value.trim();
+        if (rawPhone.startsWith('0')) rawPhone = rawPhone.substring(1);
+        const cleanPhone = '0' + rawPhone; // ເກັບເປັນຮູບແບບ 020XXXXXXXX
+        const password = document.getElementById('password').value;
+
+        if (!code) {
+            alert('❌ ກະລຸນາປ້ອນລະຫັດ OTP!');
+            return;
+        }
+
+        confirmationResultGlobal.confirm(code).then((result) => {
+            const user = result.user;
+
+            // ບັນທຶກຂໍ້ມູນຜູ້ໃຊ້ລົງ Database ພ້ອມສ້າງ Wallet ແລະ ສະຖານະ KYC
+            database.ref('users/' + cleanPhone).set({
+                uid: user.uid,
+                phone: cleanPhone,
+                password: password, // ໃນລະບົບຈິງຄວນເຂົ້າລະຫັດ
+                balance: 0, // ຍອດເງິນໃນກະເປົາເລີ່ມຕົ້ນ 0 ກີບ
+                kycStatus: 'unverified', // ຍັງບໍ່ທັນຢືນຢັນ KYC
+                isSeller: false, // ຍັງບໍ່ທັນຈ່າຍຄ່າສະໝັກຮ້ານຄ້າ 15,000 ກີບ
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                alert('🎉 ສະໝັກສະມາຊິກສຳເລັດ! ກຳລັງພາໄປໜ້າເຂົ້າສູ່ລະບົບ...');
+                window.location.href = 'login.html';
+            });
+
+        }).catch((error) => {
+            alert('❌ ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ!');
+        });
+    }
+</script>
+
+</body>
+</html>
