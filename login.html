@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ເຂົ້າສູ່ລະບົບ - KopStore</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Phetsarath OT', sans-serif, Arial; }
+        body { background-color: #121212; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 420px; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; }
+        h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #bbb; font-size: 14px; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
+        input:focus { border-color: #00e676; outline: none; }
+        .btn { width: 100%; padding: 14px; background: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #00c853; }
+        .link-text { text-align: center; margin-top: 15px; font-size: 13px; color: #aaa; }
+        .link-text a { color: #00e676; text-decoration: none; font-weight: bold; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔐 ເຂົ້າສູ່ລະບົບ KopStore</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label>ເບີໂທລະສັບ:</label>
+            <input type="tel" id="loginPhone" placeholder="020XXXXXXXX" required>
+        </div>
+        <div class="form-group">
+            <label>ລະຫັດຜ່ານ:</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn">🚀 ເຂົ້າສູ່ລະບົບ</button>
+    </form>
+
+    <div class="link-text">
+        ຍັງບໍ່ມີບັນຊີ? <a href="register.html">ລົງທະບຽນໃໝ່ທີ່ນີ້</a>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAwO0JXBBPZdmDBRYKXVOpVKXQCqzFWNI",
+        authDomain: "kopstore-sk.firebaseapp.com",
+        databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "kopstore-sk",
+        storageBucket: "kopstore-sk.firebasestorage.app",
+        messagingSenderId: "4B3901320885",
+        appId: "1:403901320885:web:e55d17ef726ab5169b87e4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        let phone = document.getElementById('loginPhone').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        if (!phone.startsWith('0')) {
+            phone = '0' + phone;
+        }
+
+        database.ref('users/' + phone).once('value').then((snapshot) => {
+            if (!snapshot.exists()) {
+                alert('❌ ບໍ່ພົບເບີໂທນີ້ໃນລະບົບ! ກະລຸນາລົງທະບຽນກ່ອນ.');
+                return;
+            }
+
+            const userData = snapshot.val();
+            if (userData.password === password) {
+                // ບັນທຶກສະຖານະການລັອກອິນໄວ້ໃນ Browser
+                localStorage.setItem('kopstore_user', phone);
+                alert('✅ ເຂົ້າສູ່ລະບົບສຳເລັດ!');
+                window.location.href = 'index.html';
+            } else {
+                alert('❌ ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+
