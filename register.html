@@ -4,8 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ສະໝັກສະມາຊິກ - KOP STORE</title>
-    <!-- ໃສ່ Link CSS ເກົ່າຂອງເຈົ້ານີ້ -->
-    <link rel="stylesheet" href="style.css"> 
+    <style>
+        body {
+            font-family: 'Phetsarath OT', sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #38bdf8;
+            outline: none;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #16a34a;
+        }
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-google:hover {
+            background-color: #dc2626;
+        }
+    </style>
 </head>
 <body>
 
@@ -23,7 +100,6 @@
             <input type="password" id="regPassword" placeholder="ຕັ້ງລະຫັດຜ່ານ ຢ່າງໜ້ອຍ 6 ຕົວ" required />
         </div>
         
-        <!-- ປຸ່ມສະໝັກ (ຮັກສາ Class ເດີມໄວ້) -->
         <button type="submit" class="btn-submit">ສະໝັກສະມາຊິກ</button>
     </form>
 
@@ -34,7 +110,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-auth.js";
 
-    // 🔴 ໃສ່ Config ໂປເຈັກ Firebase ຂອງເຈົ້າ
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
         authDomain: "YOUR_AUTH_DOMAIN",
@@ -53,7 +128,6 @@
         let inputVal = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value;
 
-        // ຖ້າຜູ້ໃຊ້ປ້ອນເປັນເບີໂທ (ຕົວເລກ) ລະບົບຈະແປງເປັນรูปแบบອີເມວອັດຕະໂນມັດເພື່ອບັນທຶກລົງ Firebase
         let email = inputVal;
         if (/^\d+$/.test(inputVal)) {
             email = `${inputVal}@kopstore-sk.com`;
