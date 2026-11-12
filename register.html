@@ -1,107 +1,75 @@
-<!DOCTYPE html>
-<html lang="lo">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ສະໝັກສະມາຊິກ - KOP STORE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
-    <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-6 text-center text-green-400">ສະໝັກສະມາຊິກ KOP STORE</h2>
-        
-        <div class="mb-4">
-            <label class="block text-sm mb-2">ເບີໂທລະສັບ (ຕົວຢ່າງ: 20xxxxxxxx)</label>
-            <input type="text" id="phone" placeholder="20xxxxxxxx" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500">
-        </div>
-        <button onclick="sendOTP()" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded font-bold mb-4 transition">ສົ່ງລະຫັດ OTP</button>
-
-        <div id="otp-section" class="hidden mb-4">
-            <label class="block text-sm mb-2">ໃສ່ລະຫັດ OTP 6 ຫຼັກ</label>
-            <input type="text" id="otp" placeholder="123456" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:border-green-500 mb-2">
-            <button onclick="verifyOTP()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded font-bold transition">ຢືນຢັນ OTP</button>
-        </div>
-
-        <div id="recaptcha-container"></div>
-
-        <div class="relative flex py-2 items-center">
-            <div class="flex-grow border-t border-gray-600"></div>
-            <span class="flex-shrink mx-4 text-gray-400 text-sm">ຫຼື</span>
-            <div class="flex-grow border-t border-gray-600"></div>
-        </div>
-
-        <button onclick="signInWithGoogle()" class="w-full bg-white text-gray-900 hover:bg-gray-100 p-3 rounded font-bold flex items-center justify-center gap-2 transition">
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-            </svg>
-            ສະໝັກດ້ວຍ Google (Gmail)
-        </button>
-
-        <p class="text-center text-sm text-gray-400 mt-4">ມີບັນຊີແລ້ວ? <a href="login.html" class="text-green-400 hover:underline">ເຂົ້າສູ່ລະບົບທີ່ນີ້</a></p>
+<!-- ຕົວຢ່າງໂຄດສ່ວນຟອມສະໝັກໃນ register.html -->
+<div class="register-container">
+  <h2>ສະໝັກສະມາຊິກ KOP STORE</h2>
+  
+  <form id="registerForm">
+    <div class="form-group">
+      <label>ອີເມວ ຫຼື ເບີໂທລະສັບ</label>
+      <input type="text" id="regEmail" placeholder="user@example.com ຫຼື 20xxxxxxxx" required />
     </div>
+    
+    <div class="form-group">
+      <label>ລະຫັດຜ່ານ (Password)</label>
+      <input type="password" id="regPassword" placeholder="ຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ" required />
+    </div>
+    
+    <button type="submit" class="btn-submit">ສະໝັກສະມາຊິກ</button>
+  </form>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  <button id="googleSignInBtn" class="btn-google">ສະໝັກດ້ວຍ Google (Gmail)</button>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAwDOJXBBPZdmD8RYWXvDpVkXQCgqzfWNI",
-            authDomain: "kopstore-sk.firebaseapp.com",
-            databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "kopstore-sk",
-            storageBucket: "kopstore-sk.firebasestorage.app",
-            messagingSenderId: "403901325805",
-            appId: "1:403901325805:web:e55d17ef726eb5169b87e4",
-            measurementId: "G-RKH593NJ2N"
-        };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-auth.js";
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+  // ຕັ້ງຄ່າ Firebase ຂອງທ່ານ
+  const firebaseConfig = {
+    // ໃສ່ Config ຂອງໂປເຈັກເຈົ້າ
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-        window.signInWithGoogle = function() {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    alert("ລັອກອິນຜ່ານ Google ສຳເລັດ!");
-                    window.location.href = "profile.html";
-                }).catch((error) => {
-                    alert("ເກີດຂໍ້ຜິດพลาด: " + error.message);
-                });
-        }
+  // ຈັດການການສະໝັກດ້ວຍ Email/Phone + Password
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    let inputVal = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
 
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 'size': 'invisible' });
+    // ຖ້າຜູ້ໃຊ້ພິມເປັນເບີໂທ (ຕົວເລກ) ໃຫ້ແປງເປັນรูปแบบອີເມວຊົ່ວຄາວສຳລັບ Firebase Auth
+    let email = inputVal;
+    if (/^\d+$/.test(inputVal)) {
+      email = `${inputVal}@kopstore-sk.com`;
+    }
 
-        window.sendOTP = function() {
-            let rawInput = document.getElementById('phone').value.trim();
-            let phoneNumber = rawInput;
-            if (rawInput.startsWith('20')) {
-                phoneNumber = '+856' + rawInput;
-            } else if (!rawInput.startsWith('+')) {
-                phoneNumber = '+856' + rawInput;
-            }
+    try {
+      // 1. ສร้างບັນຊີຜູ້ໃຊ້ໃໝ່
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-            signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
-                .then((confirmationResult) => {
-                    window.confirmationResult = confirmationResult;
-                    document.getElementById('otp-section').classList.remove('hidden');
-                    alert("ສົ່ງ SMS OTP ສຳເລັດແລ້ວ!");
-                }).catch((error) => {
-                    alert("ສົ່ງ OTP ບໍ່ສຳເລັດ: " + error.message);
-                });
-        }
+      // 2. ສົ່ງອີເມວຢືນຢັນ (ຖ້າເປັນອີເມວจริง)
+      if (!email.endsWith('@kopstore-sk.com')) {
+        await sendEmailVerification(user);
+        alert('ສະໝັກສະມາຊິກสำเร็จ! ກະລຸນາກວດສອບອີເມວເພື່ອຢືນຢັນตัวຕົນ.');
+      } else {
+        alert('ສະໝັກສະມາຊິກດ້ວຍເບີໂທสำเร็จ!');
+      }
 
-        window.verifyOTP = function() {
-            const code = document.getElementById('otp').value;
-            window.confirmationResult.confirm(code).then((result) => {
-                alert("ຢືນຢັນສຳເລັດ!");
-                window.location.href = "profile.html";
-            }).catch((error) => {
-                alert("ລະຫັດ OTP ບໍ່ຖືກຕ້ອງ!");
-            });
-        }
-    </script>
-</body>
-</html>
+      window.location.href = 'index.html';
+    } catch (error) {
+      alert('ເກີດຄວາມຜິດພາດ: ' + error.message);
+    }
+  });
+
+  // ລັອກອິນ/ສະໝັກດ້ວຍ Google
+  document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      window.location.href = 'index.html';
+    } catch (error) {
+      alert('Google Sign-In ຜິດພາດ: ' + error.message);
+    }
+  });
+</script>
