@@ -3,290 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ລົງຂາຍໄອດີ - KopStore</title>
-    <style>
-        * { box-sizing: border-box; font-family: 'Phetsarath OT', sans-serif, Arial; }
-        body { background-color: #121212; color: #fff; margin: 0; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #bbb; }
-        input[type="tel"], input[type="number"], input[type="text"], input[type="password"], textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
-        input:focus, textarea:focus { border-color: #00e676; outline: none; }
-        
-        .game-radio-group { background: #2a2a2a; border: 1px solid #333; border-radius: 8px; padding: 10px; }
-        .game-option { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-radius: 6px; margin-bottom: 4px; }
-        .game-option:hover { background: #333; }
-        .game-option input { margin-right: 10px; accent-color: #00e676; width: 18px; height: 18px; cursor: pointer; }
-        .game-option label { cursor: pointer; margin-bottom: 0; color: #fff; width: 100%; }
-
-        .upload-box { border: 2px dashed #00e676; background: rgba(0, 230, 118, 0.05); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; position: relative; }
-        .upload-box:hover { background: rgba(0, 230, 118, 0.1); }
-        .upload-box input { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
-        
-        .preview-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-        .preview-item { background: #2a2a2a; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #00e676; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
-
-        .fee-box { background: #282a36; padding: 12px; border-radius: 8px; border-left: 4px solid #00e676; margin-top: 10px; font-size: 13px; color: #ddd; }
-        .btn-submit { width: 100%; padding: 14px; background: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; }
-        .btn-submit:hover { background: #00c853; }
-        .secret-section { border: 1px dashed #ff9800; padding: 15px; border-radius: 8px; margin-top: 15px; background: rgba(255, 152, 0, 0.05); }
-        .secret-title { color: #ff9800; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
-        .lock-box { text-align: center; padding: 20px; background: #2a2a2a; border-radius: 10px; border: 1px solid #ff9800; }
-    </style>
-    
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <title>ລົງຂາຍບັນຊີ - KOP STORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl shadow-lg">
+        <h2 class="text-2xl font-bold mb-4 text-green-400">ລົງຂາຍບັນຊີເກມ P2P</h2>
+        <p class="text-gray-400 mb-4">ລະບົບ Escrow ປອດໄພ 100%</p>
+        <a href="index.html" class="block text-center bg-gray-700 hover:bg-gray-600 p-3 rounded font-bold">ກັບຄືນໜ້າຫຼັກ</a>
+    </div>
 
-<div class="container">
-    <h2>🎮 ຟອມລົງຂາຍໄອດີເກມ</h2>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    <!-- ກ່ອງແຈ້ງເຕືອນຖ້າຍັງບໍ່ຜ່ານ KYC ຫຼື ຍັງບໍ່ຈ່າຍຄ່າເປີດຮ້ານ 15,000 LAK -->
-    <div id="sellerGate" class="lock-box" style="display:none;"></div>
-
-    <form id="sellForm" style="display:none;">
-        <div class="form-group">
-            <label>ເບີໂທລະສັບຜູ້ຂາຍ (ດຶງຈາກບັນຊີ):</label>
-            <input type="tel" id="sellerPhone" readonly style="color: #00e676; font-weight: bold;">
-        </div>
-
-        <div class="form-group">
-            <label>ເລືອກເກມ:</label>
-            <div class="game-radio-group">
-                <div class="game-option">
-                    <input type="radio" id="g1" name="gameType" value="Free Fire" checked>
-                    <label for="g1">🔥 Free Fire</label>
-                </div>
-                <div class="game-option">
-                    <input type="radio" id="g2" name="gameType" value="Mobile Legends">
-                    <label for="g2">⚔️ Mobile Legends</label>
-                </div>
-                <div class="game-option">
-                    <input type="radio" id="g3" name="gameType" value="eFootball">
-                    <label for="g3">⚽ eFootball</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>ເພີ່ມຮູບພາບ ແລະ ວີດີໂອ (ເລືອກພ້ອມກັນໄດ້ຫຼາຍອັນ, ວີດີໂອບໍ່ເກີນ 4 ນາທີ):</label>
-            <div class="upload-box">
-                <div style="font-size: 28px; color: #00e676; margin-bottom: 5px;">➕</div>
-                <div style="font-weight: bold; color: #fff;">ກົດເພື່ອເລືອກຮູບ ຫຼື ວີດີໂອ</div>
-                <div style="font-size: 11px; color: #aaa; margin-top: 3px;">ຮອງຮັບຫຼາຍຮູບ ແລະ ຫຼາຍວີດີໂອ (ແຕ່ລະວີດີໂອບໍ່ເກີນ 4 ນາທີ)</div>
-                <input type="file" id="mediaFiles" accept="image/*,video/*" multiple onchange="handleFilesSelect(event)">
-            </div>
-            <div id="filePreviewList" class="preview-list"></div>
-        </div>
-
-        <div class="form-group">
-            <label>ລາຄາຂາຍ (ກີບ / LAK):</label>
-            <input type="number" id="price" placeholder="ຕົວຢ່າງ: 100000" oninput="calculateFee()" required>
-        </div>
-
-        <div class="fee-box">
-            <div>💰 ລາຍຮັບທີ່ຜູ້ຂາຍຈະໄດ້ຮັບ: <span id="sellerReceive" style="color:#00e676; font-weight:bold;">0</span> LAK</div>
-            <div style="font-size: 11px; color: #aaa; margin-top: 4px;">* ຫັກຄ່າທຳນຽມ Escrow 5.89% (ສູງສຸດບໍ່ເກີນຍອດ 2,000,000 LAK)</div>
-        </div>
-
-        <div class="secret-section">
-            <div class="secret-title">🔒 ຂໍ້ມູນລາຍລະອຽດໄອດີ (ຈະສະແດງໃນໃບບິນໃຫ້ສະເພາະຄົນຊື້):</div>
-            <div class="form-group">
-                <label style="color:#ffb74d;">ອີເມວ/ໄອດີ ເຊື່ອມເກມ:</label>
-                <input type="text" id="gameEmail" placeholder="example@gmail.com / ID" required>
-            </div>
-            <div class="form-group">
-                <label style="color:#ffb74d;">ລະຫັດຜ່ານ (Password):</label>
-                <input type="text" id="gamePassword" placeholder="ລະຫັດຜ່ານຂອງໄອດີເກມ" required>
-            </div>
-        </div>
-
-        <div class="form-group" style="margin-top: 15px;">
-            <label>ລາຍລະອຽດເພີ່ມເຕີມ:</label>
-            <textarea id="description" rows="3" placeholder="ອະທິບາຍລາຍລະອຽດໄອດີເພີ່ມເຕີມ..."></textarea>
-        </div>
-
-        <button type="submit" class="btn-submit">🚀 ລົງຂາຍໄອດີເລີຍ</button>
-    </form>
-</div>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAwO0JXBBPZdmDBRYKXVOpVKXQCqzFWNI",
-        authDomain: "kopstore-sk.firebaseapp.com",
-        databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "kopstore-sk",
-        storageBucket: "kopstore-sk.firebasestorage.app",
-        messagingSenderId: "4B3901320885",
-        appId: "1:403901320885:web:e55d17ef726ab5169b87e4"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    const currentUserPhone = localStorage.getItem('kopstore_user');
-    if (!currentUserPhone) {
-        alert('❌ ກະລຸນາເຂົ້າສູ່ລະບົບກ່ອນ!');
-        window.location.href = 'login.html';
-    }
-
-    // ກວດສອບສິດ KYC ແລະ ຄ່າສະໝັກຮ້ານຄ້າ 15,000 LAK
-    const userRef = database.ref('users/' + currentUserPhone);
-    userRef.on('value', (snapshot) => {
-        if (!snapshot.exists()) return;
-        const user = snapshot.val();
-        const gate = document.getElementById('sellerGate');
-        const form = document.getElementById('sellForm');
-
-        if (user.kycStatus !== 'approved') {
-            gate.style.display = 'block';
-            form.style.display = 'none';
-            gate.innerHTML = `
-                <h3 style="color:#ff9800; margin-top:0;">🛡️ ຕ້ອງຢືນຢັນຕົວຕົນ (KYC) ກ່ອນ</h3>
-                <p style="font-size:13px; color:#ddd;">ບັນຊີຂອງທ່ານຍັງບໍ່ຜ່ານການກວດສອບ KYC ຈາກ Admin</p>
-                <a href="profile.html" style="display:inline-block; background:#00e676; color:#000; padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:bold; margin-top:10px;">ໄປໜ້າ KYC ດຽວນີ້</a>
-            `;
-        } else if (!user.isSeller) {
-            gate.style.display = 'block';
-            form.style.display = 'none';
-            gate.innerHTML = `
-                <h3 style="color:#00e676; margin-top:0;">🏪 ເປີດໃຊ້ງານບັນຊີຜູ້ຂາຍ (Seller)</h3>
-                <p style="font-size:13px; color:#ddd;">ມີຄ່າທຳນຽມສະໝັກເປີດຮ້ານຄ້າຄັ້ງດຽວ <b>15,000 LAK</b> (ຫັກຈາກ Wallet)</p>
-                <p style="font-size:13px; color:#ffeb3b;">ຍອດເງິນໃນ Wallet ຂອງທ່ານ: ${Number(user.balance || 0).toLocaleString()} LAK</p>
-                <button onclick="activateSeller(${user.balance || 0})" style="background:#00e676; color:#000; border:none; padding:12px 20px; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px;">💳 ຈ່າຍ 15,000 LAK ເພື່ອເປີດຮ້ານ</button>
-                <br><a href="profile.html" style="display:inline-block; color:#aaa; font-size:12px; margin-top:10px;">ເຕີມເງິນເຂົ້າ Wallet</a>
-            `;
-        } else {
-            gate.style.display = 'none';
-            form.style.display = 'block';
-            document.getElementById('sellerPhone').value = currentUserPhone;
-        }
-    });
-
-    function activateSeller(currentBalance) {
-        if (currentBalance < 15000) {
-            alert('❌ ຍອດເງິນໃນ Wallet ບໍ່ພໍ (ຕ້ອງການ 15,000 LAK) ກະລຸນາເຕີມເງິນກ່ອນ!');
-            window.location.href = 'profile.html';
-            return;
-        }
-        if (confirm('ຢືນຢັນຫັກເງິນ 15,000 LAK ຈາກ Wallet ເພື່ອເປີດສິດລົງຂາຍໄອດີ?')) {
-            userRef.update({
-                balance: currentBalance - 15000,
-                isSeller: true
-            }).then(() => {
-                alert('🎉 ເປີດບັນຊີຜູ້ຂາຍສຳເລັດ! ທ່ານສາມາດລົງຂາຍໄອດີໄດ້ເລີຍ.');
-            });
-        }
-    }
-
-    let uploadedMediaUrls = [];
-
-    function handleFilesSelect(event) {
-        const files = event.target.files;
-        if (!files.length) return;
-
-        uploadedMediaUrls = [];
-        const previewList = document.getElementById('filePreviewList');
-        previewList.innerHTML = '<div class="preview-item"><span>⏳ ກຳລັງກວດສອບ ແລະ ອັບໂຫຼດໄຟລ໌...</span></div>';
-
-        let checkPromises = Array.from(files).map(file => {
-            return new Promise((resolve) => {
-                if (file.type.startsWith('video/')) {
-                    const videoElement = document.createElement('video');
-                    videoElement.preload = 'metadata';
-                    videoElement.onloadedmetadata = function() {
-                        window.URL.revokeObjectURL(videoElement.src);
-                        if (videoElement.duration > 240) {
-                            alert(`❌ ວີດີໂອ "${file.name}" ຍາວເກີນ 4 ນາທີ!`);
-                            resolve(null);
-                        } else {
-                            uploadFileToCloud(file, resolve);
-                        }
-                    };
-                    videoElement.onerror = () => uploadFileToCloud(file, resolve);
-                    videoElement.src = URL.createObjectURL(file);
-                } else {
-                    uploadFileToCloud(file, resolve);
-                }
-            });
-        });
-
-        Promise.all(checkPromises).then(() => updatePreviewUI());
-    }
-
-    function uploadFileToCloud(file, resolve) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', 'ml_default');
-
-        fetch('https://api.cloudinary.com/v1_1/demo/upload', { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(data => {
-            uploadedMediaUrls.push({ url: data.secure_url || URL.createObjectURL(file), type: file.type, name: file.name });
-            resolve(true);
-        })
-        .catch(() => {
-            uploadedMediaUrls.push({ url: URL.createObjectURL(file), type: file.type, name: file.name });
-            resolve(true);
-        });
-    }
-
-    function updatePreviewUI() {
-        const previewList = document.getElementById('filePreviewList');
-        previewList.innerHTML = "";
-        if (uploadedMediaUrls.length === 0) {
-            previewList.innerHTML = '<div class="preview-item" style="color:#ff5252;"><span>❌ ບໍ່ມີໄຟລ໌ທີ່ຜ່ານເງື່ອນໄຂ</span></div>';
-            return;
-        }
-        uploadedMediaUrls.forEach((itemData, idx) => {
-            const item = document.createElement('div');
-            item.className = 'preview-item';
-            let label = itemData.type.startsWith('video/') ? '📹 ວີດີໂອ' : '🖼️ ຮູບພາບ';
-            item.innerHTML = `<span>${label}: ${itemData.name || ('ໄຟລ໌ ' + (idx + 1))}</span> <span style="color:#00e676;">✅ ພ້ອມ</span>`;
-            previewList.appendChild(item);
-        });
-    }
-
-    function calculateFee() {
-        const price = parseFloat(document.getElementById('price').value) || 0;
-        let fee = price >= 2000000 ? (2000000 * 0.0589) : (price * 0.0589);
-        const sellerReceive = price - fee;
-        document.getElementById('sellerReceive').innerText = Math.max(0, Math.floor(sellerReceive)).toLocaleString();
-    }
-
-    document.getElementById('sellForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (uploadedMediaUrls.length === 0) {
-            alert('❌ ກະລຸນາເພີ່ມຮູບພາບ ຫຼື ວີດີໂອຢ່າງໜ້ອຍ 1 ໄຟລ໌!');
-            return;
-        }
-
-        const price = parseFloat(document.getElementById('price').value);
-        let fee = Math.floor(price >= 2000000 ? (2000000 * 0.0589) : (price * 0.0589));
-        const sellerReceive = price - fee;
-        const selectedGame = document.querySelector('input[name="gameType"]:checked').value;
-        const urlsOnly = uploadedMediaUrls.map(item => item.url);
-
-        database.ref('accounts').push().set({
-            sellerPhone: currentUserPhone,
-            gameType: selectedGame,
-            mediaUrls: urlsOnly,
-            price: price,
-            fee: fee,
-            sellerReceive: sellerReceive,
-            gameEmail: document.getElementById('gameEmail').value,
-            gamePassword: document.getElementById('gamePassword').value,
-            description: document.getElementById('description').value,
-            status: "available",
-            createdAt: new Date().toISOString()
-        }).then(() => {
-            alert('🎉 ລົງຂາຍໄອດີສຳເລັດແລ້ວ!');
-            window.location.href = 'index.html';
-        });
-    });
-</script>
-
+        const firebaseConfig = {
+            apiKey: "AIzaSyAwDOJXBBPZdmD8RYWXvDpVkXQCgqzfWNI",
+            authDomain: "kopstore-sk.firebaseapp.com",
+            databaseURL: "https://kopstore-sk-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "kopstore-sk",
+            storageBucket: "kopstore-sk.firebasestorage.app",
+            messagingSenderId: "403901325805",
+            appId: "1:403901325805:web:e55d17ef726eb5169b87e4",
+            measurementId: "G-RKH593NJ2N"
+        };
+        initializeApp(firebaseConfig);
+    </script>
 </body>
 </html>
