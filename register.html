@@ -4,52 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ສະໝັກສະມາຊິກ - KOP STORE</title>
-    <style>
-        body { font-family: 'Phetsarath OT', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h2 { text-align: center; color: #333; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #555; }
-        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .btn-submit { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .btn-submit:hover { background-color: #218838; }
-        .btn-google { width: 100%; padding: 10px; background-color: #db4437; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .btn-google:hover { background-color: #c23321; }
-        .link-text { text-align: center; margin-top: 15px; font-size: 14px; }
-        .link-text a { color: #007bff; text-decoration: none; }
-    </style>
+    <!-- ໃສ່ Link CSS ເກົ່າຂອງເຈົ້ານີ້ -->
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
-<div class="card">
+<div class="register-container">
     <h2>ສະໝັກສະມາຊິກ KOP STORE</h2>
     
     <form id="registerForm">
         <div class="form-group">
-            <label>ອີເມວ ຫຼື ເບີໂທລະສັບ</label>
-            <input type="text" id="regEmail" placeholder="user@gmail.com ຫຼື 20xxxxxxxx" required />
+            <label>ເບີໂທລະສັບ ຫຼື ອີເມວ</label>
+            <input type="text" id="regEmail" placeholder="ປ້ອນເບີໂທ (ເຊັ່ນ: 20xxxxxxxx) ຫຼື ອີເມວ" required />
         </div>
         
         <div class="form-group">
             <label>ລະຫັດຜ່ານ (Password)</label>
-            <input type="password" id="regPassword" placeholder="ຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ" required />
+            <input type="password" id="regPassword" placeholder="ຕັ້ງລະຫັດຜ່ານ ຢ່າງໜ້ອຍ 6 ຕົວ" required />
         </div>
         
+        <!-- ປຸ່ມສະໝັກ (ຮັກສາ Class ເດີມໄວ້) -->
         <button type="submit" class="btn-submit">ສະໝັກສະມາຊິກ</button>
     </form>
 
     <button id="googleSignInBtn" class="btn-google">ສະໝັກດ້ວຍ Google (Gmail)</button>
-
-    <div class="link-text">
-        ມີບັນຊີແລ້ວ? <a href="login.html">ເຂົ້າສູ່ລະບົບທີ່ນີ້</a>
-    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-auth.js";
 
-    // 🔴 ໃຫ້ປ່ຽນຄ່າ Config ນี้ເປັນຂອງໂປເຈັກ Firebase ຂອງທ່ານ
+    // 🔴 ໃສ່ Config ໂປເຈັກ Firebase ຂອງເຈົ້າ
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
         authDomain: "YOUR_AUTH_DOMAIN",
@@ -68,7 +53,7 @@
         let inputVal = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value;
 
-        // ຖ້າຜູ້ໃຊ້ປ້ອນເປັນເບີໂທ (ຕົວເລກທັງໝົດ) ໃຫ້ແປງເປັນรูปแบบອີເມວຊົ່ວຄາວ
+        // ຖ້າຜູ້ໃຊ້ປ້ອນເປັນເບີໂທ (ຕົວເລກ) ລະບົບຈະແປງເປັນรูปแบบອີເມວອັດຕະໂນມັດເພື່ອບັນທຶກລົງ Firebase
         let email = inputVal;
         if (/^\d+$/.test(inputVal)) {
             email = `${inputVal}@kopstore-sk.com`;
@@ -78,7 +63,6 @@
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // ຖ້າເປັນອີເມວจริง ໃຫ້ສົ່ງອີເມວຢືນຢັນ (ຟຣີ 100%)
             if (!email.endsWith('@kopstore-sk.com')) {
                 await sendEmailVerification(user);
                 alert('ສະໝັກສະມາຊິກສຳເລັດ! ກະລຸນາກວດສອບອີເມວເພື່ອຢືນຢັນຕົວຕົນ.');
