@@ -11,7 +11,7 @@
         h2 { text-align: center; color: #00e676; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #bbb; }
-        input[type="tel"], input[type="number"], textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
+        input[type="tel"], input[type="number"], input[type="text"], input[type="password"], textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
         input:focus, textarea:focus { border-color: #00e676; outline: none; }
         
         .game-radio-group { background: #2a2a2a; border: 1px solid #333; border-radius: 8px; padding: 10px; }
@@ -23,7 +23,6 @@
         .upload-box { border: 2px dashed #00e676; background: rgba(0, 230, 118, 0.05); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; position: relative; }
         .upload-box:hover { background: rgba(0, 230, 118, 0.1); }
         .upload-box input { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
-        .upload-icon { font-size: 28px; color: #00e676; margin-bottom: 5px; }
         
         .preview-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
         .preview-item { background: #2a2a2a; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #00e676; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
@@ -33,6 +32,7 @@
         .btn-submit:hover { background: #00c853; }
         .secret-section { border: 1px dashed #ff9800; padding: 15px; border-radius: 8px; margin-top: 15px; background: rgba(255, 152, 0, 0.05); }
         .secret-title { color: #ff9800; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+        .lock-box { text-align: center; padding: 20px; background: #2a2a2a; border-radius: 10px; border: 1px solid #ff9800; }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -42,11 +42,14 @@
 
 <div class="container">
     <h2>🎮 ຟອມລົງຂາຍໄອດີເກມ</h2>
-    <form id="sellForm">
-        
+
+    <!-- ກ່ອງແຈ້ງເຕືອນຖ້າຍັງບໍ່ຜ່ານ KYC ຫຼື ຍັງບໍ່ຈ່າຍຄ່າເປີດຮ້ານ 15,000 LAK -->
+    <div id="sellerGate" class="lock-box" style="display:none;"></div>
+
+    <form id="sellForm" style="display:none;">
         <div class="form-group">
-            <label>ເບີໂທລະສັບຜູ້ຂາຍ (ສຳລັບຕິດຕໍ່):</label>
-            <input type="tel" id="sellerPhone" placeholder="020 XXXXXXXX" required>
+            <label>ເບີໂທລະສັບຜູ້ຂາຍ (ດຶງຈາກບັນຊີ):</label>
+            <input type="tel" id="sellerPhone" readonly style="color: #00e676; font-weight: bold;">
         </div>
 
         <div class="form-group">
@@ -67,12 +70,11 @@
             </div>
         </div>
 
-        <!-- ຊ່ອງອັບໂລດຮູບຫຼາຍຮູບ + ວີດີໂອຫຼາຍວີດີໂອ (ຈຳກັດວີດີໂອບໍ່ເກີນ 4 ນາທີ) -->
         <div class="form-group">
-            <label>ເພີ່ມຮູບພາບ ແລະ ວີດີໂອ (ເລືອກໄດ້ຫຼາຍຮູບ/ຫຼາຍວີດີໂອ, ວີດີໂອບໍ່ເກີນ 4 ນາທີ):</label>
-            <div class="upload-box" id="uploadBox">
-                <div class="upload-icon">➕</div>
-                <div style="font-weight: bold; color: #fff;">ກົດເພື່ອເລືອກຮູບ ຫຼື ວີດີໂອ </div>
+            <label>ເພີ່ມຮູບພາບ ແລະ ວີດີໂອ (ເລືອກພ້ອມກັນໄດ້ຫຼາຍອັນ, ວີດີໂອບໍ່ເກີນ 4 ນາທີ):</label>
+            <div class="upload-box">
+                <div style="font-size: 28px; color: #00e676; margin-bottom: 5px;">➕</div>
+                <div style="font-weight: bold; color: #fff;">ກົດເພື່ອເລືອກຮູບ ຫຼື ວີດີໂອ</div>
                 <div style="font-size: 11px; color: #aaa; margin-top: 3px;">ຮອງຮັບຫຼາຍຮູບ ແລະ ຫຼາຍວີດີໂອ (ແຕ່ລະວີດີໂອບໍ່ເກີນ 4 ນາທີ)</div>
                 <input type="file" id="mediaFiles" accept="image/*,video/*" multiple onchange="handleFilesSelect(event)">
             </div>
@@ -81,23 +83,23 @@
 
         <div class="form-group">
             <label>ລາຄາຂາຍ (ກີບ / LAK):</label>
-            <input type="number" id="price" placeholder="ຕົວຢ່າງ: 150000" oninput="calculateFee()" required>
+            <input type="number" id="price" placeholder="ຕົວຢ່າງ: 100000" oninput="calculateFee()" required>
         </div>
 
         <div class="fee-box">
             <div>💰 ລາຍຮັບທີ່ຜູ້ຂາຍຈະໄດ້ຮັບ: <span id="sellerReceive" style="color:#00e676; font-weight:bold;">0</span> LAK</div>
-            <div style="font-size: 11px; color: #aaa; margin-top: 4px;">* ຫັກຄ່າທຳນຽມ Escrow 5.89% (Max Fee Cap ສຳລັບ 2,000,000 LAK ຂຶ້ນໄປ)</div>
+            <div style="font-size: 11px; color: #aaa; margin-top: 4px;">* ຫັກຄ່າທຳນຽມ Escrow 5.89% (ສູງສຸດບໍ່ເກີນຍອດ 2,000,000 LAK)</div>
         </div>
 
         <div class="secret-section">
-            <div class="secret-title">🔒 ຂໍ້ມູນລາຍລະອຽດໄອດີ (ຈະຖືກຊ່ອນໄວ້ ໃຫ້ສະເພາະຄົນຊື້):</div>
+            <div class="secret-title">🔒 ຂໍ້ມູນລາຍລະອຽດໄອດີ (ຈະສະແດງໃນໃບບິນໃຫ້ສະເພາະຄົນຊື້):</div>
             <div class="form-group">
                 <label style="color:#ffb74d;">ອີເມວ/ໄອດີ ເຊື່ອມເກມ:</label>
                 <input type="text" id="gameEmail" placeholder="example@gmail.com / ID" required>
             </div>
             <div class="form-group">
                 <label style="color:#ffb74d;">ລະຫັດຜ່ານ (Password):</label>
-                <input type="password" id="gamePassword" placeholder="••••••••" required>
+                <input type="text" id="gamePassword" placeholder="ລະຫັດຜ່ານຂອງໄອດີເກມ" required>
             </div>
         </div>
 
@@ -124,6 +126,61 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    const currentUserPhone = localStorage.getItem('kopstore_user');
+    if (!currentUserPhone) {
+        alert('❌ ກະລຸນາເຂົ້າສູ່ລະບົບກ່ອນ!');
+        window.location.href = 'login.html';
+    }
+
+    // ກວດສອບສິດ KYC ແລະ ຄ່າສະໝັກຮ້ານຄ້າ 15,000 LAK
+    const userRef = database.ref('users/' + currentUserPhone);
+    userRef.on('value', (snapshot) => {
+        if (!snapshot.exists()) return;
+        const user = snapshot.val();
+        const gate = document.getElementById('sellerGate');
+        const form = document.getElementById('sellForm');
+
+        if (user.kycStatus !== 'approved') {
+            gate.style.display = 'block';
+            form.style.display = 'none';
+            gate.innerHTML = `
+                <h3 style="color:#ff9800; margin-top:0;">🛡️ ຕ້ອງຢືນຢັນຕົວຕົນ (KYC) ກ່ອນ</h3>
+                <p style="font-size:13px; color:#ddd;">ບັນຊີຂອງທ່ານຍັງບໍ່ຜ່ານການກວດສອບ KYC ຈາກ Admin</p>
+                <a href="profile.html" style="display:inline-block; background:#00e676; color:#000; padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:bold; margin-top:10px;">ໄປໜ້າ KYC ດຽວນີ້</a>
+            `;
+        } else if (!user.isSeller) {
+            gate.style.display = 'block';
+            form.style.display = 'none';
+            gate.innerHTML = `
+                <h3 style="color:#00e676; margin-top:0;">🏪 ເປີດໃຊ້ງານບັນຊີຜູ້ຂາຍ (Seller)</h3>
+                <p style="font-size:13px; color:#ddd;">ມີຄ່າທຳນຽມສະໝັກເປີດຮ້ານຄ້າຄັ້ງດຽວ <b>15,000 LAK</b> (ຫັກຈາກ Wallet)</p>
+                <p style="font-size:13px; color:#ffeb3b;">ຍອດເງິນໃນ Wallet ຂອງທ່ານ: ${Number(user.balance || 0).toLocaleString()} LAK</p>
+                <button onclick="activateSeller(${user.balance || 0})" style="background:#00e676; color:#000; border:none; padding:12px 20px; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px;">💳 ຈ່າຍ 15,000 LAK ເພື່ອເປີດຮ້ານ</button>
+                <br><a href="profile.html" style="display:inline-block; color:#aaa; font-size:12px; margin-top:10px;">ເຕີມເງິນເຂົ້າ Wallet</a>
+            `;
+        } else {
+            gate.style.display = 'none';
+            form.style.display = 'block';
+            document.getElementById('sellerPhone').value = currentUserPhone;
+        }
+    });
+
+    function activateSeller(currentBalance) {
+        if (currentBalance < 15000) {
+            alert('❌ ຍອດເງິນໃນ Wallet ບໍ່ພໍ (ຕ້ອງການ 15,000 LAK) ກະລຸນາເຕີມເງິນກ່ອນ!');
+            window.location.href = 'profile.html';
+            return;
+        }
+        if (confirm('ຢືນຢັນຫັກເງິນ 15,000 LAK ຈາກ Wallet ເພື່ອເປີດສິດລົງຂາຍໄອດີ?')) {
+            userRef.update({
+                balance: currentBalance - 15000,
+                isSeller: true
+            }).then(() => {
+                alert('🎉 ເປີດບັນຊີຜູ້ຂາຍສຳເລັດ! ທ່ານສາມາດລົງຂາຍໄອດີໄດ້ເລີຍ.');
+            });
+        }
+    }
+
     let uploadedMediaUrls = [];
 
     function handleFilesSelect(event) {
@@ -132,10 +189,9 @@
 
         uploadedMediaUrls = [];
         const previewList = document.getElementById('filePreviewList');
-        previewList.innerHTML = '<div class="preview-item"><span>⏳ กำลังตรวจสอบและอัปโหลดไฟล์...</span></div>';
+        previewList.innerHTML = '<div class="preview-item"><span>⏳ ກຳລັງກວດສອບ ແລະ ອັບໂຫຼດໄຟລ໌...</span></div>';
 
-        let filesArray = Array.from(files);
-        let checkPromises = filesArray.map(file => {
+        let checkPromises = Array.from(files).map(file => {
             return new Promise((resolve) => {
                 if (file.type.startsWith('video/')) {
                     const videoElement = document.createElement('video');
@@ -143,15 +199,13 @@
                     videoElement.onloadedmetadata = function() {
                         window.URL.revokeObjectURL(videoElement.src);
                         if (videoElement.duration > 240) {
-                            alert(`❌ ວີດີໂອ "${file.name}" ມີຄວາມຍາວເກີນ 4 ນາທີ! ກະລຸນາເລືອກວີດີໂອທີ່ສັ້ນກວ່າ 4 ນາທີ.`);
+                            alert(`❌ ວີດີໂອ "${file.name}" ຍາວເກີນ 4 ນາທີ!`);
                             resolve(null);
                         } else {
                             uploadFileToCloud(file, resolve);
                         }
                     };
-                    videoElement.onerror = function() {
-                        uploadFileToCloud(file, resolve);
-                    };
+                    videoElement.onerror = () => uploadFileToCloud(file, resolve);
                     videoElement.src = URL.createObjectURL(file);
                 } else {
                     uploadFileToCloud(file, resolve);
@@ -159,9 +213,7 @@
             });
         });
 
-        Promise.all(checkPromises).then(() => {
-            updatePreviewUI();
-        });
+        Promise.all(checkPromises).then(() => updatePreviewUI());
     }
 
     function uploadFileToCloud(file, resolve) {
@@ -169,20 +221,13 @@
         formData.append('file', file);
         formData.append('upload_preset', 'ml_default');
 
-        fetch('https://api.cloudinary.com/v1_1/demo/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
+        fetch('https://api.cloudinary.com/v1_1/demo/upload', { method: 'POST', body: formData })
+        .then(res => res.json())
         .then(data => {
-            if (data.secure_url) {
-                uploadedMediaUrls.push({ url: data.secure_url, type: file.type, name: file.name });
-            } else {
-                uploadedMediaUrls.push({ url: URL.createObjectURL(file), type: file.type, name: file.name });
-            }
+            uploadedMediaUrls.push({ url: data.secure_url || URL.createObjectURL(file), type: file.type, name: file.name });
             resolve(true);
         })
-        .catch(error => {
+        .catch(() => {
             uploadedMediaUrls.push({ url: URL.createObjectURL(file), type: file.type, name: file.name });
             resolve(true);
         });
@@ -192,14 +237,14 @@
         const previewList = document.getElementById('filePreviewList');
         previewList.innerHTML = "";
         if (uploadedMediaUrls.length === 0) {
-            previewList.innerHTML = '<div class="preview-item" style="color:#ff5252;"><span>❌ ບໍ່ມີໄຟລ໌ຖືກເລືອກ ຫຼື ວີດີໂາເກີນກຳນົດ</span></div>';
+            previewList.innerHTML = '<div class="preview-item" style="color:#ff5252;"><span>❌ ບໍ່ມີໄຟລ໌ທີ່ຜ່ານເງື່ອນໄຂ</span></div>';
             return;
         }
         uploadedMediaUrls.forEach((itemData, idx) => {
             const item = document.createElement('div');
             item.className = 'preview-item';
-            let fileTypeLabel = itemData.type.startsWith('video/') ? '📹 ວີດີໂອ' : '🖼️ ຮູບພາບ';
-            item.innerHTML = `<span>${fileTypeLabel}: ${itemData.name || ('ໄຟລ໌ທີ ' + (idx + 1))}</span> <span style="color:#00e676;">✅ ພ້ອມແລ້ວ</span>`;
+            let label = itemData.type.startsWith('video/') ? '📹 ວີດີໂອ' : '🖼️ ຮູບພາບ';
+            item.innerHTML = `<span>${label}: ${itemData.name || ('ໄຟລ໌ ' + (idx + 1))}</span> <span style="color:#00e676;">✅ ພ້ອມ</span>`;
             previewList.appendChild(item);
         });
     }
@@ -213,23 +258,19 @@
 
     document.getElementById('sellForm').addEventListener('submit', function(e) {
         e.preventDefault();
-
         if (uploadedMediaUrls.length === 0) {
             alert('❌ ກະລຸນາເພີ່ມຮູບພາບ ຫຼື ວີດີໂອຢ່າງໜ້ອຍ 1 ໄຟລ໌!');
             return;
         }
 
         const price = parseFloat(document.getElementById('price').value);
-        let fee = price >= 2000000 ? (2000000 * 0.0589) : (price * 0.0589);
+        let fee = Math.floor(price >= 2000000 ? (2000000 * 0.0589) : (price * 0.0589));
         const sellerReceive = price - fee;
         const selectedGame = document.querySelector('input[name="gameType"]:checked').value;
-
-        // ດึงສະເພາະ URL ມາເກັບລົງ Database
         const urlsOnly = uploadedMediaUrls.map(item => item.url);
 
-        const newAccountRef = database.ref('accounts').push();
-        newAccountRef.set({
-            sellerPhone: document.getElementById('sellerPhone').value,
+        database.ref('accounts').push().set({
+            sellerPhone: currentUserPhone,
             gameType: selectedGame,
             mediaUrls: urlsOnly,
             price: price,
@@ -242,12 +283,7 @@
             createdAt: new Date().toISOString()
         }).then(() => {
             alert('🎉 ລົງຂາຍໄອດີສຳເລັດແລ້ວ!');
-            document.getElementById('sellForm').reset();
-            document.getElementById('filePreviewList').innerHTML = '';
-            document.getElementById('sellerReceive').innerText = '0';
-            uploadedMediaUrls = [];
-        }).catch((error) => {
-            alert('❌ ຕິດຂັດ: ' + error.message);
+            window.location.href = 'index.html';
         });
     });
 </script>
